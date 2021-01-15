@@ -13,3 +13,5 @@
 - [x] Basic bootable NixOS config
 - [ ] VFIO config
 - [ ] Setup dev environment
+- [ ] xmonad
+
