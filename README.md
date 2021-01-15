@@ -7,6 +7,7 @@
 - Asus Phoenix GTX 1050TI
 - Samsung EVO 860 512GB
 - Samsung EVO 840 120GB
+- TODO: Find specific model of WiFi/BT card
 
 ## TODO
 
