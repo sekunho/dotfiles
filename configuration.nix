@@ -65,7 +65,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.sekun = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "libvirtd" ]; # Enable ‘sudo’ for the user.
   };
 
   # List packages installed in system profile. To search, run:
@@ -78,7 +78,9 @@
     git
     vim
     firefox
-    virtmanager
+    virt-manager
+    gnome3.dconf 
+    edk2
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -111,23 +113,23 @@
   system.stateVersion = "20.09"; # Did you read the comment?
 
   # VFIO
-  # TODO: Move to vfio.nix
-  boot.initrd.availableKernelModules = [ "amdgpu" "vfio-pci" ];
-  boot.initrd.preDeviceCommands = ''
+  boot.kernelParams = [ "amd_iommu=on" ];
+  boot.blacklistedKernelModules = [ "amdgpu" "radeon" ];
+  boot.kernelModules = [ "kvm-amd" "vfio_virqfd" "vfio_pci" "vfio_iommu_type1" "vfio" ];
+
+  boot.postBootCommands = ''
     DEVS="0000:1f:00.0 0000:1f:00.1"
     for DEV in $DEVS; do
       echo "vfio-pci" > /sys/bus/pci/devices/$DEV/driver_override
     done
     modprobe -i vfio-pci
   '';
-  boot.kernelParams = [ "amd_iommu=on" "pcie_aspm=off" ];
-  boot.kernelModules = [ "kvm-amd" ];
 
   virtualisation.libvirtd = {
     enable = true;
     qemuOvmf = true;
-    qemuRunAsRoot = false;
-    onBoot = "ignore";
+    # qemuRunAsRoot = false;
+    # onBoot = "ignore";
     onShutdown = "shutdown";
   };
 }
