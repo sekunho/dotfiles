@@ -1,5 +1,9 @@
 # nixos-config
 
+Status: Abandoned
+
+NixOS ran a bit slow for me so I'm sure I missed some configs to make it run smoothly. I think I'll attempt this again when I have more time.
+
 ## Hardware specifications
 
 - AMD Ryzen 1600
