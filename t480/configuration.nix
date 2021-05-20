@@ -4,17 +4,32 @@
 
 { config, pkgs, ... }:
 
+let
+  unstableTarball =
+    fetchTarball
+      https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz;
+
+in
+
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
 
+  nixpkgs.config = {
+    packageOverrides = pkgs: {
+      unstable = import unstableTarball {
+      config = config.nixpkgs.config;
+      };
+    };
+  };
+
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "nixos-t480"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Set your time zone.
@@ -24,8 +39,8 @@
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking.useDHCP = false;
-  networking.interfaces.enp24s0.useDHCP = true;
-  networking.interfaces.wlp30s0.useDHCP = true;
+  networking.interfaces.enp0s31f6.useDHCP = true;
+  networking.interfaces.wlp3s0.useDHCP = true;
   networking.networkmanager.enable = true;
 
   # Configure network proxy if necessary
@@ -39,14 +54,21 @@
     keyMap = "us";
   };
 
-  # Nvidia Config
-  services.xserver.videoDrivers = [ "nvidia" ];
-
-  # Enable the Plasma 5 Desktop Environment.
+  # Enable the X11 windowing system.
   services.xserver.enable = true;
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
+
+
+  # Enable the GNOME 3 Desktop Environment.
+  services.xserver.displayManager.gdm.enable = true;
   
+  hardware.pulseaudio.support32Bit = true;
+  hardware.opengl.driSupport32Bit = true;
+
+  # For Thinkpad
+  services.tlp.enable = true;
+
+  # Battery power management
+  services.upower.enable = true;
 
   # Configure keymap in X11
   services.xserver.layout = "us";
@@ -60,30 +82,33 @@
   hardware.pulseaudio.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  services.xserver.libinput.enable = true;
+  services.xserver.desktopManager.gnome3 = {
+      enable = true;
+      extraGSettingsOverrides = ''
+        [org.gnome.desktop.peripherals.touchpad]
+        tap-to-click=false
+      '';
+    };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.sekun = {
+  users.users.sekun= {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "libvirtd" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager"]; # Enable ‘sudo’ for the user.
   };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     wget 
-    pciutils
-    fish
-    kitty
-    git
     vim
+    nano
+    git
+    tmux
     firefox
-    virt-manager
-    gnome3.dconf 
-    edk2
+    unstable.gh
+    gnupg
   ];
-
-  nixpkgs.config.allowUnfree = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -112,24 +137,5 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "20.09"; # Did you read the comment?
 
-  # VFIO
-  boot.kernelParams = [ "amd_iommu=on" ];
-  boot.blacklistedKernelModules = [ "amdgpu" "radeon" ];
-  boot.kernelModules = [ "kvm-amd" "vfio_virqfd" "vfio_pci" "vfio_iommu_type1" "vfio" ];
-
-  boot.postBootCommands = ''
-    DEVS="0000:1f:00.0 0000:1f:00.1"
-    for DEV in $DEVS; do
-      echo "vfio-pci" > /sys/bus/pci/devices/$DEV/driver_override
-    done
-    modprobe -i vfio-pci
-  '';
-
-  virtualisation.libvirtd = {
-    enable = true;
-    qemuOvmf = true;
-    # qemuRunAsRoot = false;
-    # onBoot = "ignore";
-    onShutdown = "shutdown";
-  };
 }
+
