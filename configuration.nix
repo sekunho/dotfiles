@@ -431,6 +431,9 @@ in {
 
           let g:airline_theme='base16_gruvbox_dark_medium'
 
+          " To hide the statusline
+          set noshowmode
+
           nmap <esc> :noh <CR>
         '';
       };
