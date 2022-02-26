@@ -410,6 +410,9 @@ in {
           set background=dark
           colorscheme gruvbox
 
+          " I'm tired of dealing with separate yanks/pastes
+          set clipboard+=unnamedplus
+
           " <leader>, by default is the backslash key.
           " So to find_files, be in normal mode, and type:
           " \ff
