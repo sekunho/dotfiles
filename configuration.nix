@@ -328,8 +328,21 @@ in {
                 # But I don't have anything else. Not a fan of `vim-elixir`.
                 tree-sitter-elixir
 
+                # Web front-end stuff
+                tree-sitter-typescript
+                tree-sitter-javascript
+                tree-sitter-html
+                tree-sitter-css
+
+                tree-sitter-rust
                 tree-sitter-haskell
                 tree-sitter-lua
+
+                # Shell
+                tree-sitter-fish
+                tree-sitter-bash
+
+                tree-sitter-make
               ]
             ))
 
