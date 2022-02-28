@@ -6,7 +6,7 @@
 
 let
   oldUnstable = "29d1f6e1f625d246dcf84a78ef97b4da3cafc6ea";
-  newUnstable = "74b10859829153d5c5d50f7c77b86763759e8654";
+  newUnstable = "22dc22f8cedc58fcb11afe1acb08e9999e78be9c";
   unstable = import (builtins.fetchTarball
     "https://github.com/nixos/nixpkgs/tarball/${newUnstable}") {
       config = config.nixpkgs.config;
@@ -166,8 +166,8 @@ in {
       enable = true;
       driSupport = true;
       driSupport32Bit = true;
-      package = unstable.mesa.drivers;
-      package32 = unstable.pkgsi686Linux.mesa.drivers;
+      package = pkgs.mesa.drivers;
+      package32 = pkgs.pkgsi686Linux.mesa.drivers;
       extraPackages = with pkgs; [ rocm-opencl-icd rocm-opencl-runtime ];
     };
   };
@@ -270,23 +270,6 @@ in {
       hledger-web
       hledger-ui
       wiki-tui
-
-      # Sure would be great to get v28 on nixpkgs but when is that gonna happen?
-      # (emacsWithPackagesFromUsePackage {
-      #   # Your Emacs config file. Org mode babel files are also
-      #   # supported.
-      #   # NB: Config files cannot contain unicode characters, since
-      #   #     they're being parsed in nix, which lacks unicode
-      #   #     support.
-      #   config = ./config/doom/config.el;
-
-      #   # Package is optional, defaults to pkgs.emacs
-      #   package = pkgs.emacsGcc28;
-
-      #   # Optionally provide extra packages not in the configuration file.
-      #   extraEmacsPackages = epkgs: [ epkgs.vterm ];
-      # })
-
       transmission-gtk
     ];
 
@@ -320,22 +303,44 @@ in {
       configure = {
         packages.myVimPackage = with pkgs.vimPlugins; {
           start = [
-            # Appearance and whatnot
+            # Airline
             unstable.vimPlugins.vim-airline
             vim-airline-themes
             vim-airline-clock
+
+            # Themes
             gruvbox-nvim
 
+            # Languages, etc.
             direnv-vim
-            vim-nix
             unstable.vimPlugins.nvim-lspconfig
-            unstable.vimPlugins.nvim-treesitter
 
+            # Usage
+            # https://nixos.org/manual/nixpkgs/unstable/#vim
+            #
+            # Available parsers
+            # https://tree-sitter.github.io/tree-sitter/#available-parsers
+            (unstable.vimPlugins.nvim-treesitter.withPlugins (
+              plugins: with plugins; [ 
+                tree-sitter-nix
+
+                # This one is too slow for my taste. :(
+                # But I don't have anything else. Not a fan of `vim-elixir`.
+                tree-sitter-elixir
+
+                tree-sitter-haskell
+                tree-sitter-lua
+              ]
+            ))
+
+            # I don't know how to categorize this
             unstable.vimPlugins.plenary-nvim
             unstable.vimPlugins.telescope-nvim
             unstable.vimPlugins.nvim-web-devicons
 
+            # Magit is unfortunately still king :(
             unstable.vimPlugins.vim-fugitive
+            unstable.vimPlugins.gitsigns-nvim
           ];
         };
 
@@ -372,6 +377,9 @@ in {
               vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
             end
 
+            -- Language Server Protocols
+            -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+
             require'lspconfig'.hls.setup {
               on_attach = on_attach,
               settings = {
@@ -381,6 +389,13 @@ in {
               }
             }
 
+            require'lspconfig'.elixirls.setup { 
+              on_attach = on_attach,
+              cmd = { "elixir-ls" } 
+            }
+
+            -- Tree Sitter
+
             require'nvim-treesitter.configs'.setup {
               highlight = {
                 enable = true,
@@ -388,7 +403,7 @@ in {
                 -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
                 -- Using this option may slow down your editor, and you may see some duplicate highlights.
                 -- Instead of true it can also be a list of languages
-                additional_vim_regex_highlighting = false,
+                additional_vim_regex_highlighting = true,
               },
             }
 
@@ -403,9 +418,14 @@ in {
           set hidden
           set title
           set encoding=utf-8
+
+          " Indents
           set smartindent
           set tabstop=2
           set expandtab
+          set shiftwidth=2
+
+          " Themes
           set termguicolors
           set background=dark
           colorscheme gruvbox

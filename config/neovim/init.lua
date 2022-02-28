@@ -11,7 +11,7 @@ vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<C
 local on_attach = function(client, bufnr)
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-  
+
   -- Mappings.
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
@@ -29,14 +29,24 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
 
+-- Language Server Protocols
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+
 require'lspconfig'.hls.setup {
   on_attach = on_attach,
-    settings = {
-      haskell = {
-        formattingProvider = "stylish-haskell"
-      }
+  settings = {
+    haskell = {
+      formattingProvider = "stylish-haskell"
+    }
   }
 }
+
+require'lspconfig'.elixirls.setup { 
+  on_attach = on_attach,
+  cmd = { "elixir-ls" } 
+}
+
+-- Tree Sitter
 
 require'nvim-treesitter.configs'.setup {
   highlight = {
@@ -45,11 +55,11 @@ require'nvim-treesitter.configs'.setup {
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
     -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
+    additional_vim_regex_highlighting = true,
   },
 }
 
 require'nvim-web-devicons'.setup {}
 
--- I want to be greeted! :)
 print("Good day, Sek Un.")
+
