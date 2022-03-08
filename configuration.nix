@@ -7,6 +7,7 @@
 let
   oldUnstable = "29d1f6e1f625d246dcf84a78ef97b4da3cafc6ea";
   newUnstable = "22dc22f8cedc58fcb11afe1acb08e9999e78be9c";
+
   unstable = import (builtins.fetchTarball
     "https://github.com/nixos/nixpkgs/tarball/${newUnstable}") {
       config = config.nixpkgs.config;
@@ -153,12 +154,6 @@ in {
   };
 
   sound.enable = true;
-
-  # postgresql = {
-  #   enable = true;
-  #   package = pkgs.postgresql_13;
-  #   dataDir = "/data/postgresql";
-  # };
 
   hardware = {
     pulseaudio.enable = true;
@@ -321,7 +316,7 @@ in {
             # Available parsers
             # https://tree-sitter.github.io/tree-sitter/#available-parsers
             (unstable.vimPlugins.nvim-treesitter.withPlugins (
-              plugins: with plugins; [ 
+              plugins: with plugins; [
                 tree-sitter-nix
 
                 # This one is too slow for my taste. :(
@@ -402,9 +397,13 @@ in {
               }
             }
 
-            require'lspconfig'.elixirls.setup { 
+            require'lspconfig'.elixirls.setup {
               on_attach = on_attach,
-              cmd = { "elixir-ls" } 
+              cmd = { "elixir-ls" }
+            }
+
+            require'lspconfig'.rls.setup{
+              on_attach = on_attach
             }
 
             -- Tree Sitter
@@ -468,6 +467,8 @@ in {
           set noshowmode
 
           nmap <esc> :noh <CR>
+
+          autocmd BufWritePre * :%s/\s\+$//e
         '';
       };
     };
@@ -498,11 +499,35 @@ in {
   # PostgreSQL
   services.postgresql = {
     enable = true;
+    extraPlugins = with pkgs.postgresql14Packages; [ pgtap ];
     package = pkgs.postgresql_14;
     authentication = pkgs.lib.mkOverride 14 ''
       local all all trust
       host all all ::1/128 trust
+      host all all localhost trust
     '';
+
+    initialScript = pkgs.writeText "backend-initScript" ''
+    -- Ensure the DB defaults to UTC
+    SET timezone TO 'UTC';
+    '';
+
+    # https://github.com/adisbladis/nixconfig/blob/0ce9e8f4556da634a12c11b16bce5364b6641a83/hosts/bladis/synapse.nix
+    settings = {
+      shared_preload_libraries             = "pg_stat_statements";
+      session_preload_libraries            = "auto_explain";
+      track_io_timing                      = "on";
+      track_functions                      = "pl";
+      log_duration                         = true;
+      log_statement                        = "all";
+
+      # AUTO_EXPLAIN stuff
+      "auto_explain.log_min_duration"      = 0;
+      "auto_explain.log_analyze"           = true;
+      "auto_explain.log_triggers"          = true;
+      "auto_explain.log_verbose"           = true;
+      "auto_explain.log_nested_statements" = true;
+    };
   };
 
   # This value determines the NixOS release from which the default
