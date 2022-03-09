@@ -244,7 +244,7 @@ in {
       # Messaging
       signal-desktop
       element-desktop
-      discord
+      unstable.discord
 
       # Networking
       # ciscoPacketTracer8
