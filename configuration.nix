@@ -34,7 +34,7 @@ in {
 
   nix = {
     # Enable nix 2.4 for flakes
-    package = pkgs.nix_2_4;
+    package = unstable.nix_2_5;
 
     gc = {
       automatic = true;
@@ -245,6 +245,7 @@ in {
       signal-desktop
       element-desktop
       unstable.discord
+      tdesktop
 
       # Networking
       # ciscoPacketTracer8
@@ -528,6 +529,19 @@ in {
       "auto_explain.log_verbose"           = true;
       "auto_explain.log_nested_statements" = true;
     };
+  };
+
+  location = {
+    provider = "manual";
+
+    # No, not my actual location. Just using a country with similar enough
+    # timezones lol.
+    latitude = 1.3521;
+    longitude = 103.8198;
+  };
+
+  services.redshift = {
+    enable = true;
   };
 
   # This value determines the NixOS release from which the default
