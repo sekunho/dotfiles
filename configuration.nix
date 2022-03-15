@@ -346,9 +346,9 @@ in {
             unstable.vimPlugins.plenary-nvim
             unstable.vimPlugins.telescope-nvim
             unstable.vimPlugins.nvim-web-devicons
+            unstable.vimPlugins.auto-pairs
 
             # Magit is unfortunately still king :(
-            unstable.vimPlugins.vim-fugitive
             unstable.vimPlugins.gitsigns-nvim
           ];
         };
