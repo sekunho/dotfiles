@@ -347,6 +347,7 @@ in {
             unstable.vimPlugins.telescope-nvim
             unstable.vimPlugins.nvim-web-devicons
             unstable.vimPlugins.auto-pairs
+            unstable.vimPlugins.trouble-nvim
 
             # Magit is unfortunately still king :(
             unstable.vimPlugins.gitsigns-nvim
@@ -403,8 +404,13 @@ in {
               cmd = { "elixir-ls" }
             }
 
-            require'lspconfig'.rls.setup{
+            require'lspconfig'.rls.setup {
               on_attach = on_attach
+            }
+
+            -- Making diagnostics prettier
+            require("trouble").setup {
+              padding = false,
             }
 
             -- Tree Sitter
@@ -454,6 +460,14 @@ in {
           nnoremap <leader>fb <cmd>Telescope buffers<cr>
           nnoremap <leader>fh <cmd>Telescope help_tags<cr>
           nnoremap <leader>fm <cmd>Telescope man_pages<cr>
+
+          " Trouble
+          nnoremap <leader>xx <cmd>TroubleToggle<cr>
+          nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
+          nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
+          nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
+          nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
+          nnoremap gR <cmd>TroubleToggle lsp_references<cr>
 
           set colorcolumn=80
 
