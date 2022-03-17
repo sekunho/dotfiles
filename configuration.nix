@@ -350,6 +350,7 @@ in {
             unstable.vimPlugins.trouble-nvim
             unstable.vimPlugins.vim-commentary
             unstable.vimPlugins.vim-surround
+            unstable.vimPlugins.which-key-nvim
 
             unstable.vimPlugins.rust-vim
 
@@ -359,6 +360,10 @@ in {
         };
 
         customRC = ''
+          " Has a leading backslash cause vim will think of it as a normal
+          " string. Also, not a fan of the forwardslash for the leader key.
+          let mapleader = "\<Space>"
+
           lua << EOF
             -- Mappings.
             -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -386,7 +391,7 @@ in {
               vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
               vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
               vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-              vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+              -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
               vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
               vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
             end
@@ -418,7 +423,6 @@ in {
             }
 
             -- Tree Sitter
-
             require'nvim-treesitter.configs'.setup {
               highlight = {
                 enable = true,
@@ -431,6 +435,19 @@ in {
             }
 
             require'nvim-web-devicons'.setup {}
+
+            -- Telescope
+            require('telescope').setup {
+              pickers = {
+                treesitter = { theme = "dropdown", previewer = false },
+                lsp_code_actions = { theme = "dropdown", previewer = false }
+              }
+            }
+
+            -- Which key
+            require("which-key").setup {
+              window = { winblend = 1 }
+            }
 
             print("Good day, Sek Un.")
           EOF
@@ -456,14 +473,18 @@ in {
           " I'm tired of dealing with separate yanks/pastes
           set clipboard+=unnamedplus
 
+          " Telescope"
           " <leader>, by default is the backslash key.
           " So to find_files, be in normal mode, and type:
-          " \ff
-          nnoremap <leader>ff <cmd>Telescope find_files<cr>
-          nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-          nnoremap <leader>fb <cmd>Telescope buffers<cr>
-          nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-          nnoremap <leader>fm <cmd>Telescope man_pages<cr>
+          " <Space>tf
+          nnoremap <leader>tf <cmd>Telescope find_files<cr>
+          nnoremap <leader>tg <cmd>Telescope live_grep<cr>
+          nnoremap <leader>tb <cmd>Telescope buffers<cr>
+          nnoremap <leader>th <cmd>Telescope help_tags<cr>
+          nnoremap <leader>tm <cmd>Telescope man_pages<cr>
+          nnoremap <leader>tk <cmd>Telescope keymaps<cr>
+          nnoremap <leader>la <cmd>:lua require'telescope.builtin'.lsp_code_actions{}<cr>
+          nnoremap <leader>pp <cmd>:lua require'telescope.builtin'.treesitter{}<cr>
 
           " Trouble
           nnoremap <leader>xx <cmd>TroubleToggle<cr>
@@ -488,6 +509,8 @@ in {
           nmap <esc> :noh <CR>
 
           autocmd BufWritePre * :%s/\s\+$//e
+
+          set timeoutlen=500
         '';
       };
     };
