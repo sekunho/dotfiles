@@ -348,6 +348,10 @@ in {
             unstable.vimPlugins.nvim-web-devicons
             unstable.vimPlugins.auto-pairs
             unstable.vimPlugins.trouble-nvim
+            unstable.vimPlugins.vim-commentary
+            unstable.vimPlugins.vim-surround
+
+            unstable.vimPlugins.rust-vim
 
             # Magit is unfortunately still king :(
             unstable.vimPlugins.gitsigns-nvim
