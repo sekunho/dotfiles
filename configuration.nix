@@ -365,6 +365,24 @@ in {
           let mapleader = "\<Space>"
 
           lua << EOF
+            -- Highlight on yank
+            vim.cmd [[
+              augroup YankHighlight
+                autocmd!
+                autocmd TextYankPost * silent! lua vim.highlight.on_yank()
+              augroup end
+            ]]
+
+            require('gitsigns').setup {
+              signs = {
+                add = { text = '+' },
+                change = { text = '~' },
+                delete = { text = '_' },
+                topdelete = { text = '‾' },
+                changedelete = { text = '~' },
+              },
+            }
+
             -- Mappings.
             -- See `:help vim.diagnostic.*` for documentation on any of the below functions
             local opts = { noremap=true, silent=true }
@@ -398,6 +416,16 @@ in {
 
             -- Language Server Protocols
             -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+            vim.diagnostic.config({
+              -- virtual_text = false
+            })
+
+            -- Change diagnostic symbols in the sign column (gutter)
+            local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+            for type, icon in pairs(signs) do
+              local hl = "DiagnosticSign" .. type
+              vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+            end
 
             require'lspconfig'.hls.setup {
               on_attach = on_attach,
@@ -473,6 +501,21 @@ in {
 
           " I'm tired of dealing with separate yanks/pastes
           set clipboard+=unnamedplus
+
+          """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+          " SIGN COLUMN
+
+          " Set the bg of the gutter similar to the line number column.
+          highlight clear SignColumn
+
+          " Show it all the time cause I hate the sudden movement when it shows
+          " up out of nowhere.
+          set signcolumn=yes
+
+          """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+          " LSP commands
+          nnoremap <leader>ld <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>
 
           " Telescope"
           " <leader>, by default is the backslash key.
