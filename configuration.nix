@@ -467,7 +467,10 @@ in {
             -- Telescope
             require('telescope').setup {
               pickers = {
-                find_files = { hidden = true },
+                find_files = {
+                  hidden = true,
+                  find_command = { 'rg', '--files', '--iglob', '!.git', '--hidden' },
+                },
                 treesitter = { theme = "dropdown", previewer = false },
                 lsp_code_actions = { theme = "dropdown", previewer = false }
               }
