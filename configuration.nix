@@ -439,6 +439,7 @@ in {
             -- Telescope
             require('telescope').setup {
               pickers = {
+                find_files = { hidden = true },
                 treesitter = { theme = "dropdown", previewer = false },
                 lsp_code_actions = { theme = "dropdown", previewer = false }
               }
