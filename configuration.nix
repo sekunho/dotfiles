@@ -477,15 +477,23 @@ in {
           " Telescope"
           " <leader>, by default is the backslash key.
           " So to find_files, be in normal mode, and type:
-          " <Space>tf
-          nnoremap <leader>tf <cmd>Telescope find_files<cr>
+          " <Space>.
+          nnoremap <leader>. <cmd>Telescope find_files<cr>
           nnoremap <leader>tg <cmd>Telescope live_grep<cr>
-          nnoremap <leader>tb <cmd>Telescope buffers<cr>
+          nnoremap <leader>bb <cmd>Telescope buffers<cr>
           nnoremap <leader>th <cmd>Telescope help_tags<cr>
           nnoremap <leader>tm <cmd>Telescope man_pages<cr>
           nnoremap <leader>tk <cmd>Telescope keymaps<cr>
           nnoremap <leader>la <cmd>:lua require'telescope.builtin'.lsp_code_actions{}<cr>
           nnoremap <leader>pp <cmd>:lua require'telescope.builtin'.treesitter{}<cr>
+
+          " Rust
+          nnoremap <leader>cr <cmd>Cargo run<cr>
+          nnoremap <leader>cc <cmd>Cargo check<cr>
+          nnoremap <leader>cb <cmd>Cargo build<cr>
+          nnoremap <leader>cx <cmd>Cargo clean<cr>
+          nnoremap <leader>ct <cmd>Cargo test<cr>
+          let g:rustfmt_autosave = 1
 
           " Trouble
           nnoremap <leader>xx <cmd>TroubleToggle<cr>
