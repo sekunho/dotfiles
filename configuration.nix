@@ -436,12 +436,17 @@ in {
               }
             }
 
+            require'lspconfig'.tsserver.setup{
+              on_attach = on_attach,
+              cmd = { "typescript-language-server", "--stdio", "--tsserver-path", "tsserver" }
+            }
+
             require'lspconfig'.elixirls.setup {
               on_attach = on_attach,
               cmd = { "elixir-ls" }
             }
 
-            require'lspconfig'.rls.setup {
+            require'lspconfig'.rust_analyzer.setup {
               on_attach = on_attach
             }
 
@@ -527,6 +532,7 @@ in {
           nnoremap <leader>. <cmd>Telescope find_files<cr>
           nnoremap <leader>tg <cmd>Telescope live_grep<cr>
           nnoremap <leader>bb <cmd>Telescope buffers<cr>
+          nnoremap <leader>bk <cmd>:bd <cr>
           nnoremap <leader>th <cmd>Telescope help_tags<cr>
           nnoremap <leader>tm <cmd>Telescope man_pages<cr>
           nnoremap <leader>tk <cmd>Telescope keymaps<cr>
@@ -539,7 +545,7 @@ in {
           nnoremap <leader>cb <cmd>Cargo build<cr>
           nnoremap <leader>cx <cmd>Cargo clean<cr>
           nnoremap <leader>ct <cmd>Cargo test<cr>
-          let g:rustfmt_autosave = 1
+          nnoremap <leader>cz <cmd>:! RUST_BACKTRACE=1 cargo run<cr>
 
           " Trouble
           nnoremap <leader>xx <cmd>TroubleToggle<cr>
