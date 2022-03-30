@@ -342,6 +342,8 @@ in {
               ]
             ))
 
+            unstable.vimPlugins.todo-comments-nvim
+
             # I don't know how to categorize this
             unstable.vimPlugins.plenary-nvim
             unstable.vimPlugins.telescope-nvim
@@ -454,6 +456,9 @@ in {
             require("trouble").setup {
               padding = false,
             }
+
+            -- TODO comments
+            require("todo-comments").setup {}
 
             -- Tree Sitter
             require'nvim-treesitter.configs'.setup {
