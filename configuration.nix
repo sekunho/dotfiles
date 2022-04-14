@@ -34,7 +34,7 @@ in {
 
   nix = {
     # Enable nix 2.4 for flakes
-    package = unstable.nix_2_5;
+    package = pkgs.nix_2_7;
 
     gc = {
       automatic = true;
