@@ -1,3 +1,21 @@
+-- Highlight on yank
+vim.cmd [[
+  augroup YankHighlight
+    autocmd!
+    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
+  augroup end
+]]
+
+require('gitsigns').setup {
+  signs = {
+    add = { text = '+' },
+    change = { text = '~' },
+    delete = { text = '_' },
+    topdelete = { text = '‾' },
+    changedelete = { text = '~' },
+  },
+}
+
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap=true, silent=true }
@@ -24,13 +42,23 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
 
 -- Language Server Protocols
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+vim.diagnostic.config({
+  -- virtual_text = false
+})
+
+-- Change diagnostic symbols in the sign column (gutter)
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
 
 require'lspconfig'.hls.setup {
   on_attach = on_attach,
@@ -41,13 +69,29 @@ require'lspconfig'.hls.setup {
   }
 }
 
-require'lspconfig'.elixirls.setup { 
+require'lspconfig'.tsserver.setup{
   on_attach = on_attach,
-  cmd = { "elixir-ls" } 
+  cmd = { "typescript-language-server", "--stdio", "--tsserver-path", "tsserver" }
 }
 
--- Tree Sitter
+require'lspconfig'.elixirls.setup {
+  on_attach = on_attach,
+  cmd = { "elixir-ls" }
+}
 
+require'lspconfig'.rust_analyzer.setup {
+  on_attach = on_attach
+}
+
+-- Making diagnostics prettier
+require("trouble").setup {
+  padding = false,
+}
+
+-- TODO comments
+require("todo-comments").setup {}
+
+-- Tree Sitter
 require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
@@ -61,5 +105,21 @@ require'nvim-treesitter.configs'.setup {
 
 require'nvim-web-devicons'.setup {}
 
-print("Good day, Sek Un.")
+-- Telescope
+require('telescope').setup {
+  pickers = {
+    find_files = {
+      hidden = true,
+      find_command = { 'rg', '--files', '--iglob', '!.git', '--hidden' },
+    },
+    treesitter = { theme = "dropdown", previewer = false },
+    lsp_code_actions = { theme = "dropdown", previewer = false }
+  }
+}
 
+-- Which key
+require("which-key").setup {
+  window = { winblend = 1 }
+}
+
+print("Good day, Sek Un.")
