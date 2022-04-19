@@ -2,38 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
-
-let
-  oldUnstable = "29d1f6e1f625d246dcf84a78ef97b4da3cafc6ea";
-  newUnstable = "22dc22f8cedc58fcb11afe1acb08e9999e78be9c";
-
-  unstable = import (builtins.fetchTarball
-    "https://github.com/nixos/nixpkgs/tarball/${newUnstable}") {
-      config = config.nixpkgs.config;
-    };
-in {
+{ config, pkgs, pkgs', ... }: {
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
 
-  nixpkgs = {
-    config.allowUnfree = true;
-
-    overlays = [
-      (import (builtins.fetchTarball {
-        url =
-          "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-      }))
-
-      (self: super: {
-        nix-direnv = super.nix-direnv.override { enableFlakes = true; };
-      })
-    ];
-  };
-
   nix = {
-    # Enable nix 2.4 for flakes
     package = pkgs.nix_2_7;
 
     gc = {
@@ -212,7 +186,7 @@ in {
       nixfmt # make nix code look pretty and nice
       cloc # how many spaghetti lines of code have I written already?
       direnv # no more cluttering global namespaces; now with flakes!
-      unstable.nix-direnv # nix integration for direnv
+      pkgs'.nix-direnv # nix integration for direnv
       asciinema
       wireguard
 
@@ -244,19 +218,18 @@ in {
       # Messaging
       signal-desktop
       element-desktop
-      unstable.discord
-      tdesktop
+      # discord
+      # tdesktop
 
       # Networking
       # ciscoPacketTracer8
-
       imagemagick
 
       # Video editing
       openshot-qt
 
       # Streaming
-      unstable.obs-studio
+      obs-studio
 
       # Plz no spy
       zoom-us
@@ -293,14 +266,15 @@ in {
       defaultEditor = true;
       viAlias = true;
       vimAlias = true;
-      package = pkgs.neovim-nightly;
+      # https://github.com/NixOS/nixpkgs/issues/137829
+      package = pkgs.neovim-unwrapped;
 
       # https://github.com/NixOS/nixpkgs/pull/124785#issuecomment-850837745
       configure = {
-        packages.myVimPackage = with pkgs.vimPlugins; {
+        packages.myVimPackage = with pkgs'.vimPlugins; {
           start = [
             # Airline
-            unstable.vimPlugins.vim-airline
+            vim-airline
             vim-airline-themes
             vim-airline-clock
 
@@ -309,14 +283,14 @@ in {
 
             # Languages, etc.
             direnv-vim
-            unstable.vimPlugins.nvim-lspconfig
+            nvim-lspconfig
 
             # Usage
             # https://nixos.org/manual/nixpkgs/unstable/#vim
             #
             # Available parsers
             # https://tree-sitter.github.io/tree-sitter/#available-parsers
-            (unstable.vimPlugins.nvim-treesitter.withPlugins (
+            (pkgs'.vimPlugins.nvim-treesitter.withPlugins (
               plugins: with plugins; [
                 tree-sitter-nix
 
@@ -342,22 +316,22 @@ in {
               ]
             ))
 
-            unstable.vimPlugins.todo-comments-nvim
+            todo-comments-nvim
 
             # I don't know how to categorize this
-            unstable.vimPlugins.plenary-nvim
-            unstable.vimPlugins.telescope-nvim
-            unstable.vimPlugins.nvim-web-devicons
-            unstable.vimPlugins.auto-pairs
-            unstable.vimPlugins.trouble-nvim
-            unstable.vimPlugins.vim-commentary
-            unstable.vimPlugins.vim-surround
-            unstable.vimPlugins.which-key-nvim
+            pkgs'.vimPlugins.plenary-nvim
+            pkgs'.vimPlugins.telescope-nvim
+            pkgs'.vimPlugins.nvim-web-devicons
+            pkgs'.vimPlugins.auto-pairs
+            pkgs'.vimPlugins.trouble-nvim
+            pkgs'.vimPlugins.vim-commentary
+            pkgs'.vimPlugins.vim-surround
+            pkgs'.vimPlugins.which-key-nvim
 
-            unstable.vimPlugins.rust-vim
+            pkgs'.vimPlugins.rust-vim
 
             # Magit is unfortunately still king :(
-            unstable.vimPlugins.gitsigns-nvim
+            pkgs'.vimPlugins.gitsigns-nvim
           ];
         };
 
