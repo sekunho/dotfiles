@@ -2,9 +2,6 @@
 " string. Also, not a fan of the forwardslash for the leader key.
 let mapleader = "\<Space>"
 
-lua << EOF
-EOF
-
 set mouse=a
 syntax on
 set number relativenumber
