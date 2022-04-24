@@ -2,9 +2,14 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, pkgs', ... }: {
-  imports = [ # Include the results of the hardware scan.
+{ config, pkgs, pkgs', emojied, ... }: {
+  imports = [
+    # Include the results of the hardware scan.
     ./hardware-configuration.nix
+
+    # Services
+    # https://nixos.wiki/wiki/NixOS:extend_NixOS
+    ./modules/services/emojied.nix
   ];
 
   nix = {
@@ -42,6 +47,7 @@
     };
 
     initrd.kernelModules = [ "amdgpu" ];
+    kernelPackages = pkgs.linuxPackages_5_15;
   };
 
   time = {
@@ -55,7 +61,7 @@
   # replicates the default behaviour.
   networking = {
     # Define your hostname.
-    hostName = "nixos";
+    hostName = "ichi";
     useDHCP = false;
 
     interfaces = {
@@ -98,6 +104,12 @@
 
   # List services that you want to enable:
   services = {
+    emojied = {
+      enable = true;
+      db_user = "sekun";
+      db_name = "emojied_db";
+    };
+
     # Enable the GNOME Desktop Environment.
     xserver = {
       # Enable the X11 windowing system.
@@ -218,12 +230,14 @@
       # Messaging
       signal-desktop
       element-desktop
-      # discord
-      # tdesktop
+      discord
+      tdesktop
 
       # Networking
       # ciscoPacketTracer8
+
       imagemagick
+      krita
 
       # Video editing
       openshot-qt
