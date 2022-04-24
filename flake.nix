@@ -5,7 +5,7 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    emojiedpkg.url = "github:sekunho/emojied/feat/add-nixos-module";
+    emojiedpkg.url = "github:sekunho/emojied";
     neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
