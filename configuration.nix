@@ -1,15 +1,14 @@
 # Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
+# your system.  Help is available in the configuration.nix(5) man page and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, pkgs', emojied, ... }: {
+{ config, pkgs, pkgs', ... }: {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
 
     # Services
     # https://nixos.wiki/wiki/NixOS:extend_NixOS
-    ./modules/services/emojied.nix
+    # ./modules/services/emojied.nix
   ];
 
   nix = {
@@ -106,9 +105,12 @@
   services = {
     emojied = {
       enable = true;
+      port = "5678";
       db_user = "sekun";
       db_name = "emojied_db";
     };
+
+    redshift.enable = true;
 
     # Enable the GNOME Desktop Environment.
     xserver = {
@@ -355,10 +357,10 @@
           let mapleader = "\<Space>"
 
           lua << EOF
-            ${builtins.readFile ./modules/neovim/init.lua}
+            ${builtins.readFile ./config/neovim/init.lua}
           EOF
 
-          ${builtins.readFile ./modules/neovim/init.vim}
+          ${builtins.readFile ./config/neovim/init.vim}
         '';
       };
     };
@@ -427,10 +429,6 @@
     # timezones lol.
     latitude = 1.3521;
     longitude = 103.8198;
-  };
-
-  services.redshift = {
-    enable = true;
   };
 
   # This value determines the NixOS release from which the default

@@ -5,17 +5,17 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    microvm = {
-      url = "github:astro/microvm.nix";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
-    };
-
-    emojiedpkg.url = "github:sekunho/emojied/main";
-
+    emojiedpkg.url = "github:sekunho/emojied/feat/add-nixos-module";
     neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
-  outputs = { self, nixpkgs-stable, nixpkgs-unstable, microvm, emojiedpkg, neovim-overlay }:
+  outputs = {
+    self,
+    nixpkgs-stable,
+    nixpkgs-unstable,
+    emojiedpkg,
+    neovim-overlay
+  }:
     let
       system = "x86_64-linux";
 
@@ -39,7 +39,10 @@
         # `nixos-rebuild switch --flake .#`
         ichi = nixpkgs-stable.lib.nixosSystem {
           inherit system;
+
           modules = [
+            emojiedpkg.nixosConfigurations.emojied
+
             # System configuration
             ./configuration.nix
           ];
@@ -51,13 +54,26 @@
           };
         };
 
-        # VM #1
-        # ni = nixpkgs-stable.lib.nixosSystem {
-        #   inherit system;
-        #   modules = [
+        /* ni = nixpkgs.lib.nixosSystem { */
+        /*   inherit system; */
 
-        #   ];
-        # };
+        /*   modules = [ */
+        /*     # Include the microvm module */
+        /*     microvm.nixosModules.microvm */
+        /*     # Add more modules here */
+        /*     { */
+        /*       networking.hostName = "ni"; */
+        /*       microvm = { */
+        /*         hypervisor = "cloud-hypervisor"; */
+        /*         mem = 256; */
+        /*         vcpu = 1; */
+        /*       }; */
+
+        /*       environment.systemPackages = [ pkgs.hello ]; */
+        /*     } */
+        /*   ]; */
+        /* }; */
+
       };
     };
 }
