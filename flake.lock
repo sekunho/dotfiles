@@ -7,16 +7,15 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1650816367,
+        "lastModified": 1650817270,
         "narHash": "sha256-zXzupv8wxwFNWlLPU9Knur/3Me9HAinDWhoeBwGO7Bw=",
         "owner": "sekunho",
         "repo": "emojied",
-        "rev": "9fe5e1d8a8d3c7b080d2d00bb6556aacec7416cb",
+        "rev": "720bf5d41c10e8442abf6b50d5e13d8b9bc2a3aa",
         "type": "github"
       },
       "original": {
         "owner": "sekunho",
-        "ref": "feat/add-nixos-module",
         "repo": "emojied",
         "type": "github"
       }
