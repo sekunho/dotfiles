@@ -11,6 +11,18 @@
     # ./modules/services/emojied.nix
   ];
 
+  containers = {
+    indigo = {
+      config = import ../../containers/indigo/configuration.nix;
+      ephemeral = true;
+      autoStart = true;
+
+      privateNetwork = true;
+      localAddress = "10.0.0.2";
+      hostAddress = "10.0.0.1";
+    };
+  };
+
   nix = {
     package = pkgs.nix_2_7;
 

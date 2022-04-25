@@ -113,25 +113,6 @@
         "type": "github"
       }
     },
-    "ni": {
-      "inputs": {
-        "emojied": [
-          "emojiedpkg"
-        ],
-        "nixpkgs": [
-          "nixpkgs-stable"
-        ]
-      },
-      "locked": {
-        "narHash": "sha256-lNaDZK2jcRsyXQfj0GhPOYW2K0EDNsxmyZ2ijUHhM2k=",
-        "path": "./hosts/ni",
-        "type": "path"
-      },
-      "original": {
-        "path": "./hosts/ni",
-        "type": "path"
-      }
-    },
     "nixos-unstable": {
       "locked": {
         "lastModified": 1647893727,
@@ -229,7 +210,6 @@
       "inputs": {
         "emojiedpkg": "emojiedpkg",
         "neovim-overlay": "neovim-overlay",
-        "ni": "ni",
         "nixpkgs-stable": "nixpkgs-stable",
         "nixpkgs-unstable": "nixpkgs-unstable"
       }
