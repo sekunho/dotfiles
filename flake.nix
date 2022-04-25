@@ -2,11 +2,18 @@
   description = "Sekun's system(s) lmao lol pee";
 
   inputs = {
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.11";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.11"; nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     emojiedpkg.url = "github:sekunho/emojied";
     neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";
+
+    ni = {
+      url = "path:./hosts/ni";
+
+      inputs = {
+        nixpkgs.follows = "nixpkgs-stable";
+        emojied.follows = "emojiedpkg";
+      };
+    };
   };
 
   outputs = {
@@ -14,7 +21,8 @@
     nixpkgs-stable,
     nixpkgs-unstable,
     emojiedpkg,
-    neovim-overlay
+    neovim-overlay,
+    ni
   }:
     let
       system = "x86_64-linux";
@@ -44,7 +52,7 @@
             emojiedpkg.nixosConfigurations.emojied
 
             # System configuration
-            ./configuration.nix
+            ./hosts/ichi/configuration.nix
           ];
 
           specialArgs = {
@@ -54,26 +62,21 @@
           };
         };
 
-        /* ni = nixpkgs.lib.nixosSystem { */
-        /*   inherit system; */
+        ni = nixpkgs-stable.lib.nixosSystem {
+          inherit system;
 
-        /*   modules = [ */
-        /*     # Include the microvm module */
-        /*     microvm.nixosModules.microvm */
-        /*     # Add more modules here */
-        /*     { */
-        /*       networking.hostName = "ni"; */
-        /*       microvm = { */
-        /*         hypervisor = "cloud-hypervisor"; */
-        /*         mem = 256; */
-        /*         vcpu = 1; */
-        /*       }; */
+          modules = [
+            emojiedpkg.nixosConfigurations.emojied
 
-        /*       environment.systemPackages = [ pkgs.hello ]; */
-        /*     } */
-        /*   ]; */
-        /* }; */
+            # System configuration
+            ./hosts/ni/configuration.nix
+          ];
 
+          specialArgs = {
+            inherit pkgs;
+            inherit emojied;
+          };
+        };
       };
     };
 }
