@@ -2,18 +2,10 @@
   description = "Sekun's system(s) lmao lol pee";
 
   inputs = {
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.11"; nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     emojiedpkg.url = "github:sekunho/emojied";
     neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";
-
-    ni = {
-      url = "path:./hosts/ni";
-
-      inputs = {
-        nixpkgs.follows = "nixpkgs-stable";
-        emojied.follows = "emojiedpkg";
-      };
-    };
   };
 
   outputs = {
@@ -21,8 +13,7 @@
     nixpkgs-stable,
     nixpkgs-unstable,
     emojiedpkg,
-    neovim-overlay,
-    ni
+    neovim-overlay
   }:
     let
       system = "x86_64-linux";
@@ -58,22 +49,6 @@
           specialArgs = {
             inherit pkgs;
             inherit pkgs';
-            inherit emojied;
-          };
-        };
-
-        ni = nixpkgs-stable.lib.nixosSystem {
-          inherit system;
-
-          modules = [
-            emojiedpkg.nixosConfigurations.emojied
-
-            # System configuration
-            ./hosts/ni/configuration.nix
-          ];
-
-          specialArgs = {
-            inherit pkgs;
             inherit emojied;
           };
         };
