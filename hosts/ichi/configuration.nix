@@ -281,6 +281,8 @@
       # VM stuff
       virt-manager
       virt-viewer
+
+      pkgs'.cloudflared
     ];
 
     pathsToLink = [ "/share/nix-direnv" ];
