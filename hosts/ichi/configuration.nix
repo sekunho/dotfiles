@@ -38,6 +38,13 @@
     ];
   };
 
+  /* microvm.vms = { */
+  /*   ni = { */
+  /*     flake = "path:./hosts/ni"; */
+  /*     updateFlake = "microvm"; */
+  /*   }; */
+  /* }; */
+
   # Use the systemd-boot EFI boot loader.
   boot = {
     loader = {
@@ -45,9 +52,11 @@
       efi.canTouchEfiVariables = true;
     };
 
-    initrd.kernelModules = [ "amdgpu" ];
+    initrd.kernelModules = [ "amdgpu" "kvm-amd" ];
     kernelPackages = pkgs.linuxPackages_5_15;
   };
+
+  virtualisation.libvirtd.enable = true;
 
   time = {
     timeZone = "Asia/Singapore";
@@ -160,7 +169,7 @@
     shell = pkgs.fish;
     isNormalUser = true;
     extraGroups =
-      [ "wheel" "networkmanager" "docker" ]; # Enable ‘sudo’ for the user.
+      [ "wheel" "networkmanager" "docker" "libvirtd" ]; # Enable ‘sudo’ for the user.
   };
 
   # List packages installed in system profile. To search, run:
@@ -256,6 +265,10 @@
       hledger-ui
       wiki-tui
       transmission-gtk
+
+      # VM stuff
+      virt-manager
+      virt-viewer
     ];
 
     pathsToLink = [ "/share/nix-direnv" ];
@@ -357,10 +370,10 @@
           let mapleader = "\<Space>"
 
           lua << EOF
-            ${builtins.readFile ./config/neovim/init.lua}
+            ${builtins.readFile ../../config/neovim/init.lua}
           EOF
 
-          ${builtins.readFile ./config/neovim/init.vim}
+          ${builtins.readFile ../../config/neovim/init.vim}
         '';
       };
     };

@@ -1,1 +1,3 @@
-t480/.config/nvim/autoload/**
+result
+*.qcow2
+ni-efi-vars.fd
