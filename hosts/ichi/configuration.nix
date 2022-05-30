@@ -68,7 +68,12 @@
     kernelPackages = pkgs.linuxPackages_5_15;
   };
 
-  virtualisation.libvirtd.enable = true;
+
+  virtualisation.docker.enable = true;
+
+  virtualisation = {
+    libvirtd.enable = true;
+  };
 
   time = {
     timeZone = "Asia/Singapore";
@@ -177,11 +182,72 @@
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.sekun = {
-    shell = pkgs.fish;
-    isNormalUser = true;
-    extraGroups =
-      [ "wheel" "networkmanager" "docker" "libvirtd" ]; # Enable ‘sudo’ for the user.
+  users.users = {
+    sekun = {
+      shell = pkgs.fish;
+      isNormalUser = true;
+      createHome = true;
+
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+        "docker"
+        "libvirtd"
+      ];
+
+      packages = with pkgs; [
+        signal-desktop
+        discord
+        tdesktop
+        element-desktop
+
+        # Video editing
+        openshot-qt
+
+        # Streaming
+        obs-studio
+
+        hledger
+        hledger-web
+        hledger-ui
+        wiki-tui
+        transmission-gtk
+
+        # Networking
+        # ciscoPacketTracer8
+
+        imagemagick
+        krita
+
+
+        # VM stuff
+        virt-manager
+        virt-viewer
+
+        pkgs'.cloudflared
+        insomnia
+      ];
+    };
+
+    noodle = {
+      shell = pkgs.fish;
+      isNormalUser = true;
+      createHome = true;
+
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+        "docker"
+        "libvirtd"
+      ];
+
+      packages = with pkgs; [
+        slack
+        zoom-us
+        krita
+        insomnia
+      ];
+    };
   };
 
   # List packages installed in system profile. To search, run:
@@ -249,40 +315,6 @@
       # Browsers
       firefox
       google-chrome
-
-      # Messaging
-      signal-desktop
-      element-desktop
-      discord
-      tdesktop
-
-      # Networking
-      # ciscoPacketTracer8
-
-      imagemagick
-      krita
-
-      # Video editing
-      openshot-qt
-
-      # Streaming
-      obs-studio
-
-      # Plz no spy
-      zoom-us
-
-      # Misc.
-      hledger
-      hledger-web
-      hledger-ui
-      wiki-tui
-      transmission-gtk
-
-      # VM stuff
-      virt-manager
-      virt-viewer
-
-      pkgs'.cloudflared
     ];
 
     pathsToLink = [ "/share/nix-direnv" ];
@@ -406,8 +438,6 @@
 
     sudo.enable = false;
   };
-
-  virtualisation.docker.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
