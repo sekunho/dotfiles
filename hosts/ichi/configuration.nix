@@ -11,6 +11,23 @@
     # ./modules/services/emojied.nix
   ];
 
+  nixpkgs.config = {
+    firefox.enableGnomeExtensions = true;
+  };
+
+  networking = {
+    hostName = "ichi";
+    hostId = "7c48531f";
+    networkmanager.enable = true;
+    useDHCP = false;
+
+    interfaces = {
+      enp34s0.useDHCP = true;
+      wlp40s0.useDHCP = true;
+    };
+  };
+
+
   containers = {
     indigo = {
       config = import ../../containers/indigo/configuration.nix;
@@ -59,13 +76,30 @@
 
   # Use the systemd-boot EFI boot loader.
   boot = {
+    initrd.kernelModules = [ "amdgpu" "kvm-amd" ];
+    kernelPackages = pkgs.linuxPackages_5_15;
+
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
+
+      grub = {
+        enable = true;
+        version = 2;
+        device = "nodev";
+        efiSupport = true;
+        enableCryptodisk = true;
+      };
     };
 
-    initrd.kernelModules = [ "amdgpu" "kvm-amd" ];
-    kernelPackages = pkgs.linuxPackages_5_15;
+    supportedFilesystems = [ "zfs" ];
+
+    initrd.luks.devices = {
+      root = {
+        device = "/dev/disk/by-uuid/627d65b7-ff80-43d9-8cb7-b4d379830976";
+        preLVM = true;
+      };
+    };
   };
 
 
@@ -84,22 +118,6 @@
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
-  networking = {
-    # Define your hostname.
-    hostName = "ichi";
-    useDHCP = false;
-
-    interfaces = {
-      enp34s0.useDHCP = true;
-      wlp40s0.useDHCP = true;
-    };
-
-    networkmanager.enable = true;
-
-    # Configure network proxy if necessary
-    # proxy.default = "http://user:password@proxy:port/";
-    # proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-  };
 
   # Should look into how to split to modules and all that.
   programs = {
@@ -266,6 +284,7 @@
       rclone # Encrypt files and make a remote backup
       glxinfo # View GPU-related information
       radeontop # Monitor GPU usage for AMD
+      chrome-gnome-shell
 
       # Media
       ffmpeg
@@ -313,7 +332,7 @@
       gnome.gnome-tweaks
 
       # Browsers
-      firefox
+      firefoxWrapper
       google-chrome
     ];
 
