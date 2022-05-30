@@ -52,6 +52,23 @@
             inherit emojied;
           };
         };
+
+        ni = nixpkgs-stable.lib.nixosSystem {
+          inherit system;
+
+          modules = [
+            emojiedpkg.nixosConfigurations.emojied
+
+            # System configuration
+            ./hosts/ni/configuration.nix
+          ];
+
+          specialArgs = {
+            inherit pkgs;
+            inherit emojied;
+          };
+        };
+
       };
     };
 }
