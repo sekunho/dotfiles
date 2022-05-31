@@ -1,6 +1,6 @@
 { config, pkgs, ... }: {
   nix = {
-    package = pkgs.nix_2_7;
+    package = pkgs.nix;
 
     gc = {
       automatic = true;
@@ -110,4 +110,6 @@
     useDHCP = false;
     firewall.allowedTCPPorts = [ 80 ];
   };
+
+  system.stateVersion = "22.05";
 }

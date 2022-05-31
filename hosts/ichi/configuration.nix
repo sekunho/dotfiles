@@ -11,10 +11,6 @@
     # ./modules/services/emojied.nix
   ];
 
-  nixpkgs.config = {
-    firefox.enableGnomeExtensions = true;
-  };
-
   networking = {
     hostName = "ichi";
     hostId = "7c48531f";
@@ -26,7 +22,6 @@
       wlp40s0.useDHCP = true;
     };
   };
-
 
   containers = {
     indigo = {
@@ -41,7 +36,7 @@
   };
 
   nix = {
-    package = pkgs.nix_2_7;
+    package = pkgs.nix;
 
     gc = {
       automatic = true;
@@ -80,7 +75,7 @@
     kernelPackages = pkgs.linuxPackages_5_15;
 
     loader = {
-      systemd-boot.enable = true;
+      /* systemd-boot.enable = true; */
       efi.canTouchEfiVariables = true;
 
       grub = {
@@ -102,17 +97,14 @@
     };
   };
 
-
-  virtualisation.docker.enable = true;
-
   virtualisation = {
     libvirtd.enable = true;
+    docker.enable = true;
   };
 
   time = {
     timeZone = "Asia/Singapore";
-
-    hardwareClockInLocalTime = true; # Because of Windows 10 *eye roll*
+    hardwareClockInLocalTime = true;
   };
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
@@ -176,7 +168,10 @@
     };
 
     # For server mode
-    emacs.enable = true;
+    emacs = {
+      package = pkgs.emacsNativeComp;
+      enable = true;
+    };
 
     # Enable CUPS to print documents.
     printing.enable = true;
@@ -200,71 +195,81 @@
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users = {
-    sekun = {
-      shell = pkgs.fish;
-      isNormalUser = true;
-      createHome = true;
-
-      extraGroups = [
-        "wheel"
-        "networkmanager"
-        "docker"
-        "libvirtd"
-      ];
-
-      packages = with pkgs; [
-        signal-desktop
-        discord
-        tdesktop
-        element-desktop
-
-        # Video editing
-        openshot-qt
-
-        # Streaming
-        obs-studio
-
-        hledger
-        hledger-web
-        hledger-ui
-        wiki-tui
-        transmission-gtk
-
-        # Networking
-        # ciscoPacketTracer8
-
-        imagemagick
-        krita
-
-
-        # VM stuff
-        virt-manager
-        virt-viewer
-
-        pkgs'.cloudflared
-        insomnia
-      ];
+  users = {
+    groups = {
+      shared = {
+        members = [ "sekun" "noodle" ];
+      };
     };
 
-    noodle = {
-      shell = pkgs.fish;
-      isNormalUser = true;
-      createHome = true;
+    users = {
+      sekun = {
+        shell = pkgs.fish;
+        isNormalUser = true;
+        createHome = true;
 
-      extraGroups = [
-        "wheel"
-        "networkmanager"
-        "docker"
-        "libvirtd"
-      ];
+        extraGroups = [
+          "wheel"
+          "networkmanager"
+          "docker"
+          "libvirtd"
+        ];
 
-      packages = with pkgs; [
-        slack
-        zoom-us
-        krita
-        insomnia
-      ];
+        packages = with pkgs; [
+          signal-desktop
+          discord
+          tdesktop
+          element-desktop
+
+          # Video editing
+          openshot-qt
+
+          # Streaming
+          obs-studio
+
+          hledger
+          hledger-web
+          hledger-ui
+          wiki-tui
+          transmission-gtk
+
+          # Networking
+          # ciscoPacketTracer8
+
+          imagemagick
+          krita
+
+
+          # VM stuff
+          virt-manager
+          virt-viewer
+
+          pkgs'.cloudflared
+          insomnia
+        ];
+      };
+
+      noodle = {
+        shell = pkgs.fish;
+        isNormalUser = true;
+        createHome = true;
+
+        extraGroups = [
+          "wheel"
+          "networkmanager"
+          "docker"
+          "libvirtd"
+        ];
+
+        packages = with pkgs; [
+          slack
+          krita
+          insomnia
+          awscli2
+
+          pkgs'._1password-gui
+        ];
+      };
     };
   };
 
@@ -273,6 +278,7 @@
   environment = {
     systemPackages = with pkgs; [
       # Essential system tools
+      git
       htop
       powertop
       neofetch
@@ -285,6 +291,8 @@
       glxinfo # View GPU-related information
       radeontop # Monitor GPU usage for AMD
       chrome-gnome-shell
+
+      pkgs'.docker-compose
 
       # Media
       ffmpeg
@@ -299,16 +307,15 @@
       xclip
       wget
       curl
-      git
       gnupg # something i need for git that i haven't looked into
       nix-du # i forgot what this was
       graphviz # visualize stuff in graphs
       nixfmt # make nix code look pretty and nice
       cloc # how many spaghetti lines of code have I written already?
-      direnv # no more cluttering global namespaces; now with flakes!
+      pkgs'.direnv # no more cluttering global namespaces; now with flakes!
       pkgs'.nix-direnv # nix integration for direnv
       asciinema
-      wireguard
+      wireguard-tools
 
       # Database
       sqlitebrowser
@@ -328,11 +335,13 @@
       proselint
       mdl
 
+      pkgs'.zoom-us
+
       # Customization
       gnome.gnome-tweaks
 
       # Browsers
-      firefoxWrapper
+      firefox
       google-chrome
     ];
 
@@ -340,6 +349,7 @@
 
     sessionVariables = rec {
       KITTY_CONFIG_DIRECTORY = "\${HOME}/System/dotfiles/config/kitty/";
+      KITTY_DISABLE_WAYLAND = "1";
     };
   };
 
@@ -513,5 +523,5 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "21.11"; # Did you read the comment?
+  system.stateVersion = "22.05"; # Did you read the comment?
 }
