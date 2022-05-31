@@ -2,10 +2,11 @@
   description = "Sekun's system(s) lmao lol pee";
 
   inputs = {
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-21.11";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-22.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     emojiedpkg.url = "github:sekunho/emojied";
     neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    /* emacs-overlay.url = "github:nix-community/emacs-overlay"; */
   };
 
   outputs = {
@@ -13,7 +14,8 @@
     nixpkgs-stable,
     nixpkgs-unstable,
     emojiedpkg,
-    neovim-overlay
+    neovim-overlay,
+    /* emacs-overlay */
   }:
     let
       system = "x86_64-linux";
@@ -25,7 +27,11 @@
         overlays = extraOverlays;
       };
 
-      pkgs = mkPkgs nixpkgs-stable [ neovim-overlay.overlay ];
+      pkgs = mkPkgs nixpkgs-stable [
+        neovim-overlay.overlay
+        /* emacs-overlay.overlay */
+      ];
+
       pkgs' = mkPkgs nixpkgs-unstable [];
 
       emojied = emojiedpkg.packages.${system}.emojied;
