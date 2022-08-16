@@ -36,7 +36,7 @@
   };
 
   nix = {
-    package = pkgs.nix;
+    package = pkgs.nixVersions.nix_2_9;
 
     gc = {
       automatic = true;
@@ -79,6 +79,7 @@
       efi.canTouchEfiVariables = true;
 
       grub = {
+        useOSProber = true;
         enable = true;
         version = 2;
         device = "nodev";
@@ -139,6 +140,8 @@
 
   # List services that you want to enable:
   services = {
+    mullvad-vpn.enable = true;
+
     emojied = {
       enable = true;
       port = "5678";
@@ -217,7 +220,7 @@
 
         packages = with pkgs; [
           signal-desktop
-          discord
+          pkgs'.discord
           tdesktop
           element-desktop
 
@@ -226,6 +229,8 @@
 
           # Streaming
           obs-studio
+
+          davinci-resolve
 
           hledger
           hledger-web
@@ -245,7 +250,7 @@
           virt-viewer
 
           pkgs'.cloudflared
-          insomnia
+          pkgs'.insomnia
         ];
       };
 
@@ -264,7 +269,7 @@
         packages = with pkgs; [
           slack
           krita
-          insomnia
+          pkgs'.insomnia
           awscli2
 
           pkgs'._1password-gui
@@ -292,6 +297,11 @@
       radeontop # Monitor GPU usage for AMD
       chrome-gnome-shell
 
+      mullvad-vpn
+
+      libreoffice
+      linux-wifi-hotspot
+
       pkgs'.docker-compose
 
       # Media
@@ -301,6 +311,7 @@
 
       # Disks and whatnot
       ventoy-bin
+      gnome.gnome-boxes
 
       # Dev tools
       kitty
@@ -335,7 +346,7 @@
       proselint
       mdl
 
-      pkgs'.zoom-us
+      zoom-us
 
       # Customization
       gnome.gnome-tweaks
@@ -343,6 +354,8 @@
       # Browsers
       firefox
       google-chrome
+
+      qpdf
     ];
 
     pathsToLink = [ "/share/nix-direnv" ];
@@ -375,12 +388,15 @@
 
       # https://github.com/NixOS/nixpkgs/pull/124785#issuecomment-850837745
       configure = {
-        packages.myVimPackage = with pkgs'.vimPlugins; {
+        packages.myVimPackage = with pkgs.vimPlugins; {
           start = [
             # Airline
             vim-airline
             vim-airline-themes
             vim-airline-clock
+
+            # ASCII diagram editor
+            venn-nvim
 
             # Themes
             gruvbox-nvim
@@ -394,7 +410,7 @@
             #
             # Available parsers
             # https://tree-sitter.github.io/tree-sitter/#available-parsers
-            (pkgs'.vimPlugins.nvim-treesitter.withPlugins (
+            (nvim-treesitter.withPlugins (
               plugins: with plugins; [
                 tree-sitter-nix
 
@@ -421,21 +437,26 @@
             ))
 
             todo-comments-nvim
+            fidget-nvim
 
             # I don't know how to categorize this
-            pkgs'.vimPlugins.plenary-nvim
-            pkgs'.vimPlugins.telescope-nvim
-            pkgs'.vimPlugins.nvim-web-devicons
-            pkgs'.vimPlugins.auto-pairs
-            pkgs'.vimPlugins.trouble-nvim
-            pkgs'.vimPlugins.vim-commentary
-            pkgs'.vimPlugins.vim-surround
-            pkgs'.vimPlugins.which-key-nvim
+            plenary-nvim
 
-            pkgs'.vimPlugins.rust-vim
+            telescope-nvim
+            # telescope-ui-select-nvim
+            # null-ls-nvim
+
+            nvim-web-devicons
+            auto-pairs
+            trouble-nvim
+            vim-commentary
+            vim-surround
+            which-key-nvim
+
+            rust-vim
 
             # Magit is unfortunately still king :(
-            pkgs'.vimPlugins.gitsigns-nvim
+            gitsigns-nvim
           ];
         };
 
