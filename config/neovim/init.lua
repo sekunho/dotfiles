@@ -32,6 +32,7 @@ local on_attach = function(client, bufnr)
 
   -- Mappings.
   -- See `:help vim.lsp.*` for documentation on any of the below functions
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>la', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
@@ -76,7 +77,8 @@ require'lspconfig'.tsserver.setup{
 
 require'lspconfig'.elixirls.setup {
   on_attach = on_attach,
-  cmd = { "elixir-ls" }
+  cmd = { "elixir-ls" },
+  root_dir = require("lspconfig.util").root_pattern(".git")
 }
 
 require'lspconfig'.rust_analyzer.setup {
@@ -87,6 +89,14 @@ require'lspconfig'.rust_analyzer.setup {
 require("trouble").setup {
   padding = false,
 }
+
+require("fidget").setup{}
+
+-- require("null-ls").setup({
+--     sources = {
+--         require("null-ls").builtins.diagnostics.credo,
+--     },
+-- })
 
 -- TODO comments
 require("todo-comments").setup {}
