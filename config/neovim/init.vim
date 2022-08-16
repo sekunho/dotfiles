@@ -49,7 +49,6 @@ nnoremap <leader>bk <cmd>:bd <cr>
 nnoremap <leader>th <cmd>Telescope help_tags<cr>
 nnoremap <leader>tm <cmd>Telescope man_pages<cr>
 nnoremap <leader>tk <cmd>Telescope keymaps<cr>
-nnoremap <leader>la <cmd>:lua require'telescope.builtin'.lsp_code_actions{}<cr>
 nnoremap <leader>pp <cmd>:lua require'telescope.builtin'.treesitter{}<cr>
 
 " Rust
