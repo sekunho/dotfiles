@@ -223,9 +223,10 @@
           pkgs'.discord
           tdesktop
           element-desktop
+          pkgs'.fractal-next
 
           # Video editing
-          openshot-qt
+          libsForQt5.kdenlive
 
           # Streaming
           obs-studio
@@ -244,6 +245,7 @@
           imagemagick
           krita
 
+          yt-dlp
 
           # VM stuff
           virt-manager
@@ -330,7 +332,7 @@
 
       # Database
       sqlitebrowser
-      dbeaver
+      pgadmin4
 
       # I didn't install `doom-emacs` with nix so I gotta declare some system
       # dependencies for it to work normally. Might look into using nix later.
@@ -526,6 +528,23 @@
       "auto_explain.log_triggers"          = true;
       "auto_explain.log_verbose"           = true;
       "auto_explain.log_nested_statements" = true;
+
+      # max_connections = 20;
+      # shared_buffers = "1GB";
+      # effective_cache_size = "3GB";
+      # maintenance_work_mem = "256MB";
+      # checkpoint_completion_target = 0.9;
+      # wal_buffers = "16MB";
+      # default_statistics_target = 100;
+      # random_page_cost = 1.1;
+      # effective_io_concurrency = 200;
+      # work_mem = "8738kB";
+      # min_wal_size = "1GB";
+      # max_wal_size = "4GB";
+      # max_worker_processes = 6;
+      # max_parallel_workers_per_gather = 3;
+      # max_parallel_workers = 6;
+      # max_parallel_maintenance_workers = 3;
     };
   };
 
