@@ -2,3 +2,4 @@ result
 *.qcow2
 ni-efi-vars.fd
 .tmp
+config/doom/config.el
