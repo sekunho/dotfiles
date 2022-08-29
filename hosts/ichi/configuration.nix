@@ -149,8 +149,6 @@
       db_name = "emojied_db";
     };
 
-    redshift.enable = true;
-
     # Enable the GNOME Desktop Environment.
     xserver = {
       # Enable the X11 windowing system.
@@ -546,15 +544,6 @@
       # max_parallel_workers = 6;
       # max_parallel_maintenance_workers = 3;
     };
-  };
-
-  location = {
-    provider = "manual";
-
-    # No, not my actual location. Just using a country with similar enough
-    # timezones lol.
-    latitude = 1.3521;
-    longitude = 103.8198;
   };
 
   # This value determines the NixOS release from which the default
