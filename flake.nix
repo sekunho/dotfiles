@@ -5,8 +5,8 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-22.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     emojiedpkg.url = "github:sekunho/emojied";
-    neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    /* emacs-overlay.url = "github:nix-community/emacs-overlay"; */
+    deploy-rs.url = "github:serokell/deploy-rs";
+    agenix.url = "github:ryantm/agenix";
   };
 
   outputs = {
@@ -14,8 +14,8 @@
     nixpkgs-stable,
     nixpkgs-unstable,
     emojiedpkg,
-    neovim-overlay,
-    /* emacs-overlay */
+    deploy-rs,
+    agenix
   }:
     let
       system = "x86_64-linux";
@@ -27,14 +27,10 @@
         overlays = extraOverlays;
       };
 
-      pkgs = mkPkgs nixpkgs-stable [
-        neovim-overlay.overlay
-        /* emacs-overlay.overlay */
-      ];
-
+      pkgs = mkPkgs nixpkgs-stable [];
       pkgs' = mkPkgs nixpkgs-unstable [];
-
       emojied = emojiedpkg.packages.${system}.emojied;
+      agenixPackage = agenix.defaultPackage.${system};
     in {
       nixosConfigurations = {
         # TODO: Add usual config for Linode/DO/Hetzner/etc.
@@ -46,35 +42,35 @@
           inherit system;
 
           modules = [
-            emojiedpkg.nixosConfigurations.emojied
-
-            # System configuration
+            emojiedpkg.nixosModule
             ./hosts/ichi/configuration.nix
+            agenix.nixosModules.age
           ];
 
           specialArgs = {
             inherit pkgs;
             inherit pkgs';
             inherit emojied;
+            inherit agenixPackage;
           };
         };
 
-        ni = nixpkgs-stable.lib.nixosSystem {
+        mew = nixpkgs-stable.lib.nixosSystem {
           inherit system;
 
           modules = [
-            emojiedpkg.nixosConfigurations.emojied
-
-            # System configuration
-            ./hosts/ni/configuration.nix
+            emojiedpkg.nixosModule
+            ./hosts/mew/configuration.nix
+            agenix.nixosModules.age
           ];
 
           specialArgs = {
             inherit pkgs;
+            inherit pkgs';
             inherit emojied;
+            inherit agenixPackage;
           };
         };
-
       };
     };
 }
