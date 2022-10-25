@@ -1,15 +1,16 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, pkgs', ... }: {
+{ lib, config, pkgs, pkgs', agenixPackage, ... }: {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-
-    # Services
-    # https://nixos.wiki/wiki/NixOS:extend_NixOS
-    # ./modules/services/emojied.nix
   ];
+
+  age = {
+    secrets = {};
+    identityPaths = [ "/home/sekun/.ssh/id_rsa" ];
+  };
 
   networking = {
     hostName = "ichi";
@@ -20,18 +21,6 @@
     interfaces = {
       enp34s0.useDHCP = true;
       wlp40s0.useDHCP = true;
-    };
-  };
-
-  containers = {
-    indigo = {
-      config = import ../../containers/indigo/configuration.nix;
-      ephemeral = true;
-      autoStart = true;
-
-      privateNetwork = true;
-      localAddress = "10.0.0.2";
-      hostAddress = "10.0.0.1";
     };
   };
 
@@ -49,25 +38,19 @@
       keep-derivations = true
     '';
 
-    binaryCaches = [
-      "https://hydra.iohk.io"
-      "https://iohk.cachix.org"
-      "https://nix-community.cachix.org"
-    ];
-
-    binaryCachePublicKeys = [
+    # Binary Cache for Haskell.nix
+    settings.trusted-public-keys = [
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
       "iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
-  };
 
-  /* microvm.vms = { */
-  /*   ni = { */
-  /*     flake = "path:./hosts/ni"; */
-  /*     updateFlake = "microvm"; */
-  /*   }; */
-  /* }; */
+    settings.substituters = [
+      "https://cache.iog.io"
+      "https://iohk.cachix.org"
+      "https://nix-community.cachix.org"
+    ];
+  };
 
   # Use the systemd-boot EFI boot loader.
   boot = {
@@ -138,15 +121,10 @@
     keyMap = "us";
   };
 
-  # List services that you want to enable:
   services = {
-    mullvad-vpn.enable = true;
-
-    emojied = {
+    tailscale = {
       enable = true;
-      port = "5678";
-      db_user = "sekun";
-      db_name = "emojied_db";
+      package = pkgs'.tailscale;
     };
 
     # Enable the GNOME Desktop Environment.
@@ -217,6 +195,7 @@
         ];
 
         packages = with pkgs; [
+          xournalpp
           signal-desktop
           pkgs'.discord
           tdesktop
@@ -271,8 +250,11 @@
           krita
           pkgs'.insomnia
           awscli2
+          obs-studio
 
           pkgs'._1password-gui
+          pkgs'.cloudflared
+          handbrake
         ];
       };
     };
@@ -283,6 +265,7 @@
   environment = {
     systemPackages = with pkgs; [
       # Essential system tools
+      tailscale
       git
       htop
       powertop
@@ -291,6 +274,7 @@
       xorg.xeyes
       vulkan-tools
       lshw
+      agenixPackage
       tree
       rclone # Encrypt files and make a remote backup
       glxinfo # View GPU-related information
@@ -312,6 +296,8 @@
       # Disks and whatnot
       ventoy-bin
       gnome.gnome-boxes
+
+      minecraft
 
       # Dev tools
       kitty
@@ -490,6 +476,16 @@
   };
 
   # Open ports in the firewall.
+  networking.firewall = {
+    enable = true;
+
+    # trace: warning: Strict reverse path filtering breaks Tailscale exit node
+    # use and some subnet routing setups
+    checkReversePath = "loose";
+    trustedInterfaces = [ "tailscale0" ];
+    allowedUDPPorts = [ config.services.tailscale.port ];
+    allowedTCPPorts = [ 22 ];
+  };
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
@@ -545,6 +541,9 @@
       # max_parallel_maintenance_workers = 3;
     };
   };
+
+
+  services.redis.servers."".enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
