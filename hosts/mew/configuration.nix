@@ -78,6 +78,22 @@
       enable = true;
       package = pkgs'.tailscale;
     };
+
+    caddy = {
+      enable = true;
+      email = "hi@sekun.net";
+
+      # FIXME: https://caddy.community/t/infinite-redirection/3230/5
+      # globalConfig = ''
+      #   auto_https disable_redirects
+      # '';
+
+      extraConfig = ''
+        www.emojied.net, emojied.net {
+          reverse_proxy :3000
+        }
+      '';
+    };
   };
 
   systemd = {
@@ -113,7 +129,7 @@
       enable = true;
       trustedInterfaces = [ "tailscale0" ];
       allowedUDPPorts = [ config.services.tailscale.port ];
-      allowedTCPPorts = [ 22 ];
+      allowedTCPPorts = [ 22 80 443 ];
       checkReversePath = "loose";
     };
   };
