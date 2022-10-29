@@ -265,7 +265,7 @@
   environment = {
     systemPackages = with pkgs; [
       # Essential system tools
-      tailscale
+      pkgs'.tailscale
       git
       htop
       powertop
