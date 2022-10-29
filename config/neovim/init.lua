@@ -67,7 +67,8 @@ require'lspconfig'.hls.setup {
     haskell = {
       formattingProvider = "fourmolu"
     }
-  }
+  },
+  cmd = { "haskell-language-server", "--lsp" }
 }
 
 require'lspconfig'.tsserver.setup{
