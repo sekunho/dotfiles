@@ -1,4 +1,4 @@
-{ modulesPath, lib, config, pkgs, pkgs', agenixPackage, ... }: {
+{ modulesPath, lib, config, pkgs, pkgs', blog, agenixPackage, ... }: {
   imports = lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix ++ [
     (modulesPath + "/virtualisation/digital-ocean-config.nix")
   ];
@@ -109,6 +109,15 @@
         www.oshismash.com, oshismash.com {
           reverse_proxy :3001
         }
+
+        blog.sekun.dev {
+          redir https://blog.sekun.net{uri} permanent
+        }
+
+        blog.sekun.net {
+          root * ${blog}
+          file_server
+        }
       '';
     };
   };
@@ -154,9 +163,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment = {
-    systemPackages = with pkgs; [
-      agenixPackage
-    ];
+    systemPackages = with pkgs; [];
 
     loginShellInit = ''
       export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"

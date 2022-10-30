@@ -265,6 +265,21 @@
         "type": "github"
       }
     },
+    "nixpkgs_7": {
+      "locked": {
+        "lastModified": 1667129554,
+        "narHash": "sha256-lQfqOqnNswX8ZTvujdqjo/FroRzopKS+6GQOs6Suwa8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "4a9f9e03fcf2ad79c9383845acb9234e1c56b533",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "oshismashpkg": {
       "inputs": {
         "naersk": "naersk_2",
@@ -292,7 +307,26 @@
         "emojiedpkg": "emojiedpkg",
         "nixpkgs-stable": "nixpkgs-stable",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "oshismashpkg": "oshismashpkg"
+        "oshismashpkg": "oshismashpkg",
+        "sekunpkg": "sekunpkg"
+      }
+    },
+    "sekunpkg": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_7"
+      },
+      "locked": {
+        "lastModified": 1667135367,
+        "narHash": "sha256-lMz49/TDvgg4zHwqJr+V0Jk2dEbctbqljDC9cxMW0GQ=",
+        "owner": "sekunho",
+        "repo": "sekun.dev",
+        "rev": "84520ec9611bc993003dbf0ab1187f57e1d88b2f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sekunho",
+        "repo": "sekun.dev",
+        "type": "github"
       }
     },
     "utils": {
