@@ -6,6 +6,7 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     emojiedpkg.url = "github:sekunho/emojied";
     oshismashpkg.url = "github:sekunho/oshismash";
+    sekunpkg.url = "github:sekunho/sekun.dev";
     deploy-rs.url = "github:serokell/deploy-rs";
     agenix.url = "github:ryantm/agenix";
   };
@@ -16,6 +17,7 @@
     nixpkgs-unstable,
     emojiedpkg,
     oshismashpkg,
+    sekunpkg,
     deploy-rs,
     agenix
   }:
@@ -33,6 +35,7 @@
       pkgs' = mkPkgs nixpkgs-unstable [];
       emojied = emojiedpkg.packages.${system}.emojied;
       oshismash = oshismashpkg.packages.${system}.oshismash;
+      blog = sekunpkg.packages.${system}.blog;
       agenixPackage = agenix.defaultPackage.${system};
     in {
       nixosConfigurations = {
@@ -56,21 +59,6 @@
           };
         };
 
-        peepeepoopoo = nixpkgs-stable.lib.nixosSystem {
-          inherit system;
-
-          modules = [
-            emojiedpkg.nixosModule
-            ./hosts/peepeepoopoo/configuration.nix
-            agenix.nixosModules.age
-          ];
-
-          specialArgs = {
-            inherit pkgs;
-            inherit emojied;
-          };
-        };
-
         mew = nixpkgs-stable.lib.nixosSystem {
           inherit system;
 
@@ -86,6 +74,7 @@
             inherit pkgs';
             inherit emojied;
             inherit oshismash;
+            inherit blog;
             inherit agenixPackage;
           };
         };
