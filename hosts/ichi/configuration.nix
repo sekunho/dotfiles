@@ -1,7 +1,7 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ lib, config, pkgs, pkgs', agenixPackage, ... }: {
+{ lib, config, pkgs, pkgs', fonts, agenixPackage, ... }: {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -352,8 +352,11 @@
     };
   };
 
-  fonts.fonts = with pkgs;
-    [ (nerdfonts.override { fonts = [ "JetBrainsMono" "Iosevka" ]; }) ];
+  fonts.fonts = with pkgs; [
+    (nerdfonts.override { fonts = [ "JetBrainsMono" "Iosevka" ]; })
+
+    fonts.berkeley-mono
+  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

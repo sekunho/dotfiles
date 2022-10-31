@@ -7,6 +7,7 @@
     emojiedpkg.url = "github:sekunho/emojied";
     oshismashpkg.url = "github:sekunho/oshismash";
     sekunpkg.url = "github:sekunho/sekun.dev";
+    fontpkgs.url = "git+ssh://git@github.com/sekunho/fonts";
     deploy-rs.url = "github:serokell/deploy-rs";
     agenix.url = "github:ryantm/agenix";
   };
@@ -18,6 +19,7 @@
     emojiedpkg,
     oshismashpkg,
     sekunpkg,
+    fontpkgs,
     deploy-rs,
     agenix
   }:
@@ -33,6 +35,7 @@
 
       pkgs = mkPkgs nixpkgs-stable [];
       pkgs' = mkPkgs nixpkgs-unstable [];
+      fonts = fontpkgs.packages.${system};
       emojied = emojiedpkg.packages.${system}.emojied;
       oshismash = oshismashpkg.packages.${system}.oshismash;
       blog = sekunpkg.packages.${system}.blog;
@@ -55,6 +58,7 @@
           specialArgs = {
             inherit pkgs;
             inherit pkgs';
+            inherit fonts;
             inherit agenixPackage;
           };
         };
