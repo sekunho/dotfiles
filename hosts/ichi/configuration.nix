@@ -25,7 +25,7 @@
   };
 
   nix = {
-    package = pkgs.nixVersions.nix_2_9;
+    package = pkgs.nix;
 
     gc = {
       automatic = true;
@@ -347,7 +347,7 @@
     pathsToLink = [ "/share/nix-direnv" ];
 
     sessionVariables = rec {
-      KITTY_CONFIG_DIRECTORY = "\${HOME}/System/dotfiles/config/kitty/";
+      KITTY_CONFIG_DIRECTORY = "/shared/System/dotfiles/config/kitty/";
       KITTY_DISABLE_WAYLAND = "1";
     };
   };
@@ -501,7 +501,7 @@
     package = pkgs.postgresql_14;
     authentication = pkgs.lib.mkOverride 14 ''
       local all all trust
-      host all all ::1/128 trust
+      hostnossl all all ::1/128 trust
       host all all localhost trust
     '';
 
@@ -554,5 +554,5 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.05"; # Did you read the comment?
+  system.stateVersion = "22.11"; # Did you read the comment?
 }
