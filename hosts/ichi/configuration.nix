@@ -43,12 +43,14 @@
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
       "iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk="
     ];
 
     settings.substituters = [
       "https://cache.iog.io"
       "https://iohk.cachix.org"
       "https://nix-community.cachix.org"
+      "https://cache.zw3rk.com"
     ];
   };
 
@@ -201,6 +203,7 @@
           tdesktop
           element-desktop
           pkgs'.fractal-next
+          obsidian
 
           # Video editing
           libsForQt5.kdenlive
@@ -251,6 +254,7 @@
           pkgs'.insomnia
           awscli2
           obs-studio
+          obsidian
 
           pkgs'._1password-gui
           pkgs'.cloudflared
