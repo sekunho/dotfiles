@@ -34,6 +34,12 @@ highlight clear SignColumn
 set signcolumn=yes
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Because I'm blind
+
+set cursorcolumn
+set cursorline
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " LSP commands
 nnoremap <leader>ld <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>

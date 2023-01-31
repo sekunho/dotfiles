@@ -61,11 +61,16 @@ for type, icon in pairs(signs) do
   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
 
+require'lspconfig'['hls'].setup {
+  filetypes = { 'haskell', 'lhaskell', 'cabal' }
+}
+
 require'lspconfig'.hls.setup {
   on_attach = on_attach,
   settings = {
     haskell = {
-      formattingProvider = "fourmolu"
+      formattingProvider = "fourmolu",
+      cabalFormattingProvider = "cabalfmt",
     }
   },
   cmd = { "haskell-language-server", "--lsp" }
@@ -80,6 +85,19 @@ require'lspconfig'.elixirls.setup {
   on_attach = on_attach,
   cmd = { "elixir-ls" },
   root_dir = require("lspconfig.util").root_pattern(".git")
+}
+
+require'lspconfig'.nil_ls.setup {
+  autostart = true,
+  cmd = { "nil" },
+  settings = {
+    ['nil'] = {
+      testSetting = 42,
+      formatting = {
+        command = { "nixpkgs-fmt" },
+      },
+    },
+  },
 }
 
 require'lspconfig'.rust_analyzer.setup {
