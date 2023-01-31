@@ -129,6 +129,11 @@
       package = pkgs'.tailscale;
     };
 
+    # mullvad-vpn = {
+    #   enable = true;
+    #   package = pkgs'.mullvad-vpn;
+    # };
+
     # Enable the GNOME Desktop Environment.
     xserver = {
       # Enable the X11 windowing system.
@@ -285,7 +290,7 @@
       radeontop # Monitor GPU usage for AMD
       chrome-gnome-shell
 
-      mullvad-vpn
+      # mullvad-vpn
 
       libreoffice
       linux-wifi-hotspot
@@ -359,7 +364,7 @@
   fonts.fonts = with pkgs; [
     (nerdfonts.override { fonts = [ "JetBrainsMono" "Iosevka" ]; })
 
-    fonts.berkeley-mono
+    fonts.berkeley-mono-1009-ligatures
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -397,6 +402,7 @@
             # Languages, etc.
             direnv-vim
             nvim-lspconfig
+            ghcid
 
             # Usage
             # https://nixos.org/manual/nixpkgs/unstable/#vim
@@ -548,9 +554,6 @@
       # max_parallel_maintenance_workers = 3;
     };
   };
-
-
-  services.redis.servers."".enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

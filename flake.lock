@@ -79,11 +79,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1667230258,
-        "narHash": "sha256-cuqCiBrt/uebrv1H2SpnBi3tKJyb2zE2MpArRtQZcEc=",
+        "lastModified": 1675183978,
+        "narHash": "sha256-hRrzjI4LS7K3W2C481yfRG+K8k7hq3elgXGc27fuArs=",
         "ref": "refs/heads/main",
-        "rev": "4c255b0031ed0052ab62341b892b2cfe92cbd812",
-        "revCount": 1,
+        "rev": "62dde8ecd720087a811897895723c0b344da489a",
+        "revCount": 2,
         "type": "git",
         "url": "ssh://git@github.com/sekunho/fonts"
       },
@@ -178,11 +178,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1669834992,
-        "narHash": "sha256-YnhZGHgb4C3Q7DSGisO/stc50jFb9F/MzHeKS4giotg=",
+        "lastModified": 1672353432,
+        "narHash": "sha256-oZfgp/44/o2tWiylV30cR+DLyWTJ+5dhsdWZVpzs3e4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "596a8e828c5dfa504f91918d0fa4152db3ab5502",
+        "rev": "913a47cd064cc06440ea84e5e0452039a85781f0",
         "type": "github"
       },
       "original": {
