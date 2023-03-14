@@ -7,6 +7,8 @@
     ./hardware-configuration.nix
   ];
 
+  nixpkgs.config.allowUnfree = true;
+
   age = {
     secrets = {};
     identityPaths = [ "/home/sekun/.ssh/id_rsa" ];
@@ -56,7 +58,7 @@
 
   # Use the systemd-boot EFI boot loader.
   boot = {
-    initrd.kernelModules = [ "amdgpu" "kvm-amd" ];
+    # initrd.kernelModules = [ "amdgpu" "kvm-amd" ];
     kernelPackages = pkgs.linuxPackages_5_15;
 
     loader = {
@@ -77,7 +79,7 @@
 
     initrd.luks.devices = {
       root = {
-        device = "/dev/disk/by-uuid/627d65b7-ff80-43d9-8cb7-b4d379830976";
+        device = "/dev/disk/by-uuid/29dbd865-825c-48ea-9123-3e28116c72d6";
         preLVM = true;
       };
     };
@@ -150,7 +152,7 @@
 
       desktopManager.gnome.enable = true;
 
-      videoDrivers = [ "amdgpu" ];
+      videoDrivers = [ "nvidia" ];
     };
 
     # For server mode
@@ -170,14 +172,8 @@
 
   hardware = {
     pulseaudio.enable = true;
-    opengl = {
-      enable = true;
-      driSupport = true;
-      driSupport32Bit = true;
-      package = pkgs.mesa.drivers;
-      package32 = pkgs.pkgsi686Linux.mesa.drivers;
-      extraPackages = with pkgs; [ rocm-opencl-icd rocm-opencl-runtime ];
-    };
+    opengl.enable = true;
+    # nvidia.powerManagement.enable = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
