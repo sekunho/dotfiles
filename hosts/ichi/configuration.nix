@@ -19,15 +19,10 @@
     hostId = "7c48531f";
     networkmanager.enable = true;
     useDHCP = false;
-
-    interfaces = {
-      enp34s0.useDHCP = true;
-      wlp40s0.useDHCP = true;
-    };
   };
 
   nix = {
-    package = pkgs.nix;
+    package = pkgs.nixVersions.nix_2_11;
 
     gc = {
       automatic = true;
@@ -58,21 +53,11 @@
 
   # Use the systemd-boot EFI boot loader.
   boot = {
-    # initrd.kernelModules = [ "amdgpu" "kvm-amd" ];
-    kernelPackages = pkgs.linuxPackages_5_15;
+    kernelPackages = pkgs.linuxPackages_6_1;
 
     loader = {
-      /* systemd-boot.enable = true; */
+      systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
-
-      grub = {
-        useOSProber = true;
-        enable = true;
-        version = 2;
-        device = "nodev";
-        efiSupport = true;
-        enableCryptodisk = true;
-      };
     };
 
     supportedFilesystems = [ "zfs" ];
@@ -125,16 +110,25 @@
     keyMap = "us";
   };
 
+  systemd.services.aorusB550iSuspendFix = {
+    description = "Fixes the 'wakes up immediately after suspend' issue";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "multi-user.target" ];
+    serviceConfig.Type =  "oneshot";
+
+    # TODO: Remove this when Gigabyte fixes this via firmware update
+    script = ''
+      if ${pkgs.ripgrep}/bin/rg --quiet '\bGPP0\b.*\benabled\b' /proc/acpi/wakeup; then
+        echo GPP0 > /proc/acpi/wakeup
+      fi
+    '';
+  };
+
   services = {
     tailscale = {
       enable = true;
       package = pkgs'.tailscale;
     };
-
-    # mullvad-vpn = {
-    #   enable = true;
-    #   package = pkgs'.mullvad-vpn;
-    # };
 
     # Enable the GNOME Desktop Environment.
     xserver = {
@@ -173,7 +167,6 @@
   hardware = {
     pulseaudio.enable = true;
     opengl.enable = true;
-    # nvidia.powerManagement.enable = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
