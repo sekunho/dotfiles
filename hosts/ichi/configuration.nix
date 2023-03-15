@@ -116,11 +116,14 @@
     after = [ "multi-user.target" ];
     serviceConfig.Type =  "oneshot";
 
-    # TODO: Remove this when Gigabyte fixes this via firmware update
     script = ''
+      # TODO: Remove this when Gigabyte fixes this via firmware update
       if ${pkgs.ripgrep}/bin/rg --quiet '\bGPP0\b.*\benabled\b' /proc/acpi/wakeup; then
         echo GPP0 > /proc/acpi/wakeup
       fi
+
+      # TODO: Find a better way for the stupid mouse to not wake up from suspend
+      echo disabled > /sys/bus/usb/devices/3-2/power/wakeup
     '';
   };
 
