@@ -96,10 +96,11 @@
 
     fish = {
       enable = true;
+      shellAliases = { doom = "~/.emacs.d/bin/doom"; };
+
       interactiveShellInit = ''
         direnv hook fish | source
       '';
-      shellAliases = { doom = "~/.emacs.d/bin/doom"; };
     };
   };
 
@@ -110,22 +111,45 @@
     keyMap = "us";
   };
 
-  # TODO: Move this to own NixOS module called fixes
-  systemd.services.aorusB550iSuspendFix = {
-    description = "Fixes the 'wakes up immediately after suspend' issue";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "multi-user.target" ];
-    serviceConfig.Type =  "oneshot";
+  systemd = {
+     services = {
+       # TODO: Move this to own NixOS module called fixes
+       aorus-b550i-suspend-fix = {
+        description = "Fixes the 'wakes up immediately after suspend' issue";
+        wantedBy = [ "multi-user.target" ];
+        after = [ "multi-user.target" ];
+        serviceConfig.Type =  "oneshot";
 
-    script = ''
-      # TODO: Remove this when Gigabyte fixes this via firmware update
-      if ${pkgs.ripgrep}/bin/rg --quiet '\bGPP0\b.*\benabled\b' /proc/acpi/wakeup; then
-        echo GPP0 > /proc/acpi/wakeup
-      fi
+        script = ''
+          # TODO: Remove this when Gigabyte fixes this via firmware update
+          if ${pkgs.ripgrep}/bin/rg --quiet '\bGPP0\b.*\benabled\b' /proc/acpi/wakeup; then
+            echo GPP0 > /proc/acpi/wakeup
+          fi
 
-      # TODO: Find a better way for the stupid mouse to not wake up from suspend
-      echo disabled > /sys/bus/usb/devices/3-2/power/wakeup
-    '';
+          # TODO: Find a better way for the stupid mouse to not wake up from suspend
+          echo disabled > /sys/bus/usb/devices/3-2/power/wakeup
+        '';
+       };
+
+       # https://gist.github.com/DavidAce/67bec5675b4a6cef72ed3391e025a8e5
+       nvidia-tdp-limit = {
+         description = "Break NVIDIA's kneecaps";
+
+         serviceConfig = {
+           Type = "oneshot";
+           ExecStartPre = "/run/current-system/sw/bin/nvidia-smi -pm 1";
+           ExecStart = "/run/current-system/sw/bin/nvidia-smi -pl 200";
+         };
+       };
+     };
+
+     timers = {
+      # https://gist.github.com/DavidAce/67bec5675b4a6cef72ed3391e025a8e5
+       nvidia-tdp-limit = {
+         wantedBy = [ "timers.target" ];
+         timerConfig.OnBootSec = "5";
+       };
+     };
   };
 
   services = {
@@ -135,14 +159,23 @@
       declarative = true;
       package = pkgs'.minecraft-server;
 
+      jvmOpts = ''
+        -Xms4092M
+        -Xmx4092M
+        -XX:+UseG1GC
+        -XX:+CMSIncrementalPacing
+        -XX:+CMSClassUnloadingEnabled
+        -XX:ParallelGCThreads=2
+        -XX:MinHeapFreeRatio=5
+        -XX:MaxHeapFreeRatio=10
+      '';
+
       serverProperties = {
         online-mode = false;
-        server-port = 25565;
+        server-port = 4111;
         gamemode = "survival";
         motd = "sekun deez nuts";
         max-players = 20;
-        enable-rcon = true;
-        "rcon-password" = "!G$@ciU!qroQM8cSLWM9VdCq$Q5eDnbB!vrEk%%2t54eapxZj8Hz9L^V$HmwARu3";
       };
     };
 
@@ -171,8 +204,34 @@
       # KDE
       displayManager.sddm.enable = true;
       desktopManager.plasma5.enable = true;
-
       videoDrivers = [ "nvidia" ];
+      exportConfiguration = true;
+
+      monitorSection = ''
+        VendorName     "Unknown"
+        ModelName      "Huawei Technologies Co., Ltd MateView"
+        HorizSync       45.0 - 180.0
+        VertRefresh     48.0 - 75.0
+      '';
+
+      deviceSection = ''
+        VendorName     "NVIDIA Corporation"
+        BoardName      "NVIDIA GeForce RTX 3090 Ti"
+        Option         "TripleBuffer" "On"
+      '';
+
+      screenSection = ''
+        DefaultDepth    24
+        Option         "Stereo" "0"
+        Option         "nvidiaXineramaInfoOrder" "DFP-1"
+        Option         "metamodes" "3840x2560_60 +0+0 {ForceCompositionPipeline=On}"
+        Option         "SLI" "Off"
+        Option         "MultiGPU" "Off"
+        Option         "BaseMosaic" "off"
+        SubSection     "Display"
+            Depth       24
+        EndSubSection
+      '';
     };
 
     # For server mode
@@ -186,76 +245,6 @@
 
     # Enable the OpenSSH daemon.
     openssh.enable = true;
-
-    # RabbitMQ
-    # NOTE: Still need to make sure the client has the same cookie
-    # TODO: Create user via Nix?
-    rabbitmq = {
-      enable = false;
-      port = 5672;
-      managementPlugin.enable = true;
-
-      # https://www.rabbitmq.com/configure.html#config-items
-      # configItems = {
-      #   "default_user" = "rabbituser";
-      #   "default_pass" = "rabbit";
-      #   "default_user_tags.administrator" = "true";
-      #   "default_permissions.configure" = ".*";
-      #   "default_permissions.read" = ".*";
-      #   "default_permissions.write" = ".*";
-      # };
-    };
-
-    # PostgreSQL
-    postgresql = {
-      enable = true;
-      extraPlugins = with pkgs.postgresql14Packages; [ pgtap ];
-      package = pkgs.postgresql_14;
-      authentication = pkgs.lib.mkOverride 14 ''
-        local all all trust
-        hostnossl all all ::1/128 trust
-        host all all localhost trust
-      '';
-
-      initialScript = pkgs.writeText "backend-initScript" ''
-      -- Ensure the DB defaults to UTC
-      SET timezone TO 'UTC';
-      '';
-
-      # https://github.com/adisbladis/nixconfig/blob/0ce9e8f4556da634a12c11b16bce5364b6641a83/hosts/bladis/synapse.nix
-      settings = {
-        shared_preload_libraries             = "pg_stat_statements";
-        session_preload_libraries            = "auto_explain";
-        track_io_timing                      = "on";
-        track_functions                      = "pl";
-        log_duration                         = true;
-        log_statement                        = "all";
-
-        # AUTO_EXPLAIN stuff
-        "auto_explain.log_min_duration"      = 0;
-        "auto_explain.log_analyze"           = true;
-        "auto_explain.log_triggers"          = true;
-        "auto_explain.log_verbose"           = true;
-        "auto_explain.log_nested_statements" = true;
-
-        # max_connections = 20;
-        # shared_buffers = "1GB";
-        # effective_cache_size = "3GB";
-        # maintenance_work_mem = "256MB";
-        # checkpoint_completion_target = 0.9;
-        # wal_buffers = "16MB";
-        # default_statistics_target = 100;
-        # random_page_cost = 1.1;
-        # effective_io_concurrency = 200;
-        # work_mem = "8738kB";
-        # min_wal_size = "1GB";
-        # max_wal_size = "4GB";
-        # max_worker_processes = 6;
-        # max_parallel_workers_per_gather = 3;
-        # max_parallel_workers = 6;
-        # max_parallel_maintenance_workers = 3;
-      };
-    };
   };
 
   sound.enable = true;
@@ -263,6 +252,9 @@
   hardware = {
     pulseaudio.enable = true;
     opengl.enable = true;
+
+    # NOTE: nvidia-drm.modeset=1
+    nvidia.modesetting.enable = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -395,8 +387,6 @@
       ventoy-bin
       gnome.gnome-boxes
 
-      minecraft
-
       # Dev tools
       kitty
       xclip
@@ -447,6 +437,8 @@
     sessionVariables = rec {
       KITTY_CONFIG_DIRECTORY = "/shared/System/dotfiles/config/kitty/";
       KITTY_DISABLE_WAYLAND = "1";
+      PLASMA_USE_QT_SCALING = "1";
+      QT_SCREEN_SCALE_FACTORS="DisplayPort-0=2;DisplayPort-1=2;DisplayPort-2=2;";
     };
   };
 
