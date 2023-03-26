@@ -96,7 +96,7 @@
       # NOTE: Set SRV and A record for using domain
       streamConfig = ''
         upstream arceus-minecraft {
-          server arceus:25565;
+          server arceus:4111;
         }
 
         server {
