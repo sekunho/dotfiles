@@ -22,7 +22,7 @@
   };
 
   nix = {
-    package = pkgs.nixVersions.nix_2_9;
+    package = pkgs.nixVersions.nix_2_11;
 
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -90,9 +90,35 @@
       package = pkgs'.tailscale;
     };
 
+    nginx = {
+      enable = true;
+
+      # NOTE: Set SRV and A record for using domain
+      streamConfig = ''
+        upstream arceus-minecraft {
+          server arceus:25565;
+        }
+
+        server {
+          listen 25565;
+          proxy_pass arceus-minecraft;
+        }
+      '';
+
+      virtualHosts."mc.sekun.net" = {
+        addSSL = false;
+        enableACME = false;
+
+        listen = [
+          { addr = "0.0.0.0"; port = 81; }
+          { addr = "[::0]"; port = 81; }
+        ];
+      };
+    };
+
     caddy = {
       enable = true;
-      email = "hi@sekun.net";
+      email = "acme@sekun.net";
 
       # FIXME: https://caddy.community/t/infinite-redirection/3230/5
       # globalConfig = ''
@@ -153,7 +179,7 @@
       enable = true;
       trustedInterfaces = [ "tailscale0" ];
       allowedUDPPorts = [ config.services.tailscale.port ];
-      allowedTCPPorts = [ 22 80 443 ];
+      allowedTCPPorts = [ 22 80 443 25565 ];
       checkReversePath = "loose";
     };
   };
@@ -168,5 +194,5 @@
     '';
   };
 
-  system.stateVersion = "22.05"; # Did you read the comment?
+  system.stateVersion = "22.11"; # Did you read the comment?
 }
