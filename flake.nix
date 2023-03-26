@@ -45,13 +45,13 @@
         # TODO: Add usual config for Linode/DO/Hetzner/etc.
 
         # Personal computer
-        # `nixos-rebuild switch --flake .#ichi` or
+        # `nixos-rebuild switch --flake .#arceus ` or
         # `nixos-rebuild switch --flake .#`
-        ichi = nixpkgs-stable.lib.nixosSystem {
+        arceus = nixpkgs-stable.lib.nixosSystem {
           inherit system;
 
           modules = [
-            ./hosts/ichi/configuration.nix
+            ./hosts/arceus/configuration.nix
             agenix.nixosModules.age
           ];
 

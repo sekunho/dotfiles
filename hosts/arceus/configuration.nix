@@ -15,7 +15,7 @@
   };
 
   networking = {
-    hostName = "ichi";
+    hostName = "arceus";
     hostId = "7c48531f";
     networkmanager.enable = true;
     useDHCP = false;
@@ -110,6 +110,7 @@
     keyMap = "us";
   };
 
+  # TODO: Move this to own NixOS module called fixes
   systemd.services.aorusB550iSuspendFix = {
     description = "Fixes the 'wakes up immediately after suspend' issue";
     wantedBy = [ "multi-user.target" ];
@@ -128,6 +129,23 @@
   };
 
   services = {
+    minecraft-server = {
+      enable = true;
+      eula = true;
+      declarative = true;
+      package = pkgs'.minecraft-server;
+
+      serverProperties = {
+        online-mode = false;
+        server-port = 25565;
+        gamemode = "survival";
+        motd = "sekun deez nuts";
+        max-players = 20;
+        enable-rcon = true;
+        "rcon-password" = "!G$@ciU!qroQM8cSLWM9VdCq$Q5eDnbB!vrEk%%2t54eapxZj8Hz9L^V$HmwARu3";
+      };
+    };
+
     tailscale = {
       enable = true;
       package = pkgs'.tailscale;
@@ -141,13 +159,18 @@
       # Configure keymap in X11
       layout = "us";
 
-      # services.xserver.xkbOptions = "eurosign:e";
-      displayManager.gdm = {
-        enable = true;
-        wayland = false;
-      };
+      # GNOME
+      # xkbOptions = "eurosign:e";
+      # displayManager.gdm = {
+      #   enable = true;
+      #   wayland = false;
+      # };
 
-      desktopManager.gnome.enable = true;
+      # desktopManager.gnome.enable = true;
+
+      # KDE
+      displayManager.sddm.enable = true;
+      desktopManager.plasma5.enable = true;
 
       videoDrivers = [ "nvidia" ];
     };
@@ -163,6 +186,76 @@
 
     # Enable the OpenSSH daemon.
     openssh.enable = true;
+
+    # RabbitMQ
+    # NOTE: Still need to make sure the client has the same cookie
+    # TODO: Create user via Nix?
+    rabbitmq = {
+      enable = false;
+      port = 5672;
+      managementPlugin.enable = true;
+
+      # https://www.rabbitmq.com/configure.html#config-items
+      # configItems = {
+      #   "default_user" = "rabbituser";
+      #   "default_pass" = "rabbit";
+      #   "default_user_tags.administrator" = "true";
+      #   "default_permissions.configure" = ".*";
+      #   "default_permissions.read" = ".*";
+      #   "default_permissions.write" = ".*";
+      # };
+    };
+
+    # PostgreSQL
+    postgresql = {
+      enable = true;
+      extraPlugins = with pkgs.postgresql14Packages; [ pgtap ];
+      package = pkgs.postgresql_14;
+      authentication = pkgs.lib.mkOverride 14 ''
+        local all all trust
+        hostnossl all all ::1/128 trust
+        host all all localhost trust
+      '';
+
+      initialScript = pkgs.writeText "backend-initScript" ''
+      -- Ensure the DB defaults to UTC
+      SET timezone TO 'UTC';
+      '';
+
+      # https://github.com/adisbladis/nixconfig/blob/0ce9e8f4556da634a12c11b16bce5364b6641a83/hosts/bladis/synapse.nix
+      settings = {
+        shared_preload_libraries             = "pg_stat_statements";
+        session_preload_libraries            = "auto_explain";
+        track_io_timing                      = "on";
+        track_functions                      = "pl";
+        log_duration                         = true;
+        log_statement                        = "all";
+
+        # AUTO_EXPLAIN stuff
+        "auto_explain.log_min_duration"      = 0;
+        "auto_explain.log_analyze"           = true;
+        "auto_explain.log_triggers"          = true;
+        "auto_explain.log_verbose"           = true;
+        "auto_explain.log_nested_statements" = true;
+
+        # max_connections = 20;
+        # shared_buffers = "1GB";
+        # effective_cache_size = "3GB";
+        # maintenance_work_mem = "256MB";
+        # checkpoint_completion_target = 0.9;
+        # wal_buffers = "16MB";
+        # default_statistics_target = 100;
+        # random_page_cost = 1.1;
+        # effective_io_concurrency = 200;
+        # work_mem = "8738kB";
+        # min_wal_size = "1GB";
+        # max_wal_size = "4GB";
+        # max_worker_processes = 6;
+        # max_parallel_workers_per_gather = 3;
+        # max_parallel_workers = 6;
+        # max_parallel_maintenance_workers = 3;
+      };
+    };
   };
 
   sound.enable = true;
@@ -216,6 +309,9 @@
           wiki-tui
           transmission-gtk
 
+          mcrcon
+          pkgs'.prismlauncher
+
           # Networking
           # ciscoPacketTracer8
 
@@ -252,6 +348,7 @@
           awscli2
           obs-studio
           obsidian
+          pkgs'.discord
 
           pkgs'._1password-gui
           pkgs'.cloudflared
@@ -495,57 +592,6 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
-
-  # PostgreSQL
-  services.postgresql = {
-    enable = true;
-    extraPlugins = with pkgs.postgresql14Packages; [ pgtap ];
-    package = pkgs.postgresql_14;
-    authentication = pkgs.lib.mkOverride 14 ''
-      local all all trust
-      hostnossl all all ::1/128 trust
-      host all all localhost trust
-    '';
-
-    initialScript = pkgs.writeText "backend-initScript" ''
-    -- Ensure the DB defaults to UTC
-    SET timezone TO 'UTC';
-    '';
-
-    # https://github.com/adisbladis/nixconfig/blob/0ce9e8f4556da634a12c11b16bce5364b6641a83/hosts/bladis/synapse.nix
-    settings = {
-      shared_preload_libraries             = "pg_stat_statements";
-      session_preload_libraries            = "auto_explain";
-      track_io_timing                      = "on";
-      track_functions                      = "pl";
-      log_duration                         = true;
-      log_statement                        = "all";
-
-      # AUTO_EXPLAIN stuff
-      "auto_explain.log_min_duration"      = 0;
-      "auto_explain.log_analyze"           = true;
-      "auto_explain.log_triggers"          = true;
-      "auto_explain.log_verbose"           = true;
-      "auto_explain.log_nested_statements" = true;
-
-      # max_connections = 20;
-      # shared_buffers = "1GB";
-      # effective_cache_size = "3GB";
-      # maintenance_work_mem = "256MB";
-      # checkpoint_completion_target = 0.9;
-      # wal_buffers = "16MB";
-      # default_statistics_target = 100;
-      # random_page_cost = 1.1;
-      # effective_io_concurrency = 200;
-      # work_mem = "8738kB";
-      # min_wal_size = "1GB";
-      # max_wal_size = "4GB";
-      # max_worker_processes = 6;
-      # max_parallel_workers_per_gather = 3;
-      # max_parallel_workers = 6;
-      # max_parallel_maintenance_workers = 3;
-    };
-  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
