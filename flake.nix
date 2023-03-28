@@ -63,6 +63,21 @@
           };
         };
 
+        giratina = nixpkgs-stable.lib.nixosSystem {
+          inherit system;
+
+          modules = [
+            ./hosts/giratina/configuration.nix
+            agenix.nixosModules.age
+          ];
+
+          specialArgs = {
+            inherit pkgs;
+            inherit pkgs';
+            inherit agenixPackage;
+          };
+        };
+
         mew = nixpkgs-stable.lib.nixosSystem {
           inherit system;
 

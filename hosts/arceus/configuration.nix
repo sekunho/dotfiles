@@ -1,6 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { lib, config, pkgs, pkgs', fonts, agenixPackage, ... }: {
   imports = [
     # Include the results of the hardware scan.
@@ -112,8 +109,17 @@
   };
 
   systemd = {
-     services = {
-       # TODO: Move this to own NixOS module called fixes
+    user.services = {
+      /* nitrogen = { */
+      /*   description = "Sets wallpaper"; */
+      /*   wantedBy = [ "graphical-session.target" ]; */
+      /*   partOf = [ "graphical-session.target" ]; */
+      /*   script = "${pkgs.nitrogen}/bin/nitrogen --set-scaled /home/sekun/Pictures/1244598.jpg"; */
+      /*   serviceConfig.Type = "exec"; */
+      /* }; */
+    };
+
+    services = {
        aorus-b550i-suspend-fix = {
         description = "Fixes the 'wakes up immediately after suspend' issue";
         wantedBy = [ "multi-user.target" ];
@@ -147,12 +153,89 @@
       # https://gist.github.com/DavidAce/67bec5675b4a6cef72ed3391e025a8e5
        nvidia-tdp-limit = {
          wantedBy = [ "timers.target" ];
-         timerConfig.OnBootSec = "5";
+         timerConfig.OnBootSec = 5;
        };
      };
   };
 
   services = {
+    picom = {
+      enable = false;
+
+      settings = {
+        inactive-opacity = 0.90;
+        active-opacity = 0.97;
+        frame-opacity = 0.97;
+
+        blur = {
+          method = "kawase";
+          strength = 9;
+          background = false;
+          background-frame = false;
+          background-fixed = false;
+        };
+      };
+    };
+
+    dbus.enable = true;
+
+    xserver = {
+      enable = true;
+      videoDrivers = [ "nvidia" ];
+      exportConfiguration = true;
+
+      # WM/DE
+
+      ## i3
+      /* desktopManager = { xterm.enable = false; }; */
+      /* displayManager = { defaultSession = "none+i3"; }; */
+
+      /* windowManager.i3 = { */
+      /*   enable = true; */
+      /*   package = pkgs'.i3; */
+
+      /*   extraPackages = with pkgs; [ */
+      /*     dmenu */
+      /*     i3status */
+      /*     i3lock */
+      /*     i3blocks */
+      /*   ]; */
+      /* }; */
+
+      ## Gnome
+      displayManager.gdm = {
+        enable = true;
+      };
+      desktopManager.gnome.enable = true;
+
+      /* monitorSection = '' */
+      /*   VendorName     "Unknown" */
+      /*   ModelName      "Huawei Technologies Co., Ltd MateView" */
+      /*   HorizSync       45.0 - 180.0 */
+      /*   VertRefresh     48.0 - 75.0 */
+      /* ''; */
+
+      /* deviceSection = '' */
+      /*   VendorName     "NVIDIA Corporation" */
+      /*   BoardName      "NVIDIA GeForce RTX 3090 Ti" */
+      /*   Option         "TripleBuffer" "On" */
+      /* ''; */
+
+      /* screenSection = '' */
+      /*   DefaultDepth    24 */
+      /*   Option         "Stereo" "0" */
+      /*   Option         "nvidiaXineramaInfoOrder" "DFP-1" */
+      /*   Option         "metamodes" "3840x2560_60 +0+0 {ForceCompositionPipeline=On}" */
+      /*   Option         "SLI" "Off" */
+      /*   Option         "MultiGPU" "Off" */
+      /*   Option         "BaseMosaic" "off" */
+      /*   SubSection     "Display" */
+      /*       Depth       24 */
+      /*   EndSubSection */
+      /* ''; */
+    };
+
+     # TODO: Move this to own NixOS module called fixes
     minecraft-server = {
       enable = true;
       eula = true;
@@ -176,62 +259,13 @@
         gamemode = "survival";
         motd = "sekun deez nuts";
         max-players = 20;
+        difficulty = "hard";
       };
     };
 
     tailscale = {
       enable = true;
       package = pkgs'.tailscale;
-    };
-
-    # Enable the GNOME Desktop Environment.
-    xserver = {
-      # Enable the X11 windowing system.
-      enable = true;
-
-      # Configure keymap in X11
-      layout = "us";
-
-      # GNOME
-      # xkbOptions = "eurosign:e";
-      # displayManager.gdm = {
-      #   enable = true;
-      #   wayland = false;
-      # };
-
-      # desktopManager.gnome.enable = true;
-
-      # KDE
-      displayManager.sddm.enable = true;
-      desktopManager.plasma5.enable = true;
-      videoDrivers = [ "nvidia" ];
-      exportConfiguration = true;
-
-      monitorSection = ''
-        VendorName     "Unknown"
-        ModelName      "Huawei Technologies Co., Ltd MateView"
-        HorizSync       45.0 - 180.0
-        VertRefresh     48.0 - 75.0
-      '';
-
-      deviceSection = ''
-        VendorName     "NVIDIA Corporation"
-        BoardName      "NVIDIA GeForce RTX 3090 Ti"
-        Option         "TripleBuffer" "On"
-      '';
-
-      screenSection = ''
-        DefaultDepth    24
-        Option         "Stereo" "0"
-        Option         "nvidiaXineramaInfoOrder" "DFP-1"
-        Option         "metamodes" "3840x2560_60 +0+0 {ForceCompositionPipeline=On}"
-        Option         "SLI" "Off"
-        Option         "MultiGPU" "Off"
-        Option         "BaseMosaic" "off"
-        SubSection     "Display"
-            Depth       24
-        EndSubSection
-      '';
     };
 
     # For server mode
@@ -354,6 +388,10 @@
   # $ nix search wget
   environment = {
     systemPackages = with pkgs; [
+      lxappearance
+      nitrogen
+      pavucontrol
+
       # Essential system tools
       pkgs'.tailscale
       git
@@ -430,13 +468,15 @@
       google-chrome
 
       qpdf
+      libsForQt5.ksshaskpass
     ];
 
-    pathsToLink = [ "/share/nix-direnv" ];
+    pathsToLink = [ "/share/nix-direnv" "/libexec" ];
 
     sessionVariables = rec {
       KITTY_CONFIG_DIRECTORY = "/shared/System/dotfiles/config/kitty/";
       KITTY_DISABLE_WAYLAND = "1";
+      # MOZ_ENABLE_WAYLAND = "0";
       PLASMA_USE_QT_SCALING = "1";
       QT_SCREEN_SCALE_FACTORS="DisplayPort-0=2;DisplayPort-1=2;DisplayPort-2=2;";
     };
