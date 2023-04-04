@@ -22,7 +22,7 @@
   };
 
   nix = {
-    package = pkgs.nixVersions.nix_2_11;
+    package = pkgs.nixVersions.nix_2_13;
 
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -88,7 +88,7 @@
 
     tailscale = {
       enable = true;
-      package = pkgs'.tailscale;
+      package = pkgs.tailscale;
     };
 
     nginx = {
@@ -143,6 +143,10 @@
           root * ${blog}
           file_server
         }
+
+        api.sekun.net {
+          reverse_proxy arceus:53333
+        }
       '';
     };
   };
@@ -158,7 +162,7 @@
 
         serviceConfig.Type = "oneshot";
 
-        script = with pkgs'; ''
+        script = with pkgs; ''
           sleep 2
 
           status="$(${tailscale}/bin/tailscale status -json | ${jq}/bin/jq -r .BackendState)"
