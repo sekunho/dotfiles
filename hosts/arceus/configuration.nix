@@ -19,7 +19,7 @@
   };
 
   nix = {
-    package = pkgs.nixVersions.nix_2_11;
+    package = pkgs.nixVersions.nix_2_13;
 
     gc = {
       automatic = true;
@@ -120,34 +120,39 @@
     };
 
     services = {
-       aorus-b550i-suspend-fix = {
-        description = "Fixes the 'wakes up immediately after suspend' issue";
-        wantedBy = [ "multi-user.target" ];
-        after = [ "multi-user.target" ];
-        serviceConfig.Type =  "oneshot";
+      # Mouse lags sometimes with this and it's so damn annoying.
+      /* aorus-b550i-suspend-fix = { */
+      /*  description = "Fixes the 'wakes up immediately after suspend' issue"; */
+      /*  wantedBy = [ "multi-user.target" ]; */
+      /*  after = [ "multi-user.target" ]; */
+      /*  serviceConfig.Type =  "oneshot"; */
 
-        script = ''
-          # TODO: Remove this when Gigabyte fixes this via firmware update
-          if ${pkgs.ripgrep}/bin/rg --quiet '\bGPP0\b.*\benabled\b' /proc/acpi/wakeup; then
-            echo GPP0 > /proc/acpi/wakeup
-          fi
+      /*  script = '' */
+      /*    # TODO: Remove this when Gigabyte fixes this via firmware update */
+      /*    if ${pkgs.ripgrep}/bin/rg --quiet '\bGPP0\b.*\benabled\b' /proc/acpi/wakeup; then */
+      /*      echo GPP0 > /proc/acpi/wakeup */
+      /*    fi */
 
-          # TODO: Find a better way for the stupid mouse to not wake up from suspend
-          echo disabled > /sys/bus/usb/devices/3-2/power/wakeup
-        '';
-       };
+      /*    # TODO: Find a better way for the stupid mouse to not wake up from suspend */
+      /*    echo disabled > /sys/bus/usb/devices/3-4/power/wakeup */
+      /*  ''; */
+      /* }; */
 
-       # https://gist.github.com/DavidAce/67bec5675b4a6cef72ed3391e025a8e5
-       nvidia-tdp-limit = {
-         description = "Break NVIDIA's kneecaps";
+       # FIXME: https://github.com/NixOS/nixpkgs/issues/180175
+      NetworkManager-wait-online.enable = false;
 
-         serviceConfig = {
-           Type = "oneshot";
-           ExecStartPre = "/run/current-system/sw/bin/nvidia-smi -pm 1";
-           ExecStart = "/run/current-system/sw/bin/nvidia-smi -pl 200";
-         };
-       };
-     };
+
+      # https://gist.github.com/DavidAce/67bec5675b4a6cef72ed3391e025a8e5
+      nvidia-tdp-limit = {
+        description = "Break NVIDIA's kneecaps";
+
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStartPre = "/run/current-system/sw/bin/nvidia-smi -pm 1";
+          ExecStart = "/run/current-system/sw/bin/nvidia-smi -pl 200";
+        };
+      };
+    };
 
      timers = {
       # https://gist.github.com/DavidAce/67bec5675b4a6cef72ed3391e025a8e5
@@ -235,37 +240,9 @@
       /* ''; */
     };
 
-     # TODO: Move this to own NixOS module called fixes
-    minecraft-server = {
-      enable = true;
-      eula = true;
-      declarative = true;
-      package = pkgs'.minecraft-server;
-
-      jvmOpts = ''
-        -Xms4092M
-        -Xmx4092M
-        -XX:+UseG1GC
-        -XX:+CMSIncrementalPacing
-        -XX:+CMSClassUnloadingEnabled
-        -XX:ParallelGCThreads=2
-        -XX:MinHeapFreeRatio=5
-        -XX:MaxHeapFreeRatio=10
-      '';
-
-      serverProperties = {
-        online-mode = false;
-        server-port = 4111;
-        gamemode = "survival";
-        motd = "sekun deez nuts";
-        max-players = 20;
-        difficulty = "hard";
-      };
-    };
-
     tailscale = {
       enable = true;
-      package = pkgs'.tailscale;
+      package = pkgs.tailscale;
     };
 
     # For server mode
@@ -393,7 +370,7 @@
       pavucontrol
 
       # Essential system tools
-      pkgs'.tailscale
+      pkgs.tailscale
       git
       htop
       powertop
