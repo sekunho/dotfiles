@@ -25,6 +25,7 @@
   }:
     let
       system = "x86_64-linux";
+      lib = nixpkgs-stable.lib;
 
       # https://github.com/hlissner/dotfiles/blob/master/flake.nix
       mkPkgs = pkgs: extraOverlays: import pkgs {
@@ -41,13 +42,19 @@
       blog = sekunpkg.packages.${system}.blog;
       agenixPackage = agenix.defaultPackage.${system};
     in {
+      devShells.${system} = {
+        default = pkgs.mkShell {
+          buildInputs = with pkgs; [ nil nixpkgs-fmt ];
+        };
+      };
+
       nixosConfigurations = {
         # TODO: Add usual config for Linode/DO/Hetzner/etc.
 
         # Personal computer
         # `nixos-rebuild switch --flake .#arceus ` or
         # `nixos-rebuild switch --flake .#`
-        arceus = nixpkgs-stable.lib.nixosSystem {
+        arceus = lib.nixosSystem {
           inherit system;
 
           modules = [
@@ -63,7 +70,7 @@
           };
         };
 
-        giratina = nixpkgs-stable.lib.nixosSystem {
+        giratina = lib.nixosSystem {
           inherit system;
 
           modules = [
@@ -78,11 +85,11 @@
           };
         };
 
-        mew = nixpkgs-stable.lib.nixosSystem {
+        mew = lib.nixosSystem {
           inherit system;
 
           modules = [
-            emojiedpkg.nixosModule
+            emojiedpkg.nixosModules.default
             oshismashpkg.nixosModule
             ./hosts/mew/configuration.nix
             agenix.nixosModules.age

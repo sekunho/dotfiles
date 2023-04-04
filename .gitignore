@@ -3,3 +3,4 @@ result
 ni-efi-vars.fd
 .tmp
 config/doom/config.el
+.direnv
