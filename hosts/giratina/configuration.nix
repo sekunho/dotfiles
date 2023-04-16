@@ -7,11 +7,10 @@
   nixpkgs.config.allowUnfree = true;
 
   # TODO: Add secrets for Tailscale
-  /* age = { */
-  /*   secrets = {}; */
-  /*   # TODO: Change user */
-  /*   identityPaths = [ "/home/root/.ssh/id_rsa" ]; */
-  /* }; */
+  age = {
+    secrets = {};
+    identityPaths = [ "/home/root/.ssh/id_giratina_rsa" ];
+  };
 
   users.users.root.openssh.authorizedKeys.keys = [
     "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net"
@@ -113,34 +112,6 @@
   };
 
   services = {
-    # TODO: Move this to own NixOS module called fixes
-    minecraft-server = {
-      enable = true;
-      eula = true;
-      declarative = true;
-      package = pkgs'.minecraft-server;
-
-      jvmOpts = ''
-        -Xms4092M
-        -Xmx4092M
-        -XX:+UseG1GC
-        -XX:+CMSIncrementalPacing
-        -XX:+CMSClassUnloadingEnabled
-        -XX:ParallelGCThreads=2
-        -XX:MinHeapFreeRatio=5
-        -XX:MaxHeapFreeRatio=10
-      '';
-
-      serverProperties = {
-        online-mode = false;
-        server-port = 4111;
-        gamemode = "survival";
-        motd = "sekun deez nuts, now 24/7!";
-        max-players = 20;
-        difficulty = "hard";
-      };
-    };
-
     tailscale = {
       enable = true;
       package = pkgs'.tailscale;
