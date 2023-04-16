@@ -5,7 +5,7 @@
 { config, pkgs, pkgs', agenixPackage, ... }:
 let
   pubKeys = [
-    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCUboqku5i0dRaOoTZab2aAtD6WWL5eCPhBQett0bVYYzWupKywA+f/HKy6TBk+syQ9mJ4tf9uBt1bsrpoYIlxzjpVj/iNU+jPxlQJl02Rmryq8dO0DaTh7gTpwZXx4MVUdbI4eV8CZ2tEBYIpPpuPjs8h7014RQJfImrXXo4DBEOTrYZ+GcPR1ITCJHMwMbv4MC+2Qvas67mEfvDAzhFqNR0srOplyRrzmFsNu2XBSjiZVsKjWsG90F21vf+yXfkFHfVILWCYxMumL+CC6rotlKlReMenuMgWhSGBxz2N2P6KifqgIHSMRfp+aVeTwIQTuUSuPFkO4PjNXkgEQvKakOOb/pSruO7fyMWowbVVONg+m+L+SCdrjC4ulxz5VOSdPtY0ZNS29QlwT6lSlCKcCQ4R0RtY+lWsLGUaPApxjqj4gVTEGDFFEx6NUQnhOZcNLDSKtAzIfxWjhLhsyTOVGxH0qTk9a0wbw/NA22eRx3iKLQ4qpF+tj5ow/6h2tywyTiDeXd9MPrOZazy+X8emwRUXvgW1gb6zMmM80/XDc7h/ojfiK5Wg2mkK/L9AksTJeV/EmX5XTNBY5Rl+anXMyh7MnYf9OEX4Ts3hBtdzJWCaQe793E6q14zmZgXP/N4Lj7YawtpFcHk5sw76KYG8tCy7ppexJVYtUA33HXULJnQ== devops@sekun.net"
+    "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net"
   ];
 in
 {
@@ -17,6 +17,8 @@ in
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
+
+  nixpkgs.config.allowUnfree = true;
 
   age = {
     secrets = {
@@ -39,7 +41,7 @@ in
       checkReversePath = "loose";
       trustedInterfaces = [ "tailscale0" ];
       allowedUDPPorts = [ config.services.tailscale.port ];
-      allowedTCPPorts = [ 22 ];
+      allowedTCPPorts = [ 22 25565 ];
     };
   };
 
@@ -79,6 +81,7 @@ in
     inetutils
     mtr
     sysstat
+    htop
   ];
 
   users.users = {
@@ -105,6 +108,33 @@ in
       enable = true;
       permitRootLogin = "yes";
       passwordAuthentication = false;
+    };
+
+    minecraft-server = {
+      enable = true;
+      eula = true;
+      declarative = true;
+      package = pkgs'.minecraft-server;
+
+      jvmOpts = ''
+        -Xms512M
+        -Xmx3072M
+        -XX:+UseG1GC
+        -XX:+CMSIncrementalPacing
+        -XX:+CMSClassUnloadingEnabled
+        -XX:ParallelGCThreads=2
+        -XX:MinHeapFreeRatio=5
+        -XX:MaxHeapFreeRatio=10
+      '';
+
+      serverProperties = {
+        online-mode = false;
+        server-port = 25565;
+        gamemode = "survival";
+        motd = "sekun deez nuts, now 24/7 and with lower ping!";
+        max-players = 20;
+        difficulty = "hard";
+      };
     };
   };
 
