@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-22.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     emojiedpkg.url = "github:sekunho/emojied";
     oshismashpkg.url = "github:sekunho/oshismash";
     sekunpkg.url = "github:sekunho/sekun.dev";
@@ -21,7 +22,7 @@
     sekunpkg,
     fontpkgs,
     deploy-rs,
-    agenix
+    agenix,
   }:
     let
       system = "x86_64-linux";
@@ -101,6 +102,20 @@
             inherit emojied;
             inherit oshismash;
             inherit blog;
+            inherit agenixPackage;
+          };
+        };
+
+        roserade = lib.nixosSystem {
+          inherit system;
+
+          modules = [
+            ./hosts/roserade/configuration.nix
+            agenix.nixosModules.age
+          ];
+
+          specialArgs = {
+            inherit pkgs';
             inherit agenixPackage;
           };
         };

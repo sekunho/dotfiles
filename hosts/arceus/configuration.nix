@@ -242,7 +242,7 @@
 
     tailscale = {
       enable = true;
-      package = pkgs.tailscale;
+      package = pkgs'.tailscale;
     };
 
     # For server mode
@@ -450,12 +450,12 @@
 
     pathsToLink = [ "/share/nix-direnv" "/libexec" ];
 
-    sessionVariables = rec {
+    sessionVariables = {
       KITTY_CONFIG_DIRECTORY = "/shared/System/dotfiles/config/kitty/";
       KITTY_DISABLE_WAYLAND = "1";
       # MOZ_ENABLE_WAYLAND = "0";
-      PLASMA_USE_QT_SCALING = "1";
-      QT_SCREEN_SCALE_FACTORS="DisplayPort-0=2;DisplayPort-1=2;DisplayPort-2=2;";
+      # PLASMA_USE_QT_SCALING = "1";
+      # QT_SCREEN_SCALE_FACTORS="DisplayPort-0=2;DisplayPort-1=2;DisplayPort-2=2;";
     };
   };
 
@@ -469,6 +469,8 @@
   # started in user sessions.
   # programs.mtr.enable = true;
   programs = {
+    steam.enable = true;
+
     gnupg.agent = {
       enable = true;
       enableSSHSupport = true;

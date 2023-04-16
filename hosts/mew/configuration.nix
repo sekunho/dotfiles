@@ -88,7 +88,7 @@
 
     tailscale = {
       enable = true;
-      package = pkgs.tailscale;
+      package = pkgs'.tailscale;
     };
 
     nginx = {
@@ -102,6 +102,11 @@
 
         server {
           listen 25565;
+          proxy_pass giratina-minecraft;
+        }
+
+        server {
+          listen 25575;
           proxy_pass giratina-minecraft;
         }
       '';
@@ -184,7 +189,7 @@
       enable = true;
       trustedInterfaces = [ "tailscale0" ];
       allowedUDPPorts = [ config.services.tailscale.port ];
-      allowedTCPPorts = [ 22 80 443 25565 ];
+      allowedTCPPorts = [ 22 80 443 25565 25575 ];
       checkReversePath = "loose";
     };
   };
