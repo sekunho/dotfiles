@@ -43,14 +43,14 @@
   ];
 
   # List services that you want to enable:
-  services = {};
-  systemd = {};
-  networking = {};
+  services = { };
+  systemd = { };
+  networking = { };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment = {
-    systemPackages = with pkgs; [];
+    systemPackages = with pkgs; [ ];
 
     loginShellInit = ''
       export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"

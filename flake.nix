@@ -4,25 +4,33 @@
   inputs = {
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-22.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-test.url = "github:NixOS/nixpkgs";
 
     emojiedpkg.url = "github:sekunho/emojied";
     oshismashpkg.url = "github:sekunho/oshismash";
     sekunpkg.url = "github:sekunho/sekun.dev";
-    fontpkgs.url = "git+ssh://git@github.com/sekunho/fonts";
-    deploy-rs.url = "github:serokell/deploy-rs";
     agenix.url = "github:ryantm/agenix";
+
+    # Private flakes
+    fontpkgs.url = "git+ssh://git@github.com/sekunho/fonts";
+
+    dotfiles-private = {
+      url = "git+ssh://git@github.com/sekunho/dotfiles-private";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
   };
 
   outputs = {
     self,
     nixpkgs-stable,
     nixpkgs-unstable,
+    nixpkgs-test,
     emojiedpkg,
     oshismashpkg,
     sekunpkg,
-    fontpkgs,
-    deploy-rs,
     agenix,
+    fontpkgs,
+    dotfiles-private,
   }:
     let
       system = "x86_64-linux";
@@ -35,13 +43,29 @@
         overlays = extraOverlays;
       };
 
-      pkgs = mkPkgs nixpkgs-stable [];
+      pkgsOverlay = final: prev: {
+        agenix = agenix.defaultPackage.${system};
+
+        papermc = import ./packages/papermc.nix {
+          inherit lib;
+          inherit (pkgs) stdenv fetchurl bash;
+          jre = pkgs.jre_headless;
+        };
+      };
+
+      pkgs = mkPkgs nixpkgs-stable [ pkgsOverlay ];
+      pkgs-test = mkPkgs nixpkgs-test [];
       pkgs' = mkPkgs nixpkgs-unstable [];
       fonts = fontpkgs.packages.${system};
       emojied = emojiedpkg.packages.${system}.emojied;
       oshismash = oshismashpkg.packages.${system}.oshismash;
       blog = sekunpkg.packages.${system}.blog;
       agenixPackage = agenix.defaultPackage.${system};
+      nix = pkgs.nixVersions.nix_2_13;
+
+      publicKeys = {
+        arceus.sekun = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net";
+      };
     in {
       devShells.${system} = {
         default = pkgs.mkShell {
@@ -59,15 +83,18 @@
           inherit system;
 
           modules = [
-            ./hosts/arceus/configuration.nix
             agenix.nixosModules.age
+
+            ./hosts/arceus/configuration.nix
+            ./config/nix.nix
           ];
 
           specialArgs = {
-            inherit pkgs;
             inherit pkgs';
+            inherit pkgs-test;
             inherit fonts;
             inherit agenixPackage;
+            inherit nix;
           };
         };
 
@@ -75,8 +102,11 @@
           inherit system;
 
           modules = [
-            ./hosts/giratina/configuration.nix
             agenix.nixosModules.age
+
+            ./config/nix.nix
+            ./hosts/giratina/configuration.nix
+            ./services/tailscale.nix
           ];
 
           specialArgs = {
@@ -92,17 +122,23 @@
           modules = [
             emojiedpkg.nixosModules.default
             oshismashpkg.nixosModule
-            ./hosts/mew/configuration.nix
             agenix.nixosModules.age
+
+            ./config/nix.nix
+            ./hosts/mew/configuration.nix
+            ./services/fail2ban.nix
+            ./services/tailscale.nix
           ];
 
           specialArgs = {
+            inherit (pkgs) tailscale jq;
             inherit pkgs;
             inherit pkgs';
             inherit emojied;
             inherit oshismash;
             inherit blog;
-            inherit agenixPackage;
+            inherit nix;
+            agenix = agenixPackage;
           };
         };
 
@@ -110,13 +146,38 @@
           inherit system;
 
           modules = [
+            ./config/nix.nix
             ./hosts/roserade/configuration.nix
+            ./services/fail2ban.nix
+            ./services/tailscale.nix
+
             agenix.nixosModules.age
           ];
 
           specialArgs = {
-            inherit pkgs';
-            inherit agenixPackage;
+            inherit (pkgs) tailscale jq;
+            inherit pkgs;
+            inherit nix;
+            inherit publicKeys;
+          };
+        };
+
+        lucario = lib.nixosSystem {
+          inherit system;
+
+          modules = [
+            dotfiles-private.nixosModules.lucario
+            agenix.nixosModules.age
+            ./services/fail2ban.nix
+            ./services/tailscale.nix
+            ./config/nix.nix
+          ];
+
+          specialArgs = {
+            inherit (pkgs) tailscale jq;
+            inherit pkgs;
+            inherit publicKeys;
+            inherit nix;
           };
         };
       };
