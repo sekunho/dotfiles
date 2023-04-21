@@ -37,7 +37,7 @@
       system = "x86_64-linux";
       lib = nixpkgs-stable.lib;
 
-      # https://github.com/hlissner/dotfiles/blob/master/flake.nix
+      # Thank you https://github.com/hlissner/dotfiles/blob/master/flake.nix
       mkPkgs = pkgs: extraOverlays: import pkgs {
         inherit system;
         config.allowUnfree = true;
@@ -52,15 +52,15 @@
           inherit (pkgs) stdenv fetchurl bash;
           jre = pkgs.jre_headless;
         };
+
+        myfonts = fontpkgs.packages.${system};
+        emojied = emojiedpkg.packages.${system}.emojied;
+        oshismash = oshismashpkg.packages.${system}.oshismash;
+        blog = sekunpkg.packages.${system}.blog;
       };
 
       pkgs = mkPkgs nixpkgs-stable [ pkgsOverlay ];
       pkgs' = mkPkgs nixpkgs-unstable [];
-      fonts = fontpkgs.packages.${system};
-      emojied = emojiedpkg.packages.${system}.emojied;
-      oshismash = oshismashpkg.packages.${system}.oshismash;
-      blog = sekunpkg.packages.${system}.blog;
-      agenixPackage = agenix.defaultPackage.${system};
       nix = pkgs.nixVersions.nix_2_13;
 
       publicKeys = {
@@ -74,11 +74,9 @@
       };
 
       nixosConfigurations = {
-        # TODO: Add usual config for Linode/DO/Hetzner/etc.
+       # TODO: Move these to `hosts`, and move the existing modules to their
+       # own `modules` folder. e.g `modules/lucario/`
 
-        # Personal computer
-        # `nixos-rebuild switch --flake .#arceus ` or
-        # `nixos-rebuild switch --flake .#`
         arceus = lib.nixosSystem {
           inherit system;
 
@@ -92,27 +90,7 @@
           specialArgs = {
             inherit pkgs;
             inherit pkgs';
-            inherit fonts;
-            inherit agenixPackage;
             inherit nix;
-          };
-        };
-
-        giratina = lib.nixosSystem {
-          inherit system;
-
-          modules = [
-            agenix.nixosModules.age
-
-            ./config/nix.nix
-            ./hosts/giratina/configuration.nix
-            ./services/tailscale.nix
-          ];
-
-          specialArgs = {
-            inherit pkgs;
-            inherit pkgs';
-            inherit agenixPackage;
           };
         };
 
@@ -131,14 +109,11 @@
           ];
 
           specialArgs = {
-            inherit (pkgs) tailscale jq;
+            inherit (pkgs) tailscale jq emojied oshismash blog;
             inherit pkgs;
             inherit pkgs';
-            inherit emojied;
-            inherit oshismash;
-            inherit blog;
             inherit nix;
-            agenix = agenixPackage;
+            inherit publicKeys;
           };
         };
 

@@ -4,6 +4,9 @@
     ./hardware-configuration.nix
   ];
 
+
+  # TODO: Split to nixos modules
+
   nixpkgs.config.allowUnfree = true;
 
   networking = {
@@ -42,11 +45,6 @@
     hardwareClockInLocalTime = true;
   };
 
-  # The global useDHCP flag is deprecated, therefore explicitly set to false here.
-  # Per-interface useDHCP will be mandatory in the future, so this generated config
-  # replicates the default behaviour.
-
-  # Should look into how to split to modules and all that.
   programs = {
     bash = {
       interactiveShellInit = ''
@@ -434,7 +432,7 @@
   fonts.fonts = with pkgs; [
     (nerdfonts.override { fonts = [ "JetBrainsMono" "Iosevka" ]; })
 
-    fonts.berkeley-mono-1009-ligatures
+    myfonts.berkeley-mono-1009-ligatures
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -560,7 +558,6 @@
     sudo.enable = false;
   };
 
-  # Open ports in the firewall.
   networking.firewall = {
     enable = true;
 
@@ -571,16 +568,6 @@
     allowedUDPPorts = [ config.services.tailscale.port ];
     allowedTCPPorts = [ 22 ];
   };
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.11"; # Did you read the comment?
+  system.stateVersion = "22.11";
 }
