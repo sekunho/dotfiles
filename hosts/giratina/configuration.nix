@@ -8,7 +8,7 @@
 
   # TODO: Add secrets for Tailscale
   age = {
-    secrets = {};
+    secrets = { };
     identityPaths = [ "/home/root/.ssh/id_giratina_rsa" ];
   };
 
@@ -21,36 +21,6 @@
     hostId = "7c48531f";
     networkmanager.enable = true;
     useDHCP = false;
-  };
-
-  nix = {
-    package = pkgs.nixVersions.nix_2_13;
-
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 14d";
-    };
-
-    extraOptions = ''
-      experimental-features = nix-command flakes
-      keep-outputs = true
-      keep-derivations = true
-    '';
-
-    # Binary Cache for Haskell.nix
-    settings.trusted-public-keys = [
-      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-      "iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk="
-    ];
-
-    settings.substituters = [
-      "https://cache.iog.io"
-      "https://iohk.cachix.org"
-      "https://nix-community.cachix.org"
-      "https://cache.zw3rk.com"
-    ];
   };
 
   # Use the systemd-boot EFI boot loader.
@@ -80,43 +50,7 @@
     keyMap = "us";
   };
 
-  systemd = {
-    services = {
-      # FIXME: https://github.com/NixOS/nixpkgs/issues/180175
-      NetworkManager-wait-online.enable = false;
-
-      tailscale-autoconnect = {
-        description = "Automatic connect to Tailscale";
-
-        after = [ "network-pre.target" "tailscale.service" ];
-        wants = [ "network-pre.target" "tailscale.service" ];
-        wantedBy = [ "multi-user.target" ];
-
-        serviceConfig.Type = "oneshot";
-
-        script = with pkgs'; ''
-          sleep 2
-
-          status="$(${tailscale}/bin/tailscale status -json | ${jq}/bin/jq -r .BackendState)"
-
-          if [ $status = "Running" ]; then
-            exit 0
-          fi
-
-          tailscale_key=$(cat ${config.age.secrets.tailscaleKey.path})
-
-          ${tailscale}/bin/tailscale up -authkey $tailscale_key
-          '';
-      };
-    };
-  };
-
   services = {
-    tailscale = {
-      enable = true;
-      package = pkgs'.tailscale;
-    };
-
     # Enable the OpenSSH daemon.
     openssh.enable = true;
   };

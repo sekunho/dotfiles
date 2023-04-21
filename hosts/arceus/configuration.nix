@@ -1,4 +1,4 @@
-{ lib, config, pkgs, pkgs', fonts, agenixPackage, ... }: {
+{ lib, config, pkgs, pkgs', pkgs-test, fonts, agenixPackage, ... }: {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -6,46 +6,11 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  age = {
-    secrets = {};
-    identityPaths = [ "/home/sekun/.ssh/id_rsa" ];
-  };
-
   networking = {
     hostName = "arceus";
     hostId = "7c48531f";
     networkmanager.enable = true;
     useDHCP = false;
-  };
-
-  nix = {
-    package = pkgs.nixVersions.nix_2_13;
-
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 14d";
-    };
-
-    extraOptions = ''
-      experimental-features = nix-command flakes
-      keep-outputs = true
-      keep-derivations = true
-    '';
-
-    # Binary Cache for Haskell.nix
-    settings.trusted-public-keys = [
-      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-      "iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk="
-    ];
-
-    settings.substituters = [
-      "https://cache.iog.io"
-      "https://iohk.cachix.org"
-      "https://nix-community.cachix.org"
-      "https://cache.zw3rk.com"
-    ];
   };
 
   # Use the systemd-boot EFI boot loader.
@@ -138,7 +103,7 @@
       /*  ''; */
       /* }; */
 
-       # FIXME: https://github.com/NixOS/nixpkgs/issues/180175
+      # FIXME: https://github.com/NixOS/nixpkgs/issues/180175
       NetworkManager-wait-online.enable = false;
 
 
@@ -154,13 +119,13 @@
       };
     };
 
-     timers = {
+    timers = {
       # https://gist.github.com/DavidAce/67bec5675b4a6cef72ed3391e025a8e5
-       nvidia-tdp-limit = {
-         wantedBy = [ "timers.target" ];
-         timerConfig.OnBootSec = 5;
-       };
-     };
+      nvidia-tdp-limit = {
+        wantedBy = [ "timers.target" ];
+        timerConfig.OnBootSec = 5;
+      };
+    };
   };
 
   services = {
@@ -364,6 +329,13 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment = {
+    sessionVariables.GST_PLUGIN_SYSTEM_PATH_1_0 = lib.makeSearchPathOutput "lib" "lib/gstreamer-1.0" (with pkgs.gst_all_1; [
+      gst-plugins-good
+      gst-plugins-bad
+      gst-plugins-ugly
+      gst-libav
+    ]);
+
     systemPackages = with pkgs; [
       lxappearance
       nitrogen
