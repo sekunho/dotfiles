@@ -1,4 +1,4 @@
-{ modulesPath, lib, config, pkgs, pkgs', blog, agenix, ... }: {
+{ modulesPath, lib, config, pkgs, pkgs', blog, publicKeys, ... }: {
   imports = lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix ++ [
     (modulesPath + "/virtualisation/digital-ocean-config.nix")
   ];
@@ -28,9 +28,7 @@
     keyMap = "us";
   };
 
-  users.users.root.openssh.authorizedKeys.keys = [
-    "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net"
-  ];
+  users.users.root.openssh.authorizedKeys.keys = [ publicKeys.arceus.sekun ];
 
   # List services that you want to enable:
   services = {
@@ -112,7 +110,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment = {
-    systemPackages = [
+    systemPackages = with pkgs; [
       agenix
     ];
 
