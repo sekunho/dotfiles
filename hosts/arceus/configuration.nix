@@ -127,24 +127,6 @@
   };
 
   services = {
-    picom = {
-      enable = false;
-
-      settings = {
-        inactive-opacity = 0.90;
-        active-opacity = 0.97;
-        frame-opacity = 0.97;
-
-        blur = {
-          method = "kawase";
-          strength = 9;
-          background = false;
-          background-frame = false;
-          background-fixed = false;
-        };
-      };
-    };
-
     dbus.enable = true;
 
     xserver = {
