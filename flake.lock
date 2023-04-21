@@ -144,7 +144,9 @@
     },
     "fontpkgs": {
       "inputs": {
-        "nixpkgs": "nixpkgs_6"
+        "nixpkgs": [
+          "nixpkgs-stable"
+        ]
       },
       "locked": {
         "lastModified": 1675183978,
@@ -241,7 +243,7 @@
     },
     "naersk_2": {
       "inputs": {
-        "nixpkgs": "nixpkgs_7"
+        "nixpkgs": "nixpkgs_6"
       },
       "locked": {
         "lastModified": 1662220400,
@@ -378,21 +380,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-test": {
-      "locked": {
-        "lastModified": 1681672980,
-        "narHash": "sha256-+mXhfgwXQfaciYGbGh9Ek0fVmidKKHIw0dgdED2vXkc=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "40bbc9ae53d891477fce3529ad29c82ac51e49e5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-unstable": {
       "locked": {
         "lastModified": 1681557730,
@@ -473,20 +460,6 @@
     },
     "nixpkgs_6": {
       "locked": {
-        "lastModified": 1667055375,
-        "narHash": "sha256-xfSTHYxuKRiqF4dcuAFdti1OUvrC2lHpQqCHWUK5/JA=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "7f9be6a505a31f88499c5d20d11f98accf5ae6ba",
-        "type": "github"
-      },
-      "original": {
-        "id": "nixpkgs",
-        "type": "indirect"
-      }
-    },
-    "nixpkgs_7": {
-      "locked": {
         "lastModified": 1666753130,
         "narHash": "sha256-Wff1dGPFSneXJLI2c0kkdWTgxnQ416KE6X4KnFkgPYQ=",
         "owner": "NixOS",
@@ -499,7 +472,7 @@
         "type": "indirect"
       }
     },
-    "nixpkgs_8": {
+    "nixpkgs_7": {
       "locked": {
         "lastModified": 1651024496,
         "narHash": "sha256-uKSrrw/neSkxX6TXPSaMyfu7iKzFrK7F6HOt6vQefGY=",
@@ -515,7 +488,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_9": {
+    "nixpkgs_8": {
       "locked": {
         "lastModified": 1667129554,
         "narHash": "sha256-lQfqOqnNswX8ZTvujdqjo/FroRzopKS+6GQOs6Suwa8=",
@@ -534,7 +507,7 @@
       "inputs": {
         "naersk": "naersk_2",
         "nixos-unstable": "nixos-unstable",
-        "nixpkgs": "nixpkgs_8"
+        "nixpkgs": "nixpkgs_7"
       },
       "locked": {
         "lastModified": 1666799236,
@@ -609,7 +582,6 @@
         "emojiedpkg": "emojiedpkg",
         "fontpkgs": "fontpkgs",
         "nixpkgs-stable": "nixpkgs-stable_3",
-        "nixpkgs-test": "nixpkgs-test",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "oshismashpkg": "oshismashpkg",
         "sekunpkg": "sekunpkg"
@@ -617,7 +589,7 @@
     },
     "sekunpkg": {
       "inputs": {
-        "nixpkgs": "nixpkgs_9"
+        "nixpkgs": "nixpkgs_8"
       },
       "locked": {
         "lastModified": 1667135367,

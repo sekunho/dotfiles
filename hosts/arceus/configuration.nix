@@ -1,4 +1,4 @@
-{ lib, config, pkgs, pkgs', pkgs-test, fonts, agenixPackage, ... }: {
+{ lib, config, pkgs, pkgs', fonts, ... }: {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -351,7 +351,7 @@
       xorg.xeyes
       vulkan-tools
       lshw
-      agenixPackage
+      agenix
       tree
       rclone # Encrypt files and make a remote backup
       glxinfo # View GPU-related information

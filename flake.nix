@@ -4,7 +4,6 @@
   inputs = {
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-22.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-test.url = "github:NixOS/nixpkgs";
 
     emojiedpkg.url = "github:sekunho/emojied";
     oshismashpkg.url = "github:sekunho/oshismash";
@@ -12,7 +11,10 @@
     agenix.url = "github:ryantm/agenix";
 
     # Private flakes
-    fontpkgs.url = "git+ssh://git@github.com/sekunho/fonts";
+    fontpkgs = {
+      url = "git+ssh://git@github.com/sekunho/fonts";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
 
     dotfiles-private = {
       url = "git+ssh://git@github.com/sekunho/dotfiles-private";
@@ -24,7 +26,6 @@
     self,
     nixpkgs-stable,
     nixpkgs-unstable,
-    nixpkgs-test,
     emojiedpkg,
     oshismashpkg,
     sekunpkg,
@@ -54,7 +55,6 @@
       };
 
       pkgs = mkPkgs nixpkgs-stable [ pkgsOverlay ];
-      pkgs-test = mkPkgs nixpkgs-test [];
       pkgs' = mkPkgs nixpkgs-unstable [];
       fonts = fontpkgs.packages.${system};
       emojied = emojiedpkg.packages.${system}.emojied;
@@ -90,8 +90,8 @@
           ];
 
           specialArgs = {
+            inherit pkgs;
             inherit pkgs';
-            inherit pkgs-test;
             inherit fonts;
             inherit agenixPackage;
             inherit nix;
