@@ -63,6 +63,18 @@
       apiKeyFile = config.age.secrets.longview_key.path;
     };
 
+    # NOTE: Cause Linode will complain about the host's time being slow
+    ntp = {
+      enable = true;
+
+      servers = [
+        "0.jp.pool.ntp.org"
+        "1.jp.pool.ntp.org"
+        "2.jp.pool.ntp.org"
+        "3.jp.pool.ntp.org"
+      ];
+    };
+
     openssh = {
       enable = true;
       permitRootLogin = "yes";
