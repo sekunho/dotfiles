@@ -29,7 +29,7 @@
       checkReversePath = "loose";
       trustedInterfaces = [ "tailscale0" ];
       allowedUDPPorts = [ config.services.tailscale.port ];
-      allowedTCPPorts = [ 22 25565 ];
+      allowedTCPPorts = [ 22 ];
     };
   };
 
@@ -116,7 +116,7 @@
         online-mode = false;
         server-port = 25565;
         gamemode = "survival";
-        motd = "sekun deez nuts, now 24/7 and with lower ping!";
+        motd = "sekun deez nuts. now 24/7, with lower ping, and private!";
         max-players = 20;
         difficulty = "hard";
         simulation-distance = 4;

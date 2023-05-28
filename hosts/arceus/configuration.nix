@@ -8,6 +8,7 @@
   # TODO: Split to nixos modules
 
   nixpkgs.config.allowUnfree = true;
+  nix.settings.auto-optimise-store = true;
 
   networking = {
     hostName = "arceus";
@@ -60,6 +61,7 @@
 
       interactiveShellInit = ''
         direnv hook fish | source
+        export PATH="$HOME/.cargo/bin:$PATH"
       '';
     };
   };
@@ -321,8 +323,15 @@
       nitrogen
       pavucontrol
 
+      linuxPackages_6_1.perf
+      perf-tools
+
+      wine
+      winetricks
+      wineWowPackages.stable
+
       # Essential system tools
-      pkgs.tailscale
+      tailscale
       git
       htop
       powertop
@@ -368,6 +377,7 @@
       pkgs'.nix-direnv # nix integration for direnv
       asciinema
       wireguard-tools
+      pkgs'.erdtree
 
       # Database
       sqlitebrowser
@@ -391,6 +401,7 @@
 
       # Customization
       gnome.gnome-tweaks
+      gnome-browser-connector
 
       # Browsers
       firefox
