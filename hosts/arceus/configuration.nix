@@ -217,7 +217,7 @@
         packages = with pkgs; [
           slack
           krita
-          .insomnia
+          insomnia
           awscli2
           obs-studio
           obsidian
@@ -329,6 +329,7 @@
     sessionVariables = {
       KITTY_CONFIG_DIRECTORY = "/shared/System/dotfiles/config/kitty/";
       KITTY_DISABLE_WAYLAND = "1";
+      SSH_ASKPASS_REQUIRE="prefer";
       # MOZ_ENABLE_WAYLAND = "0";
       # PLASMA_USE_QT_SCALING = "1";
       # QT_SCREEN_SCALE_FACTORS="DisplayPort-0=2;DisplayPort-1=2;DisplayPort-2=2;";
