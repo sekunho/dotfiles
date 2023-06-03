@@ -1,4 +1,4 @@
-{ lib, config, pkgs, pkgs', fonts, ... }: {
+{ lib, config, pkgs, pkgs', ... }: {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -73,38 +73,9 @@
   };
 
   systemd = {
-    user.services = {
-      /* nitrogen = { */
-      /*   description = "Sets wallpaper"; */
-      /*   wantedBy = [ "graphical-session.target" ]; */
-      /*   partOf = [ "graphical-session.target" ]; */
-      /*   script = "${pkgs.nitrogen}/bin/nitrogen --set-scaled /home/sekun/Pictures/1244598.jpg"; */
-      /*   serviceConfig.Type = "exec"; */
-      /* }; */
-    };
-
     services = {
-      # Mouse lags sometimes with this and it's so damn annoying.
-      /* aorus-b550i-suspend-fix = { */
-      /*  description = "Fixes the 'wakes up immediately after suspend' issue"; */
-      /*  wantedBy = [ "multi-user.target" ]; */
-      /*  after = [ "multi-user.target" ]; */
-      /*  serviceConfig.Type =  "oneshot"; */
-
-      /*  script = '' */
-      /*    # TODO: Remove this when Gigabyte fixes this via firmware update */
-      /*    if ${pkgs.ripgrep}/bin/rg --quiet '\bGPP0\b.*\benabled\b' /proc/acpi/wakeup; then */
-      /*      echo GPP0 > /proc/acpi/wakeup */
-      /*    fi */
-
-      /*    # TODO: Find a better way for the stupid mouse to not wake up from suspend */
-      /*    echo disabled > /sys/bus/usb/devices/3-4/power/wakeup */
-      /*  ''; */
-      /* }; */
-
       # FIXME: https://github.com/NixOS/nixpkgs/issues/180175
       NetworkManager-wait-online.enable = false;
-
 
       # https://gist.github.com/DavidAce/67bec5675b4a6cef72ed3391e025a8e5
       nvidia-tdp-limit = {
@@ -137,53 +108,15 @@
 
       # WM/DE
 
-      ## i3
-      /* desktopManager = { xterm.enable = false; }; */
-      /* displayManager = { defaultSession = "none+i3"; }; */
+      ## KDE
+      displayManager.sddm.enable = true;
+      desktopManager.plasma5.enable = true;
 
-      /* windowManager.i3 = { */
-      /*   enable = true; */
-      /*   package = pkgs'.i3; */
-
-      /*   extraPackages = with pkgs; [ */
-      /*     dmenu */
-      /*     i3status */
-      /*     i3lock */
-      /*     i3blocks */
-      /*   ]; */
-      /* }; */
-
-      ## Gnome
-      displayManager.gdm = {
-        enable = true;
-      };
-      desktopManager.gnome.enable = true;
-
-      /* monitorSection = '' */
-      /*   VendorName     "Unknown" */
-      /*   ModelName      "Huawei Technologies Co., Ltd MateView" */
-      /*   HorizSync       45.0 - 180.0 */
-      /*   VertRefresh     48.0 - 75.0 */
-      /* ''; */
-
-      /* deviceSection = '' */
-      /*   VendorName     "NVIDIA Corporation" */
-      /*   BoardName      "NVIDIA GeForce RTX 3090 Ti" */
-      /*   Option         "TripleBuffer" "On" */
-      /* ''; */
-
-      /* screenSection = '' */
-      /*   DefaultDepth    24 */
-      /*   Option         "Stereo" "0" */
-      /*   Option         "nvidiaXineramaInfoOrder" "DFP-1" */
-      /*   Option         "metamodes" "3840x2560_60 +0+0 {ForceCompositionPipeline=On}" */
-      /*   Option         "SLI" "Off" */
-      /*   Option         "MultiGPU" "Off" */
-      /*   Option         "BaseMosaic" "off" */
-      /*   SubSection     "Display" */
-      /*       Depth       24 */
-      /*   EndSubSection */
-      /* ''; */
+      deviceSection = ''
+        VendorName     "NVIDIA Corporation"
+        BoardName      "NVIDIA GeForce RTX 3090 Ti"
+        Option         "TripleBuffer" "On"
+      '';
     };
 
     tailscale = {
@@ -236,32 +169,25 @@
         ];
 
         packages = with pkgs; [
-          xournalpp
+          # Social
           signal-desktop
-          pkgs'.discord
+          discord
           tdesktop
           element-desktop
-          pkgs'.fractal-next
-          obsidian
-
-          # Video editing
-          libsForQt5.kdenlive
 
           # Streaming
           obs-studio
 
-          hledger
-          hledger-web
-          hledger-ui
-          wiki-tui
+          # Torrent
           transmission-gtk
 
-          mcrcon
-          pkgs'.prismlauncher
+          # Games
+          prismlauncher
 
           # Networking
           # ciscoPacketTracer8
 
+          # Image processing
           imagemagick
           krita
 
@@ -271,8 +197,8 @@
           virt-manager
           virt-viewer
 
-          pkgs'.cloudflared
-          pkgs'.insomnia
+          # Dev tools
+          insomnia
         ];
       };
 
@@ -291,14 +217,13 @@
         packages = with pkgs; [
           slack
           krita
-          pkgs'.insomnia
+          .insomnia
           awscli2
           obs-studio
           obsidian
-          pkgs'.discord
+          discord
 
           _1password-gui
-          pkgs'.cloudflared
           handbrake
         ];
       };
@@ -317,7 +242,6 @@
 
     systemPackages = with pkgs; [
       lxappearance
-      nitrogen
       pavucontrol
 
       linuxPackages_6_1.perf
@@ -341,24 +265,17 @@
       tree
       rclone # Encrypt files and make a remote backup
       glxinfo # View GPU-related information
-      radeontop # Monitor GPU usage for AMD
       chrome-gnome-shell
 
-      # mullvad-vpn
-
       libreoffice
-      linux-wifi-hotspot
 
       pkgs'.docker-compose
 
       # Media
       ffmpeg
-      youtube-dl
       vlc
 
-      # Disks and whatnot
       ventoy-bin
-      gnome.gnome-boxes
 
       # Dev tools
       kitty
@@ -370,11 +287,10 @@
       graphviz # visualize stuff in graphs
       nixfmt # make nix code look pretty and nice
       cloc # how many spaghetti lines of code have I written already?
-      pkgs'.direnv # no more cluttering global namespaces; now with flakes!
-      pkgs'.nix-direnv # nix integration for direnv
+      direnv # no more cluttering global namespaces; now with flakes!
+      nix-direnv # nix integration for direnv
       asciinema
-      wireguard-tools
-      pkgs'.erdtree
+      erdtree
 
       # Database
       sqlitebrowser
@@ -435,6 +351,8 @@
       enable = true;
       enableSSHSupport = true;
     };
+
+    dconf.enable = true;
 
     neovim = {
       enable = true;
@@ -528,6 +446,7 @@
             ${builtins.readFile ../../config/neovim/init.lua}
           EOF
 
+          ${builtins.readFile ../../config/neovim/void.vim}
           ${builtins.readFile ../../config/neovim/init.vim}
         '';
       };
