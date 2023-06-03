@@ -1,8 +1,6 @@
 {
-  description = "Sekun's system(s) lmao lol pee";
-
   inputs = {
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-22.11";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     emojiedpkg.url = "github:sekunho/emojied";

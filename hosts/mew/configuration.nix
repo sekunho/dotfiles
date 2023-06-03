@@ -59,8 +59,10 @@
 
     openssh = {
       enable = true;
-      permitRootLogin = "prohibit-password";
-      passwordAuthentication = false;
+      settings = {
+        PermitRootLogin = "prohibit-password";
+        PasswordAuthentication = false;
+      };
     };
 
     caddy = {
@@ -89,10 +91,6 @@
           root * ${blog}
           file_server
         }
-
-        api.sekun.net {
-          reverse_proxy arceus:53333
-        }
       '';
     };
   };
@@ -119,5 +117,5 @@
     '';
   };
 
-  system.stateVersion = "22.11"; # Did you read the comment?
+  system.stateVersion = "23.05";
 }
