@@ -4,7 +4,6 @@
     ./hardware-configuration.nix
   ];
 
-
   # TODO: Split to nixos modules
 
   nixpkgs.config.allowUnfree = true;
@@ -189,7 +188,7 @@
 
     tailscale = {
       enable = true;
-      package = pkgs'.tailscale;
+      package = pkgs.tailscale;
     };
 
     # For server mode
@@ -251,8 +250,6 @@
           # Streaming
           obs-studio
 
-          davinci-resolve
-
           hledger
           hledger-web
           hledger-ui
@@ -300,7 +297,7 @@
           obsidian
           pkgs'.discord
 
-          pkgs'._1password-gui
+          _1password-gui
           pkgs'.cloudflared
           handbrake
         ];
@@ -562,5 +559,5 @@
     allowedTCPPorts = [ 22 ];
   };
 
-  system.stateVersion = "22.11";
+  system.stateVersion = "23.05";
 }

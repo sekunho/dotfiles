@@ -5,8 +5,6 @@
     ];
 
   boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
-
   nixpkgs.config.allowUnfree = true;
 
   age = {
@@ -77,8 +75,10 @@
 
     openssh = {
       enable = true;
-      permitRootLogin = "yes";
-      passwordAuthentication = false;
+      settings = {
+        PermitRootLogin = "yes";
+        PasswordAuthentication = false;
+      };
     };
 
     minecraft-server = {
@@ -126,5 +126,5 @@
     };
   };
 
-  system.stateVersion = "22.11";
+  system.stateVersion = "23.05";
 }
