@@ -18,7 +18,6 @@ set shiftwidth=2
 " Themes
 set termguicolors
 set background=dark
-colorscheme gruvbox
 
 " I'm tired of dealing with separate yanks/pastes
 set clipboard+=unnamedplus
@@ -80,7 +79,7 @@ tnoremap <esc> <C-\><C-N>
 set list
 set listchars=lead:·,trail:·,tab:>-
 
-let g:airline_theme='base16_gruvbox_dark_medium'
+" let g:airline_theme='base16_gruvbox_dark_medium'
 
 " To hide the statusline
 set noshowmode
@@ -90,4 +89,3 @@ nmap <esc> :noh <CR>
 autocmd BufWritePre * :%s/\s\+$//e
 
 set timeoutlen=500
-
