@@ -444,6 +444,7 @@
           let mapleader = "\<Space>"
 
           lua << EOF
+            ${builtins.readFile ../../config/neovim/lsp.lua}
             ${builtins.readFile ../../config/neovim/init.lua}
           EOF
 

@@ -43,9 +43,12 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.format { async = true }<CR>', opts)
+
+  vim.keymap.set('n', '<space>f', function()
+    vim.lsp.buf.format { async = true }
+  end, opts)
 end
 
 -- Language Server Protocols
@@ -61,6 +64,7 @@ for type, icon in pairs(signs) do
   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
 
+-- TODO: Refactor like rust_analyzer
 require'lspconfig'['hls'].setup {
   filetypes = { 'haskell', 'lhaskell', 'cabal' }
 }
@@ -100,22 +104,12 @@ require'lspconfig'.nil_ls.setup {
   },
 }
 
-require'lspconfig'.rust_analyzer.setup {
-  on_attach = on_attach
-}
-
 -- Making diagnostics prettier
 require("trouble").setup {
   padding = false,
 }
 
 require("fidget").setup{}
-
--- require("null-ls").setup({
---     sources = {
---         require("null-ls").builtins.diagnostics.credo,
---     },
--- })
 
 -- TODO comments
 require("todo-comments").setup {}
@@ -128,7 +122,7 @@ require'nvim-treesitter.configs'.setup {
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
     -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = true,
+    -- additional_vim_regex_highlighting = true,
   },
 }
 
@@ -151,4 +145,4 @@ require("which-key").setup {
   window = { winblend = 1 }
 }
 
-print("Good day, Sek Un.")
+print("Good day, SEKUN.")
