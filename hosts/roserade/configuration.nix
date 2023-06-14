@@ -126,5 +126,34 @@
     };
   };
 
+  # https://wiki.archlinux.org/title/systemd/Timers
+  systemd = {
+    timers = {
+      "restart-minecraft-server" = {
+        wantedBy = [ "timers.target" ];
+
+        timerConfig = {
+          OnCalendar = "weekly";
+          Persistent = true;
+          Unit = "restart-minecraft-server.service";
+        };
+      };
+    };
+
+    services = {
+      "restart-minecraft-server" = {
+        script = ''
+          set -eu
+          systemctl restart minecraft-server.service
+        '';
+
+        serviceConfig = {
+          Type = "oneshot";
+          User = "root";
+        };
+      };
+    };
+  };
+
   system.stateVersion = "23.05";
 }
