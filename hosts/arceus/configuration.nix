@@ -178,8 +178,8 @@
           # Streaming
           obs-studio
 
-          # Torrent
-          transmission-gtk
+          # Torrent (I only torrent legal stuff :D)
+          qbittorrent
 
           # Games
           prismlauncher
@@ -322,6 +322,8 @@
 
       qpdf
       libsForQt5.ksshaskpass
+
+      virt-manager
     ];
 
     pathsToLink = [ "/share/nix-direnv" "/libexec" ];
