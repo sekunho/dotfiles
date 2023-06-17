@@ -192,6 +192,7 @@
           krita
 
           yt-dlp
+          gnome.gnome-disk-utility
 
           # VM stuff
           virt-manager
@@ -276,6 +277,9 @@
       vlc
 
       ventoy-bin
+      ventoy-full
+      woeusb-ng
+      ntfs3g
 
       # Dev tools
       kitty
