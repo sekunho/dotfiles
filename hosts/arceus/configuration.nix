@@ -61,6 +61,7 @@
       interactiveShellInit = ''
         direnv hook fish | source
         export PATH="$HOME/.cargo/bin:$PATH"
+        eval (ssh-agent -c)
       '';
     };
   };
