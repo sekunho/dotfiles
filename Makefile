@@ -27,3 +27,16 @@ switch-lucario:
 switch-roserade:
 	@echo "building and applying roserade configuration"
 	doas nixos-rebuild switch --flake .#roserade --fast --target-host root@roserade
+
+.PHONY: switch-gnawex-staging
+switch-gnawex-staging:
+	# NOTE: Need to use torterra DNS to resolve `gx-staging-x.sekun.net`
+	@echo "building and applying gnawex-staging configuration"
+	doas nixos-rebuild switch --flake .#gnawex-staging --fast --target-host root@gx-staging-1.sekun.net
+
+.PHONY: switch-all
+switch-all:
+	make switch-arceus
+	make switch-mew
+	make switch-lucario
+	make switch-roserade

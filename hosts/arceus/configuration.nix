@@ -243,6 +243,7 @@
     ]);
 
     systemPackages = with pkgs; [
+      pkgs'.thunderbird
       lxappearance
       pavucontrol
 
