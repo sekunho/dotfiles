@@ -2,6 +2,7 @@
   inputs = {
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixos-22-11.url = "github:NixOS/nixpkgs/nixos-22.11";
 
     emojiedpkg.url = "github:sekunho/emojied";
     oshismashpkg.url = "github:sekunho/oshismash";
@@ -20,17 +21,19 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs-stable,
-    nixpkgs-unstable,
-    emojiedpkg,
-    oshismashpkg,
-    sekunpkg,
-    agenix,
-    fontpkgs,
-    dotfiles-private,
-  }:
+  outputs =
+    { self
+    , nixpkgs-stable
+    , nixpkgs-unstable
+    , nixos-22-11
+    , emojiedpkg
+    , oshismashpkg
+    , sekunpkg
+    , agenix
+    , fontpkgs
+    , dotfiles-private
+    ,
+    }:
     let
       system = "x86_64-linux";
       lib = nixpkgs-stable.lib;
@@ -58,13 +61,15 @@
       };
 
       pkgs = mkPkgs nixpkgs-stable [ pkgsOverlay ];
-      pkgs' = mkPkgs nixpkgs-unstable [];
+      pkgs' = mkPkgs nixpkgs-unstable [ ];
+      pkgs-22-11 = mkPkgs nixos-22-11 [ ];
       nix = pkgs.nixVersions.nix_2_13;
 
       publicKeys = {
         arceus.sekun = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net";
       };
-    in {
+    in
+    {
       devShells.${system} = {
         default = pkgs.mkShell {
           buildInputs = with pkgs; [ nil nixpkgs-fmt gnumake ];
@@ -72,8 +77,8 @@
       };
 
       nixosConfigurations = {
-       # TODO: Move these to `hosts`, and move the existing modules to their
-       # own `modules` folder. e.g `modules/lucario/`
+        # TODO: Move these to `hosts`, and move the existing modules to their
+        # own `modules` folder. e.g `modules/lucario/`
 
         arceus = lib.nixosSystem {
           inherit system;
@@ -107,7 +112,8 @@
           ];
 
           specialArgs = {
-            inherit (pkgs) tailscale jq emojied oshismash blog;
+            inherit (pkgs) jq emojied oshismash blog;
+            inherit (pkgs') tailscale;
             inherit pkgs;
             inherit pkgs';
             inherit nix;
@@ -128,10 +134,25 @@
           ];
 
           specialArgs = {
-            inherit (pkgs) tailscale jq;
+            inherit (pkgs) jq;
+            inherit (pkgs') tailscale;
             inherit pkgs;
             inherit nix;
             inherit publicKeys;
+          };
+        };
+
+        gnawex-staging = lib.nixosSystem {
+          inherit system;
+
+          modules = [
+            ./hosts/gnawex/staging/configuration.nix
+            ./config/nix.nix
+          ];
+
+          specialArgs = {
+            inherit pkgs;
+            inherit nix;
           };
         };
 
@@ -147,7 +168,8 @@
           ];
 
           specialArgs = {
-            inherit (pkgs) tailscale jq;
+            inherit (pkgs) jq;
+            inherit (pkgs') tailscale;
             inherit pkgs;
             inherit publicKeys;
             inherit nix;
