@@ -38,6 +38,7 @@
   virtualisation = {
     libvirtd.enable = true;
     docker.enable = true;
+    docker.package = pkgs'.docker;
   };
 
   time = {
@@ -337,7 +338,7 @@
     sessionVariables = {
       KITTY_CONFIG_DIRECTORY = "/shared/System/dotfiles/config/kitty/";
       KITTY_DISABLE_WAYLAND = "1";
-      SSH_ASKPASS_REQUIRE="prefer";
+      SSH_ASKPASS_REQUIRE = "prefer";
       # MOZ_ENABLE_WAYLAND = "0";
       # PLASMA_USE_QT_SCALING = "1";
       # QT_SCREEN_SCALE_FACTORS="DisplayPort-0=2;DisplayPort-1=2;DisplayPort-2=2;";

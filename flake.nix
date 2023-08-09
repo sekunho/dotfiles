@@ -148,11 +148,13 @@
           modules = [
             ./hosts/gnawex/staging/configuration.nix
             ./config/nix.nix
+            ./services/fail2ban.nix
           ];
 
           specialArgs = {
             inherit pkgs;
             inherit nix;
+            inherit publicKeys;
           };
         };
 
