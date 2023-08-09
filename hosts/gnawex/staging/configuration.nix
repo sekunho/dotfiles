@@ -1,4 +1,4 @@
-{ modulesPath, pkgs, ... }:
+{ modulesPath, pkgs, publicKeys, ... }:
 {
   imports = [
     (modulesPath + "/virtualisation/google-compute-image.nix")
@@ -7,17 +7,27 @@
   security.sudo.wheelNeedsPassword = false;
   services.nscd.enableNsncd = false;
 
-  users.users.root.openssh.authorizedKeys.keys = [ "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net" ];
+  users.users.root.openssh.authorizedKeys.keys = [ publicKeys.arceus.sekun ];
 
   users.extraUsers.sekun = {
     isNormalUser = true;
     description = "admin user";
     group = "users";
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [ "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net" ];
+    openssh.authorizedKeys.keys = [ publicKeys.arceus.sekun ];
   };
 
   environment.systemPackages = with pkgs; [ htop ];
+
+  networking = {
+    firewall = {
+      enable = true;
+      trustedInterfaces = [];
+      allowedUDPPorts = [];
+      allowedTCPPorts = [ 22 ];
+      checkReversePath = "loose";
+    };
+  };
 
   system.stateVersion = "23.05";
 }
