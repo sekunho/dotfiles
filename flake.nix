@@ -72,7 +72,7 @@
     {
       devShells.${system} = {
         default = pkgs.mkShell {
-          buildInputs = with pkgs; [ nil nixpkgs-fmt gnumake ];
+          buildInputs = with pkgs; [ nil nixpkgs-fmt just fzf ];
         };
       };
 
