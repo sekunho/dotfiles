@@ -284,6 +284,26 @@
         "type": "github"
       }
     },
+    "nix-darwin": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-stable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1696043447,
+        "narHash": "sha256-VbJ1dY5pVH2fX1bS+cT2+4+BYEk4lMHRP0+udu9G6tk=",
+        "owner": "LnL7",
+        "repo": "nix-darwin",
+        "rev": "792c2e01347cb1b2e7ec84a1ef73453ca86537d8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "LnL7",
+        "repo": "nix-darwin",
+        "type": "github"
+      }
+    },
     "nixos-22-11": {
       "locked": {
         "lastModified": 1688392541,
@@ -597,6 +617,7 @@
         "dotfiles-private": "dotfiles-private",
         "emojiedpkg": "emojiedpkg",
         "fontpkgs": "fontpkgs",
+        "nix-darwin": "nix-darwin",
         "nixos-22-11": "nixos-22-11",
         "nixpkgs-stable": "nixpkgs-stable_3",
         "nixpkgs-unstable": "nixpkgs-unstable",

@@ -8,6 +8,11 @@
     oshismashpkg.url = "github:sekunho/oshismash";
     sekunpkg.url = "github:sekunho/sekun.dev";
     agenix.url = "github:ryantm/agenix";
+ 
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
 
     # Private flakes
     fontpkgs = {
@@ -30,6 +35,7 @@
     , oshismashpkg
     , sekunpkg
     , agenix
+    , nix-darwin
     , fontpkgs
     , dotfiles-private
     ,
@@ -75,6 +81,18 @@
           buildInputs = with pkgs; [ nil nixpkgs-fmt just fzf ];
         };
       };
+
+      darwinConfigurations."sekuns-MacBook-Pro" = nix-darwin.lib.darwinSystem {
+        modules = [
+          ./hosts/blaziken/configuration.nix
+        ];
+
+        specialArgs = {
+          inherit self;
+        };
+      };
+
+      darwinPackages = self.darwinConfigurations."sekuns-MacBook-Pro".pkgs;
 
       nixosConfigurations = {
         # TODO: Move these to `hosts`, and move the existing modules to their
