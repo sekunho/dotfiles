@@ -135,7 +135,7 @@
 
     tailscale = {
       enable = true;
-      package = pkgs.tailscale;
+      package = pkgs'.tailscale;
     };
 
     # For server mode
