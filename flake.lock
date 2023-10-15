@@ -46,11 +46,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1691332557,
-        "narHash": "sha256-QXsOcO6I5B7YyvWiz7tbNnGMBxeeyLPAREfbl7IA/VA=",
+        "lastModified": 1685760984,
+        "narHash": "sha256-QyLZM1OmN+vyLfua2b85gGxNNp8yphMqiyUA+FwDEcY=",
         "ref": "refs/heads/main",
-        "rev": "c57e468ffb88394148e0668821a8c2cf1aabcfac",
-        "revCount": 7,
+        "rev": "018db9b52d90f542fe079674f83341c4fb33dd8f",
+        "revCount": 4,
         "type": "git",
         "url": "ssh://git@github.com/sekunho/dotfiles-private"
       },
@@ -142,6 +142,24 @@
         "type": "github"
       }
     },
+    "flake-utils_3": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1694529238,
+        "narHash": "sha256-zsNZZGTGnMOf9YpHKJqMSsa0dXbfmxeoJ7xHlrt+xmY=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "ff7b65b44d01cf9ba6a71320833626af21126384",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "fontpkgs": {
       "inputs": {
         "nixpkgs": [
@@ -204,6 +222,27 @@
       "original": {
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
+        "type": "github"
+      }
+    },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-stable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1695108154,
+        "narHash": "sha256-gSg7UTVtls2yO9lKtP0yb66XBHT1Fx5qZSZbGMpSn2c=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "07682fff75d41f18327a871088d20af2710d4744",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "ref": "release-23.05",
+        "repo": "home-manager",
         "type": "github"
       }
     },
@@ -418,11 +457,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1691654369,
-        "narHash": "sha256-gSILTEx1jRaJjwZxRlnu3ZwMn1FVNk80qlwiCX8kmpo=",
+        "lastModified": 1696193975,
+        "narHash": "sha256-mnQjUcYgp9Guu3RNVAB2Srr1TqKcPpRXmJf4LJk6KRY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ce5e4a6ef2e59d89a971bc434ca8ca222b9c7f5e",
+        "rev": "fdd898f8f79e8d2f99ed2ab6b3751811ef683242",
         "type": "github"
       },
       "original": {
@@ -616,7 +655,9 @@
         "agenix": "agenix",
         "dotfiles-private": "dotfiles-private",
         "emojiedpkg": "emojiedpkg",
+        "flake-utils": "flake-utils_3",
         "fontpkgs": "fontpkgs",
+        "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nixos-22-11": "nixos-22-11",
         "nixpkgs-stable": "nixpkgs-stable_3",
@@ -640,6 +681,21 @@
       "original": {
         "owner": "sekunho",
         "repo": "sekun.dev",
+        "type": "github"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
         "type": "github"
       }
     }
