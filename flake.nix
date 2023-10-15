@@ -8,6 +8,7 @@
     oshismashpkg.url = "github:sekunho/oshismash";
     sekunpkg.url = "github:sekunho/sekun.dev";
     agenix.url = "github:ryantm/agenix";
+    gnawex.url = "github:gnawex/gnawex";
 
     home-manager.url = "github:nix-community/home-manager/release-23.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs-stable";
@@ -40,6 +41,7 @@
     , agenix
     , nix-darwin
     , home-manager
+    , gnawex
     , fontpkgs
     , dotfiles-private
     ,
@@ -60,13 +62,15 @@
       };
 
       pkgsOverlay = system: final: prev: {
-        agenix = agenix.defaultPackage.${system};
-
+        agenix = agenix.packages.${system}.default;
         myfonts = fontpkgs.packages.${system};
         emojied = emojiedpkg.packages.${system}.emojied;
         oshismash = oshismashpkg.packages.${system}.oshismash;
         blog = sekunpkg.packages.${system}.blog;
       };
+
+      pkgs-22-11 = mkPkgs nixos-22-11 [ ];
+      gnawexpkgs = gnawex.packages.${system};
 
       publicKeys = {
         arceus.sekun = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net";
@@ -120,14 +124,12 @@
         };
       };
 
-      darwinPackages = self.darwinConfigurations."blaziken".pkgs;
-
       nixosConfigurations = {
         # TODO: Move these to `hosts`, and move the existing modules to their
         # own `modules` folder. e.g `modules/lucario/`
 
         arceus = lib.nixosSystem {
-          system = "x86_64-linux";
+          system = system.x86_64-linux;
 
           modules = [
             agenix.nixosModules.age
@@ -138,13 +140,13 @@
 
           specialArgs = {
             nix = (nix system.x86_64-linux);
-            pkgs = pkgs "x86_64-linux";
-            pkgs' = pkgs' "x86_64-linux";
+            pkgs = pkgs system.x86_64-linux;
+            pkgs' = pkgs' system.x86_64-linux;
           };
         };
 
         mew = lib.nixosSystem {
-          system = "x86_64-linux";
+          system = system.x86_64-linux;
 
           modules = [
             emojiedpkg.nixosModules.default
@@ -161,14 +163,14 @@
             inherit (pkgs system.x86_64-linux) jq emojied oshismash blog;
             inherit (pkgs' system.x86_64-linux) tailscale;
             inherit publicKeys;
-            pkgs = pkgs "x86_64-linux";
-            pkgs' = pkgs' "x86_64-linux";
+            pkgs = pkgs system.x86_64-linux;
+            pkgs' = pkgs' system.x86_64-linux;
             nix = nix system.x86_64-linux;
           };
         };
 
         roserade = lib.nixosSystem {
-          system = "x86_64-linux";
+          system = system.x86_64-linux;
 
           modules = [
             ./config/nix.nix
@@ -180,32 +182,36 @@
           ];
 
           specialArgs = {
-            inherit (pkgs "x86_64-linux") jq;
-            inherit (pkgs' "x86_64-linux") tailscale;
+            inherit (pkgs system.x86_64-linux) jq;
+            inherit (pkgs' system.x86_64-linux) tailscale;
             inherit publicKeys;
-            pkgs = pkgs "x86_64-linux";
+            pkgs = pkgs system.x86_64-linux;
             nix = nix system.x86_64-linux;
           };
         };
 
         gnawex-staging = lib.nixosSystem {
-          system = "x86_64-linux";
+          system = system.x86_64-linux;
 
           modules = [
+            gnawex.nixosModules.x86_64-linux.default
+            agenix.nixosModules.age
             ./hosts/gnawex/staging/configuration.nix
             ./config/nix.nix
             ./services/fail2ban.nix
           ];
 
           specialArgs = {
-            inherit publicKeys;
-            pkgs = pkgs "x86_64-linux";
+            pkgs = pkgs system.x86_64-linux;
             nix = nix system.x86_64-linux;
+            inherit gnawexpkgs;
+            inherit publicKeys;
+            inherit (gnawexpkgs) gnawex;
           };
         };
 
         lucario = lib.nixosSystem {
-          system = "x86_64-linux";
+          system = system.x86_64-linux;
 
           modules = [
             dotfiles-private.nixosModules.lucario
@@ -216,10 +222,10 @@
           ];
 
           specialArgs = {
-            inherit (pkgs "x86_64-linux") jq;
-            inherit (pkgs' "x86_64-linux") tailscale;
+            inherit (pkgs system.x86_64-linux) jq;
+            inherit (pkgs' system.x86_64-linux) tailscale;
             inherit publicKeys;
-            pkgs = pkgs "x86_64-linux";
+            pkgs = pkgs system.x86_64-linux;
             nix = nix system.x86_64-linux;
           };
         };

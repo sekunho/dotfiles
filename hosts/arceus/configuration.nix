@@ -103,6 +103,18 @@
   services = {
     dbus.enable = true;
 
+    ntp = {
+      enable = true;
+
+      servers = [
+        "0.jp.pool.ntp.org"
+        "1.jp.pool.ntp.org"
+        "2.jp.pool.ntp.org"
+        "3.jp.pool.ntp.org"
+      ];
+    };
+
+
     xserver = {
       enable = true;
       videoDrivers = [ "nvidia" ];
@@ -144,6 +156,7 @@
   hardware = {
     pulseaudio.enable = true;
     opengl.enable = true;
+    bluetooth.enable = true;
 
     # NOTE: nvidia-drm.modeset=1
     nvidia.modesetting.enable = true;
@@ -247,6 +260,8 @@
       pkgs'.thunderbird
       lxappearance
       pavucontrol
+      # libsForQt5.kdeconnect-kde
+      darktable
 
       linuxPackages_6_1.perf
       perf-tools
@@ -356,6 +371,8 @@
   # programs.mtr.enable = true;
   programs = {
     steam.enable = true;
+
+    kdeconnect.enable = true;
 
     gnupg.agent = {
       enable = true;
