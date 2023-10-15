@@ -9,8 +9,6 @@
     sekunpkg.url = "github:sekunho/sekun.dev";
     agenix.url = "github:ryantm/agenix";
 
-    flake-utils.url = "github:numtide/flake-utils";
-
     home-manager.url = "github:nix-community/home-manager/release-23.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs-stable";
 
@@ -40,7 +38,6 @@
     , oshismashpkg
     , sekunpkg
     , agenix
-    , flake-utils
     , nix-darwin
     , home-manager
     , fontpkgs
@@ -48,24 +45,22 @@
     ,
     }:
     let
-      system = "aarch64-darwin";
       lib = nixpkgs-stable.lib;
 
+      system = {
+        x86_64-linux = "x86_64-linux";
+        aarch64-darwin = "aarch64-darwin";
+      };
+
       # Thank you https://github.com/hlissner/dotfiles/blob/master/flake.nix
-      mkPkgs = pkgs: extraOverlays: import pkgs {
+      mkPkgs = system: pkgs: extraOverlays: import pkgs {
         inherit system;
         config.allowUnfree = true;
         overlays = extraOverlays;
       };
 
-      pkgsOverlay = final: prev: {
+      pkgsOverlay = system: final: prev: {
         agenix = agenix.defaultPackage.${system};
-
-        papermc = import ./packages/papermc.nix {
-          inherit lib;
-          inherit (pkgs) stdenv fetchurl bash;
-          jre = pkgs.jre_headless;
-        };
 
         myfonts = fontpkgs.packages.${system};
         emojied = emojiedpkg.packages.${system}.emojied;
@@ -73,20 +68,42 @@
         blog = sekunpkg.packages.${system}.blog;
       };
 
-      pkgs = mkPkgs nixpkgs-stable [ pkgsOverlay ];
-      pkgs' = mkPkgs nixpkgs-unstable [ ];
-      pkgs-22-11 = mkPkgs nixos-22-11 [ ];
-      nix = pkgs.nixVersions.nix_2_13;
-
       publicKeys = {
         arceus.sekun = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net";
         blaziken.sekun = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE07iMNKunyBGdOq61DWKIBQYy77e1sm69lXaFofkmtp software@sekun.net";
       };
+
+      pkgs = system: mkPkgs system nixpkgs-stable [ (pkgsOverlay system) ];
+      pkgs' = system: mkPkgs system nixpkgs-unstable [ ];
+      nix = system: (pkgs' system).nixVersions.nix_2_18;
     in
     {
-      devShells.${system} = {
-        default = pkgs.mkShell {
-          buildInputs = with pkgs; [ nil nixpkgs-fmt just fzf ];
+      packages = {
+        x86_64-linux = { };
+        aarch64-darwin = { };
+      };
+
+      devShells = {
+        x86_64-linux = {
+          default = (pkgs system.x86_64-linux).mkShell {
+            buildInputs = with (pkgs system.x86_64-linux); [
+              nil
+              nixpkgs-fmt
+              just
+              fzf
+            ];
+          };
+        };
+
+        aarch64-darwin = {
+          default = (pkgs system.aarch64-darwin).mkShell {
+            buildInputs = with (pkgs system.aarch64-darwin); [
+              nil
+              nixpkgs-fmt
+              just
+              fzf
+            ];
+          };
         };
       };
 
@@ -98,8 +115,8 @@
 
         specialArgs = {
           inherit self;
-          pkgs = nixpkgs-stable.legacyPackages."aarch64-darwin";
-          inherit pkgs';
+          pkgs = pkgs "aarch64-darwin";
+          pkgs' = pkgs' "aarch64-darwin";
         };
       };
 
@@ -110,7 +127,7 @@
         # own `modules` folder. e.g `modules/lucario/`
 
         arceus = lib.nixosSystem {
-          inherit system;
+          system = "x86_64-linux";
 
           modules = [
             agenix.nixosModules.age
@@ -120,14 +137,14 @@
           ];
 
           specialArgs = {
-            inherit pkgs;
-            inherit pkgs';
-            inherit nix;
+            nix = (nix system.x86_64-linux);
+            pkgs = pkgs "x86_64-linux";
+            pkgs' = pkgs' "x86_64-linux";
           };
         };
 
         mew = lib.nixosSystem {
-          inherit system;
+          system = "x86_64-linux";
 
           modules = [
             emojiedpkg.nixosModules.default
@@ -141,17 +158,17 @@
           ];
 
           specialArgs = {
-            inherit (pkgs) jq emojied oshismash blog;
-            inherit (pkgs') tailscale;
-            inherit pkgs;
-            inherit pkgs';
-            inherit nix;
+            inherit (pkgs system.x86_64-linux) jq emojied oshismash blog;
+            inherit (pkgs' system.x86_64-linux) tailscale;
             inherit publicKeys;
+            pkgs = pkgs "x86_64-linux";
+            pkgs' = pkgs' "x86_64-linux";
+            nix = nix system.x86_64-linux;
           };
         };
 
         roserade = lib.nixosSystem {
-          inherit system;
+          system = "x86_64-linux";
 
           modules = [
             ./config/nix.nix
@@ -163,16 +180,16 @@
           ];
 
           specialArgs = {
-            inherit (pkgs) jq;
-            inherit (pkgs') tailscale;
-            inherit pkgs;
-            inherit nix;
+            inherit (pkgs "x86_64-linux") jq;
+            inherit (pkgs' "x86_64-linux") tailscale;
             inherit publicKeys;
+            pkgs = pkgs "x86_64-linux";
+            nix = nix system.x86_64-linux;
           };
         };
 
         gnawex-staging = lib.nixosSystem {
-          inherit system;
+          system = "x86_64-linux";
 
           modules = [
             ./hosts/gnawex/staging/configuration.nix
@@ -181,14 +198,14 @@
           ];
 
           specialArgs = {
-            inherit pkgs;
-            inherit nix;
             inherit publicKeys;
+            pkgs = pkgs "x86_64-linux";
+            nix = nix system.x86_64-linux;
           };
         };
 
         lucario = lib.nixosSystem {
-          inherit system;
+          system = "x86_64-linux";
 
           modules = [
             dotfiles-private.nixosModules.lucario
@@ -199,13 +216,13 @@
           ];
 
           specialArgs = {
-            inherit (pkgs) jq;
-            inherit (pkgs') tailscale;
-            inherit pkgs;
+            inherit (pkgs "x86_64-linux") jq;
+            inherit (pkgs' "x86_64-linux") tailscale;
             inherit publicKeys;
-            inherit nix;
+            pkgs = pkgs "x86_64-linux";
+            nix = nix system.x86_64-linux;
           };
         };
       };
     };
-    }
+}
