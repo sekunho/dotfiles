@@ -8,7 +8,12 @@
     oshismashpkg.url = "github:sekunho/oshismash";
     sekunpkg.url = "github:sekunho/sekun.dev";
     agenix.url = "github:ryantm/agenix";
- 
+
+    flake-utils.url = "github:numtide/flake-utils";
+
+    home-manager.url = "github:nix-community/home-manager/release-23.05";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs-stable";
+
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-stable";
@@ -35,13 +40,15 @@
     , oshismashpkg
     , sekunpkg
     , agenix
+    , flake-utils
     , nix-darwin
+    , home-manager
     , fontpkgs
     , dotfiles-private
     ,
     }:
     let
-      system = "x86_64-linux";
+      system = "aarch64-darwin";
       lib = nixpkgs-stable.lib;
 
       # Thank you https://github.com/hlissner/dotfiles/blob/master/flake.nix
@@ -73,6 +80,7 @@
 
       publicKeys = {
         arceus.sekun = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net";
+        blaziken.sekun = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE07iMNKunyBGdOq61DWKIBQYy77e1sm69lXaFofkmtp software@sekun.net";
       };
     in
     {
@@ -82,17 +90,20 @@
         };
       };
 
-      darwinConfigurations."sekuns-MacBook-Pro" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations."blaziken" = nix-darwin.lib.darwinSystem {
         modules = [
+          home-manager.darwinModules.default
           ./hosts/blaziken/configuration.nix
         ];
 
         specialArgs = {
           inherit self;
+          pkgs = nixpkgs-stable.legacyPackages."aarch64-darwin";
+          inherit pkgs';
         };
       };
 
-      darwinPackages = self.darwinConfigurations."sekuns-MacBook-Pro".pkgs;
+      darwinPackages = self.darwinConfigurations."blaziken".pkgs;
 
       nixosConfigurations = {
         # TODO: Move these to `hosts`, and move the existing modules to their
@@ -197,4 +208,4 @@
         };
       };
     };
-}
+    }
