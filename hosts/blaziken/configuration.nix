@@ -1,7 +1,7 @@
 { self, pkgs, pkgs', ... }:
 let
   userConfig = { pkgs, ... }: {
-    home.stateVersion = "23.05";
+    home.stateVersion = "23.11";
 
     programs = {
       direnv.enable = true;
@@ -42,6 +42,8 @@ let
           direnv-vim
           nvim-lspconfig
           ghcid
+          catppuccin-nvim
+          nvim-web-devicons
 
           # Usage
           # https://nixos.org/manual/nixpkgs/unstable/#vim
@@ -107,7 +109,6 @@ let
             ${builtins.readFile ../../config/neovim/init.lua}
           EOF
 
-          ${builtins.readFile ../../config/neovim/void.vim}
           ${builtins.readFile ../../config/neovim/init.vim}
         '';
       };
@@ -121,7 +122,16 @@ in
     ripgrep
     fzf
     neofetch
+    pkgs'.tailscale
   ];
+
+  fonts = {
+    fontDir.enable = true;
+    fonts = with pkgs; [
+      myfonts.berkeley-mono-1009-ligatures
+      comic-mono
+    ];
+  };
 
   nix.settings.experimental-features = "nix-command flakes";
 
