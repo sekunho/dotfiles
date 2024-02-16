@@ -51,13 +51,10 @@
       interactiveShellInit = ''
         eval "$(direnv hook bash)"
       '';
-
-      shellAliases = { doom = "~/.emacs.d/bin/doom"; };
     };
 
     fish = {
       enable = true;
-      shellAliases = { doom = "~/.emacs.d/bin/doom"; };
 
       interactiveShellInit = ''
         direnv hook fish | source
@@ -135,13 +132,7 @@
 
     tailscale = {
       enable = true;
-      package = pkgs'.tailscale;
-    };
-
-    # For server mode
-    emacs = {
-      package = pkgs.emacsNativeComp;
-      enable = true;
+      package = pkgs.tailscale;
     };
 
     # Enable CUPS to print documents.
@@ -212,9 +203,6 @@
           # VM stuff
           virt-manager
           virt-viewer
-
-          # Dev tools
-          insomnia
         ];
       };
 
@@ -233,10 +221,8 @@
         packages = with pkgs; [
           slack
           krita
-          insomnia
           awscli2
           obs-studio
-          obsidian
           discord
 
           _1password-gui
@@ -257,7 +243,7 @@
     ]);
 
     systemPackages = with pkgs; [
-      pkgs'.thunderbird
+      thunderbird
       lxappearance
       pavucontrol
       # libsForQt5.kdeconnect-kde
@@ -288,35 +274,24 @@
 
       libreoffice
 
-      pkgs'.docker-compose
+      docker-compose
 
       # Media
       ffmpeg
       vlc
 
-      ventoy-bin
-      ventoy-full
-      woeusb-ng
-      ntfs3g
-
       # Dev tools
-      kitty
       xclip
       wget
       curl
       gnupg # something i need for git that i haven't looked into
       nix-du # i forgot what this was
-      graphviz # visualize stuff in graphs
       nixfmt # make nix code look pretty and nice
       cloc # how many spaghetti lines of code have I written already?
       direnv # no more cluttering global namespaces; now with flakes!
       nix-direnv # nix integration for direnv
       asciinema
       erdtree
-
-      # Database
-      sqlitebrowser
-      pgadmin4
 
       # I didn't install `doom-emacs` with nix so I gotta declare some system
       # dependencies for it to work normally. Might look into using nix later.
@@ -360,7 +335,7 @@
     };
   };
 
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     (nerdfonts.override { fonts = [ "JetBrainsMono" "Iosevka" ]; })
 
     myfonts.berkeley-mono-1009-ligatures
