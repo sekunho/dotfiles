@@ -28,6 +28,15 @@
       url = "git+ssh://git@github.com/sekunho/dotfiles-private";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
+
+    tacohiropkg = {
+      url = "git+ssh://git@github.com/sekunho/tacohiro";
+    };
+
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
   };
 
   outputs =
@@ -37,6 +46,7 @@
     , nixos-22-11
     , emojiedpkg
     , oshismashpkg
+    , tacohiropkg
     , sekunpkg
     , agenix
     , nix-darwin
@@ -44,7 +54,7 @@
     , gnawex
     , fontpkgs
     , dotfiles-private
-    ,
+    , nixos-generators
     }:
     let
       lib = nixpkgs-stable.lib;
@@ -67,6 +77,7 @@
         emojied = emojiedpkg.packages.${system}.emojied;
         oshismash = oshismashpkg.packages.${system}.oshismash;
         blog = sekunpkg.packages.${system}.blog;
+        tacohiro = tacohiropkg.packages.${system}.tacohiro;
       };
 
       pkgs-22-11 = mkPkgs nixos-22-11 [ ];
@@ -83,7 +94,21 @@
     in
     {
       packages = {
-        x86_64-linux = { };
+        x86_64-linux = {
+          gce = nixos-generators.nixosGenerate {
+            system = "x86_64-linux";
+            format = "gce";
+
+            modules = [
+              ./hosts/tacohiro/configuration.nix
+            ];
+
+            specialArgs = {
+              inherit publicKeys;
+            };
+          };
+        };
+
         aarch64-darwin = { };
       };
 
@@ -133,12 +158,14 @@
 
           modules = [
             agenix.nixosModules.age
+            tacohiropkg.nixosModules.x86_64-linux.default
 
             ./hosts/arceus/configuration.nix
             ./config/nix.nix
           ];
 
           specialArgs = {
+            inherit (pkgs system.x86_64-linux) tacohiro;
             nix = (nix system.x86_64-linux);
             pkgs = pkgs system.x86_64-linux;
             pkgs' = pkgs' system.x86_64-linux;
@@ -187,6 +214,25 @@
             inherit publicKeys;
             pkgs = pkgs system.x86_64-linux;
             nix = nix system.x86_64-linux;
+          };
+        };
+
+        tacohiro = lib.nixosSystem {
+          system = system.x86_64-linux;
+
+          modules = [
+            tacohiropkg.nixosModules.x86_64-linux.default
+            agenix.nixosModules.age
+            dotfiles-private.nixosModules.tacohiro
+            ./config/nix.nix
+            ./services/fail2ban.nix
+          ];
+
+          specialArgs = {
+            pkgs = pkgs system.x86_64-linux;
+            nix = nix system.x86_64-linux;
+            inherit publicKeys;
+            inherit (pkgs system.x86_64-linux) tacohiro;
           };
         };
 

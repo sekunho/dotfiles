@@ -66,6 +66,7 @@
     description = "admin user";
     group = "users";
     extraGroups = [ "wheel" ];
+
     openssh.authorizedKeys.keys = [
       publicKeys.arceus.sekun
       publicKeys.blaziken.sekun

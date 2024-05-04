@@ -100,6 +100,40 @@
   services = {
     dbus.enable = true;
 
+    postgresql = {
+      enable = true;
+      port = 5432;
+      package = pkgs.postgresql_16;
+
+      authentication = pkgs.lib.mkOverride 14 ''
+        local all all trust
+        host all all ::1/128 trust
+        host all all localhost trust
+      '';
+
+      initialScript = pkgs.writeText "backend-initScript" ''
+        -- Ensure the DB defaults to UTC
+        SET timezone TO 'UTC';
+      '';
+
+      # https://github.com/adisbladis/nixconfig/blob/0ce9e8f4556da634a12c11b16bce5364b6641a83/hosts/bladis/synapse.nix
+      settings = {
+        shared_preload_libraries = "pg_stat_statements";
+        session_preload_libraries = "auto_explain";
+        track_io_timing = "on";
+        track_functions = "pl";
+        log_duration = true;
+        log_statement = "all";
+
+        # AUTO_EXPLAIN stuff
+        "auto_explain.log_min_duration" = 0;
+        "auto_explain.log_analyze" = true;
+        "auto_explain.log_triggers" = true;
+        "auto_explain.log_verbose" = true;
+        "auto_explain.log_nested_statements" = true;
+      };
+    };
+
     ntp = {
       enable = true;
 
@@ -110,7 +144,6 @@
         "3.jp.pool.ntp.org"
       ];
     };
-
 
     xserver = {
       enable = true;
