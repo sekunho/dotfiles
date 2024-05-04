@@ -79,7 +79,7 @@ tnoremap <esc> <C-\><C-N>
 set list
 set listchars=lead:·,trail:·,tab:>-
 
-let g:airline_theme = 'catppuccin'
+" let g:airline_theme = 'catppuccin'
 
 " To hide the statusline
 set noshowmode

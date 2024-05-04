@@ -13,9 +13,13 @@ let
       root = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGRhVj+b2OxbYIi6+tT1MQnlegoTBO1xMqYFYMduFa1O devops@sekun.net
 ";
     };
+
+    tacohiro-core-1 = {
+      root = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMO5pPGLfz1gKJc+LDWtuji337I4LsipjnHJ3V1lz1Xr sekun@arceus";
+    };
   };
 
-  mew = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOq98pf8ZVPTjaLWB7lEFnyqHmVD40KfnTFWZ05xKzC9 sekun@ichi";
+  # mew = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOq98pf8ZVPTjaLWB7lEFnyqHmVD40KfnTFWZ05xKzC9 sekun@ichi";
 in
 {
   /* "emojiedDBPassword.age".publicKeys = [ sekun mew ]; */
@@ -26,4 +30,11 @@ in
   "gx-stg-db-ca-cert.age".publicKeys = with hosts; [ gx-stg-1.root ];
   "gx-stg-db-client-cert.age".publicKeys = with hosts; [ gx-stg-1.root ];
   "gx-stg-db-client-key.age".publicKeys = with hosts; [ gx-stg-1.root ];
+
+  "th-slack-client-secret.age".publicKeys = with hosts; [ tacohiro-core-1.root arceus.sekun ];
+  "th-slack-signing-secret.age".publicKeys = with hosts; [ tacohiro-core-1.root arceus.sekun ];
+  "th-password.age".publicKeys = with hosts; [ tacohiro-core-1.root arceus.sekun ];
+  "th-ca-cert.age".publicKeys = with hosts; [ tacohiro-core-1.root arceus.sekun ];
+  "th-client-cert.age".publicKeys = with hosts; [ tacohiro-core-1.root arceus.sekun ];
+  "th-client-key.age".publicKeys = with hosts; [ tacohiro-core-1.root arceus.sekun ];
 }
