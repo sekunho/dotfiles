@@ -129,11 +129,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1714830499,
-        "narHash": "sha256-D6SHK/0mxDvFAJ578tLXG+We0/A4cZ/5YvycWdW7AcA=",
+        "lastModified": 1714917237,
+        "narHash": "sha256-rC9zPH+Gpifulb/Nb4RPQL/lKCG6UJmkdMrgTZ9RTFM=",
         "ref": "refs/heads/main",
-        "rev": "fc96568e172c799ba81e6d2715ae96b042fee3c2",
-        "revCount": 19,
+        "rev": "7a19c6d90332b02bb8ff08a03d249a9ea1e94bd1",
+        "revCount": 27,
         "type": "git",
         "url": "ssh://git@github.com/sekunho/dotfiles-private"
       },
@@ -887,11 +887,11 @@
     },
     "nixpkgs-stable_4": {
       "locked": {
-        "lastModified": 1707978831,
-        "narHash": "sha256-UblFdWQ2MMZNzD9C/w8+7RjAJ2QIbebbzHUniQ/a44o=",
+        "lastModified": 1714685007,
+        "narHash": "sha256-Q4ddhb5eC5pwci0QhAapFwnsc8X8H9ZMQiWpsofBsDc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c68a9fc85c2cb3a313be6ff40511635544dde8da",
+        "rev": "383ffe076d9b633a2e97b6e4dd97fc15fcf30159",
         "type": "github"
       },
       "original": {
@@ -1428,11 +1428,11 @@
         "pre-commit-hooks": "pre-commit-hooks_4"
       },
       "locked": {
-        "lastModified": 1714820971,
-        "narHash": "sha256-lYj5OwaVbPZgvikPyKhA20veLYmEN7+h2zvFbqNkBA8=",
+        "lastModified": 1714917461,
+        "narHash": "sha256-LpzxbATOHjY6uy2/4rPJWEiu1vYQVxtOybs8AId45lY=",
         "ref": "refs/heads/main",
-        "rev": "da2337c0b3f1783eb4184598bee8fffab69c5ba4",
-        "revCount": 44,
+        "rev": "284a9683864951be9074cc8cc48f610936816087",
+        "revCount": 53,
         "type": "git",
         "url": "ssh://git@github.com/sekunho/tacohiro"
       },
