@@ -24,7 +24,7 @@
 
   # Use the systemd-boot EFI boot loader.
   boot = {
-    kernelPackages = pkgs.linuxPackages_6_8;
+    kernelPackages = pkgs.linuxPackages_6_10;
 
     loader = {
       systemd-boot.enable = true;
@@ -107,40 +107,6 @@
   services = {
     dbus.enable = true;
 
-    postgresql = {
-      enable = true;
-      settings.port = 5432;
-      package = pkgs.postgresql_16;
-
-      authentication = pkgs.lib.mkOverride 14 ''
-        local all all trust
-        host all all ::1/128 trust
-        host all all localhost trust
-      '';
-
-      initialScript = pkgs.writeText "backend-initScript" ''
-        -- Ensure the DB defaults to UTC
-        SET timezone TO 'UTC';
-      '';
-
-      # https://github.com/adisbladis/nixconfig/blob/0ce9e8f4556da634a12c11b16bce5364b6641a83/hosts/bladis/synapse.nix
-      settings = {
-        shared_preload_libraries = "pg_stat_statements";
-        session_preload_libraries = "auto_explain";
-        track_io_timing = "on";
-        track_functions = "pl";
-        log_duration = true;
-        log_statement = "all";
-
-        # AUTO_EXPLAIN stuff
-        "auto_explain.log_min_duration" = 0;
-        "auto_explain.log_analyze" = true;
-        "auto_explain.log_triggers" = true;
-        "auto_explain.log_verbose" = true;
-        "auto_explain.log_nested_statements" = true;
-      };
-    };
-
     ntp = {
       enable = true;
 
@@ -191,7 +157,7 @@
     bluetooth.enable = true;
 
     # NOTE: nvidia-drm.modeset=1
-    # nvidia.modesetting.enable = true;
+    nvidia.modesetting.enable = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -298,7 +264,7 @@
       wineWowPackages.stable
 
       # Essential system tools
-      tailscale
+      pkgs'.tailscale
       git
       htop
       powertop
