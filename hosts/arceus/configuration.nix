@@ -7,7 +7,13 @@
   # TODO: Split to nixos modules
 
   nixpkgs.config.allowUnfree = true;
-  nix.settings.auto-optimise-store = true;
+
+  nix = {
+    settings = {
+      trusted-users = [ "root" "sekun" ];
+      auto-optimise-store = true;
+    };
+  };
 
   networking = {
     hostName = "arceus";
@@ -18,7 +24,7 @@
 
   # Use the systemd-boot EFI boot loader.
   boot = {
-    kernelPackages = pkgs.linuxPackages_6_1;
+    kernelPackages = pkgs.linuxPackages_6_8;
 
     loader = {
       systemd-boot.enable = true;
@@ -26,6 +32,7 @@
     };
 
     supportedFilesystems = [ "zfs" ];
+    # boot.kernelParams = ["nvidia-drm.modeset=1" "nvidia-drm.fbdev=1"];
 
     initrd.luks.devices = {
       root = {
@@ -102,7 +109,7 @@
 
     postgresql = {
       enable = true;
-      port = 5432;
+      settings.port = 5432;
       package = pkgs.postgresql_16;
 
       authentication = pkgs.lib.mkOverride 14 ''
@@ -145,16 +152,17 @@
       ];
     };
 
+    ## KDE
+    displayManager.sddm.enable = true;
+    desktopManager.plasma6.enable = true;
+
+
     xserver = {
       enable = true;
       videoDrivers = [ "nvidia" ];
       exportConfiguration = true;
 
       # WM/DE
-
-      ## KDE
-      displayManager.sddm.enable = true;
-      desktopManager.plasma5.enable = true;
 
       deviceSection = ''
         VendorName     "NVIDIA Corporation"
@@ -165,7 +173,7 @@
 
     tailscale = {
       enable = true;
-      package = pkgs.tailscale;
+      package = pkgs'.tailscale;
     };
 
     # Enable CUPS to print documents.
@@ -183,7 +191,7 @@
     bluetooth.enable = true;
 
     # NOTE: nvidia-drm.modeset=1
-    nvidia.modesetting.enable = true;
+    # nvidia.modesetting.enable = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
