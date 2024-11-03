@@ -3,6 +3,7 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-22-11.url = "github:NixOS/nixpkgs/nixos-22.11";
+    infra.url = "github:sekunho/infra";
 
     emojiedpkg.url = "github:sekunho/emojied";
     oshismashpkg.url = "github:sekunho/oshismash";
@@ -29,11 +30,6 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
-    # tacohiropkg = {
-    #   url = "path:/home/sekun/Projects/tacohiro";
-    #   # url = "git+ssh://git@github.com/sekunho/tacohiro?ref=chore/harden-nixos-module";
-    # };
-
     nixos-generators = {
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs-stable";
@@ -45,9 +41,9 @@
     , nixpkgs-stable
     , nixpkgs-unstable
     , nixos-22-11
+    , infra
     , emojiedpkg
     , oshismashpkg
-      # , tacohiropkg
     , sekunpkg
     , agenix
     , nix-darwin
@@ -78,7 +74,6 @@
         emojied = emojiedpkg.packages.${system}.emojied;
         oshismash = oshismashpkg.packages.${system}.oshismash;
         blog = sekunpkg.packages.${system}.blog;
-        # tacohiro = tacohiropkg.packages.${system}.tacohiro;
       };
 
       pkgs-22-11 = mkPkgs nixos-22-11 [ ];
@@ -101,7 +96,6 @@
             format = "gce";
 
             modules = [
-              # ./hosts/tacohiro/configuration.nix
             ];
 
             specialArgs = {
@@ -158,15 +152,13 @@
           system = system.x86_64-linux;
 
           modules = [
+            infra.nixosModules.nix
             agenix.nixosModules.age
-            # tacohiropkg.nixosModules.x86_64-linux.default
-
             ./hosts/arceus/configuration.nix
-            ./config/nix.nix
           ];
 
           specialArgs = {
-            # inherit (pkgs system.x86_64-linux) tacohiro;
+            trusted-users = [ "root" "sekun" ];
             nix = (nix system.x86_64-linux);
             pkgs = pkgs system.x86_64-linux;
             pkgs' = pkgs' system.x86_64-linux;
@@ -215,45 +207,6 @@
             inherit publicKeys;
             pkgs = pkgs system.x86_64-linux;
             nix = nix system.x86_64-linux;
-          };
-        };
-
-        # tacohiro = lib.nixosSystem {
-        #   system = system.x86_64-linux;
-
-        #   modules = [
-        #     # tacohiropkg.nixosModules.x86_64-linux.default
-        #     agenix.nixosModules.age
-        #     # dotfiles-private.nixosModules.tacohiro
-        #     ./config/nix.nix
-        #     ./services/fail2ban.nix
-        #   ];
-
-        #   specialArgs = {
-        #     pkgs = pkgs system.x86_64-linux;
-        #     nix = nix system.x86_64-linux;
-        #     inherit publicKeys;
-        #     # inherit (pkgs system.x86_64-linux) tacohiro;
-        #   };
-        # };
-
-        gnawex-staging = lib.nixosSystem {
-          system = system.x86_64-linux;
-
-          modules = [
-            gnawex.nixosModules.x86_64-linux.default
-            agenix.nixosModules.age
-            ./hosts/gnawex/staging/configuration.nix
-            ./config/nix.nix
-            ./services/fail2ban.nix
-          ];
-
-          specialArgs = {
-            pkgs = pkgs system.x86_64-linux;
-            nix = nix system.x86_64-linux;
-            inherit gnawexpkgs;
-            inherit publicKeys;
-            inherit (gnawexpkgs) gnawex;
           };
         };
 
