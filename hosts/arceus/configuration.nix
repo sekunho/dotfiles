@@ -8,13 +8,6 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  nix = {
-    settings = {
-      trusted-users = [ "root" "sekun" ];
-      auto-optimise-store = true;
-    };
-  };
-
   networking = {
     hostName = "arceus";
     hostId = "7c48531f";
@@ -24,7 +17,7 @@
 
   # Use the systemd-boot EFI boot loader.
   boot = {
-    kernelPackages = pkgs.linuxPackages_6_10;
+    kernelPackages = pkgs.linuxPackages_6_6;
 
     loader = {
       systemd-boot.enable = true;
@@ -156,8 +149,15 @@
     opengl.enable = true;
     bluetooth.enable = true;
 
-    # NOTE: nvidia-drm.modeset=1
-    nvidia.modesetting.enable = true;
+    nvidia = {
+      #      forceFullCompositionPipeline = true;
+      modesetting.enable = true;
+      powerManagement.enable = false;
+      powerManagement.finegrained = false;
+      open = false;
+      nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.stable;
+    };
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -488,5 +488,5 @@
     allowedTCPPorts = [ 22 ];
   };
 
-  system.stateVersion = "23.05";
+  system.stateVersion = "24.05";
 }
