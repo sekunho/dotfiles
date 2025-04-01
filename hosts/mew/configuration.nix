@@ -44,19 +44,6 @@
       dbCACertFile = config.age.secrets.emojiedDBCACert.path;
     };
 
-    oshismash = {
-      enable = true;
-      host = "oshismash.com";
-      port = "3001";
-      dbHost = "private-db-postgresql-sgp1-27177-do-user-9304792-0.b.db.ondigitalocean.com";
-      dbName = "oshismash-db";
-      dbPort = "25060";
-      dbUser = "doadmin";
-      dbPoolSize = "5";
-      dbPasswordFile = config.age.secrets.emojiedDBPassword.path;
-      dbCACertFile = config.age.secrets.emojiedDBCACert.path;
-    };
-
     openssh = {
       enable = true;
       settings = {
@@ -77,10 +64,6 @@
       extraConfig = ''
         www.emojied.net, emojied.net {
           reverse_proxy :3000
-        }
-
-        www.oshismash.com, oshismash.com {
-          reverse_proxy :3001
         }
 
         blog.sekun.dev {
