@@ -47,14 +47,14 @@ nnoremap <leader>ld <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>
 " <leader>, by default is the backslash key.
 " So to find_files, be in normal mode, and type:
 " <Space>.
-nnoremap <leader>. <cmd>Telescope find_files<cr>
-nnoremap <leader>tg <cmd>Telescope live_grep<cr>
-nnoremap <leader>bb <cmd>Telescope buffers<cr>
-nnoremap <leader>bk <cmd>:bd <cr>
-nnoremap <leader>th <cmd>Telescope help_tags<cr>
-nnoremap <leader>tm <cmd>Telescope man_pages<cr>
-nnoremap <leader>tk <cmd>Telescope keymaps<cr>
-nnoremap <leader>pp <cmd>:lua require'telescope.builtin'.treesitter{}<cr>
+" nnoremap <leader>. <cmd>Telescope find_files<cr>
+" nnoremap <leader>tg <cmd>Telescope live_grep<cr>
+" nnoremap <leader>bb <cmd>Telescope buffers<cr>
+" nnoremap <leader>bk <cmd>:bd <cr>
+" nnoremap <leader>th <cmd>Telescope help_tags<cr>
+" nnoremap <leader>tm <cmd>Telescope man_pages<cr>
+" nnoremap <leader>tk <cmd>Telescope keymaps<cr>
+" nnoremap <leader>pp <cmd>:lua require'telescope.builtin'.treesitter{}<cr>
 
 " Rust
 nnoremap <leader>cr <cmd>Cargo run<cr>
@@ -65,12 +65,12 @@ nnoremap <leader>ct <cmd>Cargo test<cr>
 nnoremap <leader>cz <cmd>:! RUST_BACKTRACE=1 cargo run<cr>
 
 " Trouble
-nnoremap <leader>xx <cmd>TroubleToggle<cr>
-nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
-nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
-nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
-nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
-nnoremap gR <cmd>TroubleToggle lsp_references<cr>
+" nnoremap <leader>xx <cmd>TroubleToggle<cr>
+" nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
+" nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
+" nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
+" nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
+" nnoremap gR <cmd>TroubleToggle lsp_references<cr>
 
 set colorcolumn=80
 

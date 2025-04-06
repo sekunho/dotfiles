@@ -1,7 +1,7 @@
 { self, pkgs, pkgs', ... }:
 let
   userConfig = { pkgs, ... }: {
-    home.stateVersion = "23.11";
+    home.stateVersion = "24.11";
 
     programs = {
       direnv.enable = true;
@@ -10,7 +10,7 @@ let
 
       zsh = {
         enable = true;
-        enableAutosuggestions = true;
+        autosuggestion.enable = true;
         enableCompletion = true;
 
         plugins = [
@@ -23,10 +23,10 @@ let
         viAlias = true;
         vimAlias = true;
         # https://github.com/NixOS/nixpkgs/issues/137829
-        package = pkgs.neovim-unwrapped;
+        package = pkgs'.neovim-unwrapped;
 
         # https://github.com/NixOS/nixpkgs/pull/124785#issuecomment-850837745
-        plugins = with pkgs.vimPlugins; [
+        plugins = with pkgs'.vimPlugins; [
           # Airline
           vim-airline
           vim-airline-themes
@@ -38,9 +38,10 @@ let
           # Themes
           gruvbox-nvim
 
+          # mini-icons
+
           # Languages, etc.
           direnv-vim
-          nvim-lspconfig
           ghcid
           catppuccin-nvim
           nvim-web-devicons
@@ -63,6 +64,7 @@ let
               tree-sitter-javascript
               tree-sitter-html
               tree-sitter-css
+              tree-sitter-sql
 
               tree-sitter-rust
               tree-sitter-haskell
@@ -77,26 +79,25 @@ let
           ))
 
           todo-comments-nvim
-          fidget-nvim
+          # fidget-nvim
 
           # I don't know how to categorize this
-          plenary-nvim
+          # plenary-nvim
 
-          telescope-nvim
+          # telescope-nvim
           # telescope-ui-select-nvim
           # null-ls-nvim
 
-          nvim-web-devicons
+          # nvim-web-devicons
           auto-pairs
-          trouble-nvim
+          # nvim-fzf
+          # trouble-nvim
           vim-commentary
           vim-surround
-          which-key-nvim
-
-          rust-vim
+          # which-key-nvim
 
           # Magit is unfortunately still king :(
-          gitsigns-nvim
+          # gitsigns-nvim
         ];
 
         extraConfig = ''
@@ -105,8 +106,8 @@ let
           let mapleader = "\<Space>"
 
           lua << EOF
-            ${builtins.readFile ../../config/neovim/lsp.lua}
             ${builtins.readFile ../../config/neovim/init.lua}
+            ${builtins.readFile ../../config/neovim/lsp.lua}
           EOF
 
           ${builtins.readFile ../../config/neovim/init.vim}
@@ -123,17 +124,34 @@ in
     fzf
     neofetch
     pkgs'.tailscale
+    # qbittorrent
+    exiftool
   ];
 
   fonts = {
-    fontDir.enable = true;
-    fonts = with pkgs; [
+    packages = with pkgs; [
       myfonts.berkeley-mono-1009-ligatures
       comic-mono
+      atkinson-hyperlegible
     ];
   };
 
-  nix.settings.experimental-features = "nix-command flakes";
+
+  nix = {
+    enable = true;
+    package = pkgs'.nixVersions.nix_2_24;
+    settings.experimental-features = "nix-command flakes";
+
+    settings = {
+      trusted-public-keys = [
+        "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+      ];
+
+      substituters = [
+        "https://cache.iog.io"
+      ];
+    };
+  };
 
   users.users = {
     sekun = {
@@ -148,7 +166,6 @@ in
   };
 
   programs = { zsh.enable = true; };
-  nix.package = pkgs'.nixVersions.nix_2_18;
 
   home-manager.users = {
     sekun = userConfig;
@@ -158,7 +175,10 @@ in
   networking.hostName = "blaziken";
 
   services = {
-    nix-daemon.enable = true;
+    tailscale = {
+      enable = true;
+      package = pkgs'.tailscale;
+    };
   };
 
   system.configurationRevision = self.rev or self.dirtyRev or null;
