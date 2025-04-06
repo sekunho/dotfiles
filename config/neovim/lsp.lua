@@ -8,8 +8,15 @@ vim.lsp.config.rust_analyzer = {
       files = {
         excludeDirs = { ".direnv", ".devenv" },
       },
-
-      -- checkOnSave = true,
+      capabilities = {
+        experimental = {
+          serverStatusNotification = true,
+        },
+      },
+      diagnostics = {
+        enable = false;
+      },
+      checkOnSave = true,
       -- check = {
       --   features = "all",
       --   command = "clippy",
@@ -26,7 +33,11 @@ vim.lsp.config.rust_analyzer = {
   }
 }
 
-vim.lsp.config('gopls', {})
+vim.lsp.config.gopls = {
+  cmd = { 'gopls' },
+  root_markers = { '.direnv', 'flake.nix', 'go.mod' },
+  filetypes = {'go'},
+}
 
 vim.lsp.config('golangci_lint_ls', {})
 
