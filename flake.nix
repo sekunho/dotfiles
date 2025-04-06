@@ -1,23 +1,23 @@
 {
   inputs = {
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/nix-darwin-24.11";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+
     nixos-22-11.url = "github:NixOS/nixpkgs/nixos-22.11";
     infra.url = "github:sekunho/infra";
 
     emojiedpkg.url = "github:sekunho/emojied";
-    oshismashpkg.url = "github:sekunho/oshismash";
     sekunpkg.url = "github:sekunho/sekun.dev";
     agenix.url = "github:ryantm/agenix";
     gnawex.url = "github:gnawex/gnawex";
 
-    home-manager.url = "github:nix-community/home-manager/release-24.05";
+    home-manager.url = "github:nix-community/home-manager/release-24.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs-stable";
-
-    nix-darwin = {
-      url = "github:LnL7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
-    };
 
     # Private flakes
     fontpkgs = {
@@ -43,7 +43,6 @@
     , nixos-22-11
     , infra
     , emojiedpkg
-    , oshismashpkg
     , sekunpkg
     , agenix
     , nix-darwin
@@ -72,7 +71,6 @@
         agenix = agenix.packages.${system}.default;
         myfonts = fontpkgs.packages.${system};
         emojied = emojiedpkg.packages.${system}.emojied;
-        oshismash = oshismashpkg.packages.${system}.oshismash;
         blog = sekunpkg.packages.${system}.blog;
       };
 
@@ -111,6 +109,7 @@
         x86_64-linux = {
           default = (pkgs system.x86_64-linux).mkShell {
             buildInputs = with (pkgs system.x86_64-linux); [
+              git
               nil
               nixpkgs-fmt
               just
@@ -122,6 +121,7 @@
         aarch64-darwin = {
           default = (pkgs system.aarch64-darwin).mkShell {
             buildInputs = with (pkgs system.aarch64-darwin); [
+              git
               nil
               nixpkgs-fmt
               just
@@ -170,7 +170,6 @@
 
           modules = [
             emojiedpkg.nixosModules.default
-            oshismashpkg.nixosModule
             agenix.nixosModules.age
 
             ./config/nix.nix
@@ -180,7 +179,7 @@
           ];
 
           specialArgs = {
-            inherit (pkgs system.x86_64-linux) jq emojied oshismash blog;
+            inherit (pkgs system.x86_64-linux) jq emojied blog;
             inherit (pkgs' system.x86_64-linux) tailscale;
             inherit publicKeys;
             pkgs = pkgs system.x86_64-linux;
