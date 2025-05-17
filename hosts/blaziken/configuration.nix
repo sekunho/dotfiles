@@ -163,6 +163,11 @@ in
       name = "noodle";
       home = "/Users/noodle";
     };
+
+    editor = {
+      name = "editor";
+      home = "/Users/editor";
+    };
   };
 
   programs = { zsh.enable = true; };
@@ -170,6 +175,7 @@ in
   home-manager.users = {
     sekun = userConfig;
     noodle = userConfig;
+    editor = userConfig;
   };
 
   networking.hostName = "blaziken";
