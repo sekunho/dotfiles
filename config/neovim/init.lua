@@ -90,4 +90,8 @@ require("nvim-treesitter.configs").setup {
 -- setup must be called before loading
 -- vim.cmd.colorscheme "catppuccin"
 
+vim.diagnostic.config({
+  virtual_text = { current_line = true }
+})
+
 print("Good day, SEKUN.")

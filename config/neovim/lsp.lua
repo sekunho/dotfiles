@@ -4,32 +4,32 @@ vim.lsp.config.rust_analyzer = {
   filetypes = {'rust'},
   settings = {
     ['rust_analyzer'] = {
-      excludeGlobs = {".direnv/**"},
+      excludeGlobs = {".direnv/**", "target/**"},
       files = {
-        excludeDirs = { ".direnv", ".devenv" },
-      },
-      capabilities = {
-        experimental = {
-          serverStatusNotification = true,
-        },
-      },
-      diagnostics = {
-        enable = false;
-      },
-      checkOnSave = true,
-      -- check = {
-      --   features = "all",
-      --   command = "clippy",
-      --   -- extraArgs = {
-      --   --   "--",
-      --   --   "--no-deps",
-      --   --   "-Dclippy::correctness",
-      --   --   "-Dclippy::complexity",
-      --   --   "-Wclippy::perf",
-      --   --   "-Wclippy::pedantic",
-      --   -- },
-      -- },
-    },
+        excludeDirs = { ".direnv", ".devenv", "node_modules" },
+      }
+    --   capabilities = {
+    --     experimental = {
+    --       serverStatusNotification = true,
+    --     },
+    --   },
+    --   diagnostics = {
+    --     enable = false;
+    --   },
+    --   checkOnSave = true,
+    --   check = {
+    --     features = "all",
+    --     command = "clippy",
+    --     extraArgs = {
+    --       "--",
+    --       "--no-deps",
+    --       "-Dclippy::correctness",
+    --       "-Dclippy::complexity",
+    --       "-Wclippy::perf",
+    --       "-Wclippy::pedantic",
+    --     },
+    --   },
+    }
   }
 }
 
@@ -39,7 +39,11 @@ vim.lsp.config.gopls = {
   filetypes = {'go'},
 }
 
-vim.lsp.config('golangci_lint_ls', {})
+vim.lsp.config.typescript_ls = {
+  cmd = { 'typescript-language-server', "--stdio", "--tsserver-path", "tsserver" },
+  root_markers = { 'package.json', 'flake.nix' },
+  filetypes = {'typescript'}
+};
 
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(ev)
@@ -84,7 +88,7 @@ vim.lsp.config.nil_ls = {
   },
 }
 
-vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls'})
+vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls'})
 
 vim.cmd("set completeopt+=noselect")
 vim.o.winborder = 'rounded'
