@@ -1,7 +1,7 @@
 { self, pkgs, pkgs', ... }:
 let
   userConfig = { pkgs, ... }: {
-    home.stateVersion = "24.11";
+    home.stateVersion = "25.05";
 
     programs = {
       direnv.enable = true;
@@ -126,6 +126,7 @@ in
     pkgs'.tailscale
     # qbittorrent
     exiftool
+    kopia
   ];
 
   fonts = {
