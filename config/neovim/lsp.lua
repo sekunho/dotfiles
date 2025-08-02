@@ -2,17 +2,29 @@ vim.lsp.config.rust_analyzer = {
   cmd = { 'rust-analyzer' },
   root_markers = { '.direnv', 'flake.nix', 'Cargo.toml' },
   filetypes = {'rust'},
+
+  capabilities = {
+    experimental = {
+      serverStatusNotification = true,
+    },
+  },
+
   settings = {
     ['rust_analyzer'] = {
       excludeGlobs = {".direnv/**", "target/**"},
       files = {
         excludeDirs = { ".direnv", ".devenv", "node_modules" },
-      }
-    --   capabilities = {
-    --     experimental = {
-    --       serverStatusNotification = true,
-    --     },
-    --   },
+      },
+
+      check = {
+        command = "clippy",
+        features = "all",
+        allTargets = true,
+      },
+      diagnostics = {
+        styleLints = { enable = true }
+      },
+
     --   diagnostics = {
     --     enable = false;
     --   },
