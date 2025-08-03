@@ -35,8 +35,8 @@ set signcolumn=yes
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Because I'm blind
 
-set cursorcolumn
-set cursorline
+" set cursorcolumn
+" set cursorline
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
