@@ -1,4 +1,5 @@
 vim.lsp.config.rust_analyzer = {
+  workspace_required = true,
   cmd = { 'rust-analyzer' },
   root_markers = { '.direnv', 'flake.nix', 'Cargo.toml' },
   filetypes = {'rust'},
@@ -16,31 +17,29 @@ vim.lsp.config.rust_analyzer = {
         excludeDirs = { ".direnv", ".devenv", "node_modules" },
       },
 
-      check = {
-        command = "clippy",
-        features = "all",
-        allTargets = true,
-      },
+      -- check = {
+      --   command = "clippy",
+      --   features = "all",
+      --   allTargets = true,
+      -- },
+
       diagnostics = {
         styleLints = { enable = true }
       },
 
-    --   diagnostics = {
-    --     enable = false;
-    --   },
     --   checkOnSave = true,
-    --   check = {
-    --     features = "all",
-    --     command = "clippy",
-    --     extraArgs = {
-    --       "--",
-    --       "--no-deps",
-    --       "-Dclippy::correctness",
-    --       "-Dclippy::complexity",
-    --       "-Wclippy::perf",
-    --       "-Wclippy::pedantic",
-    --     },
-    --   },
+      check = {
+        features = "all",
+        command = "clippy",
+        extraArgs = {
+          "--",
+          "--no-deps",
+          "-Dclippy::correctness",
+          "-Dclippy::complexity",
+          "-Wclippy::perf",
+          "-Wclippy::pedantic",
+        },
+      },
     }
   }
 }
