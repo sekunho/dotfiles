@@ -140,7 +140,7 @@ in
 
   nix = {
     enable = true;
-    package = pkgs'.nixVersions.nix_2_24;
+    package = pkgs'.nixVersions.nix_2_28;
     settings.experimental-features = "nix-command flakes";
 
     settings = {
