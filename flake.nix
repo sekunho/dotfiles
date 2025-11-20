@@ -3,6 +3,14 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+
+    disko = {
+      url = "github:nix-community/disko";
+      # inputs.nixpkgs.url = "nixpkgs-stable";
+    };
+
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/nix-darwin-25.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
@@ -40,6 +48,9 @@
     { self
     , nixpkgs-stable
     , nixpkgs-unstable
+    , nixos-hardware
+    , determinate
+    , disko
     , nixos-22-11
     , infra
     , emojiedpkg
@@ -84,7 +95,7 @@
 
       pkgs = system: mkPkgs system nixpkgs-stable [ (pkgsOverlay system) ];
       pkgs' = system: mkPkgs system nixpkgs-unstable [ ];
-      nix = system: (pkgs' system).nixVersions.nix_2_18;
+      nix = system: (pkgs system).nix;
     in
     {
       packages = {
@@ -134,6 +145,7 @@
       darwinConfigurations."blaziken" = nix-darwin.lib.darwinSystem {
         modules = [
           home-manager.darwinModules.default
+          ./modules/programs/neovim.nix
           ./hosts/blaziken/configuration.nix
         ];
 
@@ -152,6 +164,8 @@
           system = system.x86_64-linux;
 
           modules = [
+            ./modules/programs/direnv.nix
+            ./modules/programs/neovim.nix
             infra.nixosModules.nix
             agenix.nixosModules.age
             ./hosts/arceus/configuration.nix
@@ -172,7 +186,7 @@
             emojiedpkg.nixosModules.default
             agenix.nixosModules.age
 
-            ./config/nix.nix
+            ./modules/nix.nix
             ./hosts/mew/configuration.nix
             ./services/fail2ban.nix
             ./services/tailscale.nix
@@ -192,7 +206,7 @@
           system = system.x86_64-linux;
 
           modules = [
-            ./config/nix.nix
+            ./modules/nix.nix
             ./hosts/roserade/configuration.nix
             ./services/fail2ban.nix
             ./services/tailscale.nix
@@ -217,13 +231,33 @@
             agenix.nixosModules.age
             ./services/fail2ban.nix
             ./services/tailscale.nix
-            ./config/nix.nix
+            ./modules/nix.nix
           ];
 
           specialArgs = {
             inherit (pkgs system.x86_64-linux) jq;
             inherit (pkgs' system.x86_64-linux) tailscale;
             inherit publicKeys;
+            pkgs = pkgs system.x86_64-linux;
+            nix = nix system.x86_64-linux;
+          };
+        };
+
+        litten = nixpkgs-stable.lib.nixosSystem {
+          modules = [
+            ./modules/doas.nix
+            ./modules/programs/git.nix
+            ./modules/programs/neovim.nix
+            ./modules/programs/fish.nix
+            ./modules/programs/direnv.nix
+            ./modules/nix.nix
+            ./hosts/litten/configuration.nix
+            disko.nixosModules.disko
+            nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
+            determinate.nixosModules.default
+          ];
+
+          specialArgs = {
             pkgs = pkgs system.x86_64-linux;
             nix = nix system.x86_64-linux;
           };
