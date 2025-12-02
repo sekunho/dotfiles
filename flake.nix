@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
@@ -8,12 +8,12 @@
 
     disko = {
       url = "github:nix-community/disko";
-      # inputs.nixpkgs.url = "nixpkgs-stable";
+      # inputs.nixpkgs.url = "nixpkgs";
     };
 
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/nix-darwin-25.05";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixos-22-11.url = "github:NixOS/nixpkgs/nixos-22.11";
@@ -22,31 +22,33 @@
     emojiedpkg.url = "github:sekunho/emojied";
     sekunpkg.url = "github:sekunho/sekun.dev";
     agenix.url = "github:ryantm/agenix";
-    gnawex.url = "github:gnawex/gnawex";
 
     home-manager.url = "github:nix-community/home-manager/release-25.05";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs-stable";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Private flakes
     fontpkgs = {
       url = "git+ssh://git@github.com/sekunho/fonts";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     dotfiles-private = {
       url = "git+ssh://git@github.com/sekunho/dotfiles-private";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixos-generators = {
       url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    microvm.url = "github:microvm-nix/microvm.nix";
+    microvm.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
     { self
-    , nixpkgs-stable
+    , nixpkgs
     , nixpkgs-unstable
     , nixos-hardware
     , determinate
@@ -58,13 +60,13 @@
     , agenix
     , nix-darwin
     , home-manager
-    , gnawex
     , fontpkgs
     , dotfiles-private
     , nixos-generators
+    , microvm
     }:
     let
-      lib = nixpkgs-stable.lib;
+      lib = nixpkgs.lib;
 
       system = {
         x86_64-linux = "x86_64-linux";
@@ -86,14 +88,13 @@
       };
 
       pkgs-22-11 = mkPkgs nixos-22-11 [ ];
-      gnawexpkgs = gnawex.packages.${system};
 
       publicKeys = {
         arceus.sekun = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net";
         blaziken.sekun = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE07iMNKunyBGdOq61DWKIBQYy77e1sm69lXaFofkmtp software@sekun.net";
       };
 
-      pkgs = system: mkPkgs system nixpkgs-stable [ (pkgsOverlay system) ];
+      pkgs = system: mkPkgs system nixpkgs [ (pkgsOverlay system) ];
       pkgs' = system: mkPkgs system nixpkgs-unstable [ ];
       nix = system: (pkgs system).nix;
     in
@@ -157,9 +158,6 @@
       };
 
       nixosConfigurations = {
-        # TODO: Move these to `hosts`, and move the existing modules to their
-        # own `modules` folder. e.g `modules/lucario/`
-
         arceus = lib.nixosSystem {
           system = system.x86_64-linux;
 
@@ -179,71 +177,7 @@
           };
         };
 
-        mew = lib.nixosSystem {
-          system = system.x86_64-linux;
-
-          modules = [
-            emojiedpkg.nixosModules.default
-            agenix.nixosModules.age
-
-            ./modules/nix.nix
-            ./hosts/mew/configuration.nix
-            ./services/fail2ban.nix
-            ./services/tailscale.nix
-          ];
-
-          specialArgs = {
-            inherit (pkgs system.x86_64-linux) jq emojied blog;
-            inherit (pkgs' system.x86_64-linux) tailscale;
-            inherit publicKeys;
-            pkgs = pkgs system.x86_64-linux;
-            pkgs' = pkgs' system.x86_64-linux;
-            nix = nix system.x86_64-linux;
-          };
-        };
-
-        roserade = lib.nixosSystem {
-          system = system.x86_64-linux;
-
-          modules = [
-            ./modules/nix.nix
-            ./hosts/roserade/configuration.nix
-            ./services/fail2ban.nix
-            ./services/tailscale.nix
-
-            agenix.nixosModules.age
-          ];
-
-          specialArgs = {
-            inherit (pkgs system.x86_64-linux) jq;
-            inherit (pkgs' system.x86_64-linux) tailscale;
-            inherit publicKeys;
-            pkgs = pkgs system.x86_64-linux;
-            nix = nix system.x86_64-linux;
-          };
-        };
-
-        lucario = lib.nixosSystem {
-          system = system.x86_64-linux;
-
-          modules = [
-            dotfiles-private.nixosModules.lucario
-            agenix.nixosModules.age
-            ./services/fail2ban.nix
-            ./services/tailscale.nix
-            ./modules/nix.nix
-          ];
-
-          specialArgs = {
-            inherit (pkgs system.x86_64-linux) jq;
-            inherit (pkgs' system.x86_64-linux) tailscale;
-            inherit publicKeys;
-            pkgs = pkgs system.x86_64-linux;
-            nix = nix system.x86_64-linux;
-          };
-        };
-
-        litten = nixpkgs-stable.lib.nixosSystem {
+        litten = nixpkgs.lib.nixosSystem {
           modules = [
             ./modules/doas.nix
             ./modules/programs/git.nix
@@ -255,11 +189,20 @@
             disko.nixosModules.disko
             nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
             determinate.nixosModules.default
+
+            microvm.nixosModules.host {
+              networking.hostName = "litten";
+
+              microvm.autostart = [
+                "ilex"
+              ];
+            }
           ];
 
           specialArgs = {
             pkgs = pkgs system.x86_64-linux;
             nix = nix system.x86_64-linux;
+            microvm = microvm.nixosModules;
           };
         };
       };

@@ -16,8 +16,10 @@ set expandtab
 set shiftwidth=2
 
 " Themes
-set termguicolors
+" set termguicolors
 set background=dark
+set notermguicolors
+" set t_Co=16
 
 " I'm tired of dealing with separate yanks/pastes
 set clipboard+=unnamedplus

@@ -1,11 +1,9 @@
-{ config, lib, pkgs, ... }:
-
-{
-  imports =
-    [
-      ./hardware-configuration.nix
-      ./disk-config.nix
-    ];
+{ microvm, pkgs, ... }: {
+  imports = [
+    ./hardware-configuration.nix
+    ./disk-config.nix
+    microvm.host
+  ];
 
   boot = {
     kernelPackages = pkgs.linuxPackages_6_12;
@@ -18,19 +16,13 @@
     initrd.kernelModules = [ "zfs" ];
   };
 
-  nix = {
-    settings = {
-      trusted-public-keys = [
-        "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
-      ];
-      substituters = [ "https://nix-community.cachix.org" ];
-    };
-  };
-
   networking = {
     hostName = "litten";
     hostId = "60ad1747";
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      wifi.powersave = false;
+    };
   };
 
   # Set your time zone.
@@ -58,6 +50,40 @@
       enable = true;
       pulse.enable = true;
     };
+
+    vault = {
+      enable = true;
+      package = pkgs.vault-bin;
+
+      extraConfig = ''
+        ui = true
+      '';
+    };
+
+    # coredns = {
+    #   enable = true;
+    #   config = ''
+    #     .:53 {
+    #        bind 10.0.1.74
+    #        bufsize 1232
+    #        acl {
+    #                allow net 10.0.0.1/23
+    #                block
+    #        }
+    #        hosts {
+    #                reload 0
+    #                fallthrough
+    #        }
+    #        cache {
+    #                success 4096
+    #                denial  1024
+    #                prefetch 512
+    #        }
+    #        errors
+    #        log
+    #     }
+    #   '';
+    # };
   };
 
 
@@ -70,9 +96,143 @@
     users.sekun = {
       isNormalUser = true;
       extraGroups = [ "wheel" "networkmanager" ];
+
       packages = with pkgs; [
         tree
+        discord
       ];
+    };
+  };
+
+  microvm.vms = {
+    ilex = {
+      config = {
+        # It is highly recommended to share the host's nix-store
+        # with the VMs to prevent building huge images.
+        system.stateVersion = "25.05";
+
+        microvm = {
+          vcpu = 2;
+          mem = 512;
+          hypervisor = "qemu";
+
+          interfaces = [
+            {
+              type = "user";
+              id = "qemu";
+              mac = "02:00:00:01:01:01";
+            }
+          ];
+
+          shares = [{
+            source = "/nix/store";
+            mountPoint = "/nix/.ro-store";
+            tag = "ro-store";
+            proto = "virtiofs";
+          }];
+
+          forwardPorts = [
+            { from = "host"; host.port = 2222; guest.port = 22; }
+            { from = "host"; host.port = 8080; guest.port = 80; }
+          ];
+        };
+
+        services = {
+          openssh = {
+            enable = true;
+          };
+
+          nginx = {
+            enable = true;
+            virtualHosts.localhost = {
+              locations."/" = {
+                return = "200 '<html><body>Hello, world! - ilex</body></html>'";
+                extraConfig = ''
+                  default_type text/html;
+                '';
+              };
+            };
+          };
+        };
+
+        networking = {
+          hostName = "ilex";
+          firewall.allowedTCPPorts = [ 22 80 443 ];
+          # networks.
+        };
+
+        users.users.operator = {
+          extraGroups = [ "wheel" ];
+          isNormalUser = true;
+          openssh.authorizedKeys.keys = [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLsglb+15g0rlrWmutywPEUO9pKCSyfIwRHRvProIsh software@sekun.net"
+          ];
+        };
+      };
+    };
+
+    olivine = {
+      config = {
+        # It is highly recommended to share the host's nix-store
+        # with the VMs to prevent building huge images.
+        system.stateVersion = "25.05";
+
+        microvm = {
+          vcpu = 2;
+          mem = 512;
+          hypervisor = "qemu";
+
+          interfaces = [
+            {
+              type = "user";
+              id = "qemu";
+              mac = "02:00:00:01:01:01";
+            }
+          ];
+
+          shares = [{
+            source = "/nix/store";
+            mountPoint = "/nix/.ro-store";
+            tag = "ro-store";
+            proto = "virtiofs";
+          }];
+
+          forwardPorts = [
+            { from = "host"; host.port = 2223; guest.port = 22; }
+            { from = "host"; host.port = 8081; guest.port = 80; }
+          ];
+        };
+
+        services = {
+          openssh = {
+            enable = true;
+          };
+
+          nginx = {
+            enable = true;
+            virtualHosts.localhost = {
+              locations."/" = {
+                return = "200 '<html><body>Hello, world! - olivine</body></html>'";
+                extraConfig = ''
+                  default_type text/html;
+                '';
+              };
+            };
+          };
+        };
+
+        networking.hostName = "olivine";
+
+        networking.firewall.allowedTCPPorts = [ 22 80 443 ];
+
+        users.users.operator = {
+          extraGroups = [ "wheel" ];
+          isNormalUser = true;
+          openssh.authorizedKeys.keys = [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLsglb+15g0rlrWmutywPEUO9pKCSyfIwRHRvProIsh software@sekun.net"
+          ];
+        };
+      };
     };
   };
 
@@ -93,6 +253,13 @@
   environment.systemPackages = with pkgs; [
     vim
     wget
+    kdePackages.akregator
+    kdePackages.alligator
+  ];
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.commit-mono
+    myfonts.berkeley-mono-1009-ligatures
   ];
 
   # List services that you want to enable:
@@ -108,4 +275,3 @@
 
   system.stateVersion = "25.05";
 }
-
