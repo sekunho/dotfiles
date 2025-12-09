@@ -3,7 +3,7 @@
 let mapleader = "\<Space>"
 
 set mouse=a
-syntax on
+syntax off
 set number relativenumber
 set hidden
 set title

@@ -8,7 +8,7 @@
 
     disko = {
       url = "github:nix-community/disko";
-      # inputs.nixpkgs.url = "nixpkgs";
+      inputs.nixpkgs.url = "nixpkgs";
     };
 
     nix-darwin = {

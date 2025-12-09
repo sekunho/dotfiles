@@ -43,7 +43,7 @@
     displayManager.sddm.enable = true;
     displayManager.sddm.wayland.enable = true;
     desktopManager.plasma6.enable = true;
-
+    tailscale.enable = true;
 
     # Enable sound.
     pipewire = {
@@ -255,6 +255,7 @@
     wget
     kdePackages.akregator
     kdePackages.alligator
+    tailscale
   ];
 
   fonts.packages = with pkgs; [

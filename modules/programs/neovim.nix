@@ -17,15 +17,9 @@
             vim-airline-themes
             vim-airline-clock
 
-            # ASCII diagram editor
-            venn-nvim
-
-            # Themes
-            gruvbox-nvim
-
             # Languages, etc.
             direnv-vim
-            nvim-lspconfig
+            # nvim-lspconfig
             ghcid
 
             # Usage
@@ -64,10 +58,6 @@
 
             # I don't know how to categorize this
             plenary-nvim
-
-            telescope-nvim
-            # telescope-ui-select-nvim
-            # null-ls-nvim
 
             nvim-web-devicons
             auto-pairs
