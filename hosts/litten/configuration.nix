@@ -1,8 +1,7 @@
-{ microvm, pkgs, ... }: {
+{ pkgs, ... }: {
   imports = [
     ./hardware-configuration.nix
     ./disk-config.nix
-    microvm.host
   ];
 
   boot = {
@@ -104,138 +103,6 @@
     };
   };
 
-  microvm.vms = {
-    ilex = {
-      config = {
-        # It is highly recommended to share the host's nix-store
-        # with the VMs to prevent building huge images.
-        system.stateVersion = "25.05";
-
-        microvm = {
-          vcpu = 2;
-          mem = 512;
-          hypervisor = "qemu";
-
-          interfaces = [
-            {
-              type = "user";
-              id = "qemu";
-              mac = "02:00:00:01:01:01";
-            }
-          ];
-
-          shares = [{
-            source = "/nix/store";
-            mountPoint = "/nix/.ro-store";
-            tag = "ro-store";
-            proto = "virtiofs";
-          }];
-
-          forwardPorts = [
-            { from = "host"; host.port = 2222; guest.port = 22; }
-            { from = "host"; host.port = 8080; guest.port = 80; }
-          ];
-        };
-
-        services = {
-          openssh = {
-            enable = true;
-          };
-
-          nginx = {
-            enable = true;
-            virtualHosts.localhost = {
-              locations."/" = {
-                return = "200 '<html><body>Hello, world! - ilex</body></html>'";
-                extraConfig = ''
-                  default_type text/html;
-                '';
-              };
-            };
-          };
-        };
-
-        networking = {
-          hostName = "ilex";
-          firewall.allowedTCPPorts = [ 22 80 443 ];
-          # networks.
-        };
-
-        users.users.operator = {
-          extraGroups = [ "wheel" ];
-          isNormalUser = true;
-          openssh.authorizedKeys.keys = [
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLsglb+15g0rlrWmutywPEUO9pKCSyfIwRHRvProIsh software@sekun.net"
-          ];
-        };
-      };
-    };
-
-    olivine = {
-      config = {
-        # It is highly recommended to share the host's nix-store
-        # with the VMs to prevent building huge images.
-        system.stateVersion = "25.05";
-
-        microvm = {
-          vcpu = 2;
-          mem = 512;
-          hypervisor = "qemu";
-
-          interfaces = [
-            {
-              type = "user";
-              id = "qemu";
-              mac = "02:00:00:01:01:01";
-            }
-          ];
-
-          shares = [{
-            source = "/nix/store";
-            mountPoint = "/nix/.ro-store";
-            tag = "ro-store";
-            proto = "virtiofs";
-          }];
-
-          forwardPorts = [
-            { from = "host"; host.port = 2223; guest.port = 22; }
-            { from = "host"; host.port = 8081; guest.port = 80; }
-          ];
-        };
-
-        services = {
-          openssh = {
-            enable = true;
-          };
-
-          nginx = {
-            enable = true;
-            virtualHosts.localhost = {
-              locations."/" = {
-                return = "200 '<html><body>Hello, world! - olivine</body></html>'";
-                extraConfig = ''
-                  default_type text/html;
-                '';
-              };
-            };
-          };
-        };
-
-        networking.hostName = "olivine";
-
-        networking.firewall.allowedTCPPorts = [ 22 80 443 ];
-
-        users.users.operator = {
-          extraGroups = [ "wheel" ];
-          isNormalUser = true;
-          openssh.authorizedKeys.keys = [
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLsglb+15g0rlrWmutywPEUO9pKCSyfIwRHRvProIsh software@sekun.net"
-          ];
-        };
-      };
-    };
-  };
-
   programs = {
     firefox.enable = true;
 
@@ -256,6 +123,8 @@
     kdePackages.akregator
     kdePackages.alligator
     tailscale
+    obs-studio
+    vlc
   ];
 
   fonts.packages = with pkgs; [

@@ -189,20 +189,11 @@
             disko.nixosModules.disko
             nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
             determinate.nixosModules.default
-
-            microvm.nixosModules.host {
-              networking.hostName = "litten";
-
-              microvm.autostart = [
-                "ilex"
-              ];
-            }
           ];
 
           specialArgs = {
             pkgs = pkgs system.x86_64-linux;
             nix = nix system.x86_64-linux;
-            microvm = microvm.nixosModules;
           };
         };
       };
