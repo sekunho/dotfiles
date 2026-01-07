@@ -15,6 +15,12 @@
     initrd.kernelModules = [ "zfs" ];
   };
 
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+    dockerSocket.enable = true;
+  };
+
   networking = {
     hostName = "litten";
     hostId = "60ad1747";
@@ -58,31 +64,6 @@
         ui = true
       '';
     };
-
-    # coredns = {
-    #   enable = true;
-    #   config = ''
-    #     .:53 {
-    #        bind 10.0.1.74
-    #        bufsize 1232
-    #        acl {
-    #                allow net 10.0.0.1/23
-    #                block
-    #        }
-    #        hosts {
-    #                reload 0
-    #                fallthrough
-    #        }
-    #        cache {
-    #                success 4096
-    #                denial  1024
-    #                prefetch 512
-    #        }
-    #        errors
-    #        log
-    #     }
-    #   '';
-    # };
   };
 
 
@@ -125,6 +106,7 @@
     tailscale
     obs-studio
     vlc
+    hledger
   ];
 
   fonts.packages = with pkgs; [
@@ -143,5 +125,5 @@
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
-  system.stateVersion = "25.05";
+  system.stateVersion = "25.11";
 }

@@ -3,7 +3,7 @@
 let mapleader = "\<Space>"
 
 set mouse=a
-syntax off
+syntax enable
 set number relativenumber
 set hidden
 set title
@@ -16,9 +16,9 @@ set expandtab
 set shiftwidth=2
 
 " Themes
-" set termguicolors
+set termguicolors
 set background=dark
-set notermguicolors
+" set notermguicolors
 " set t_Co=16
 
 " I'm tired of dealing with separate yanks/pastes
@@ -91,3 +91,5 @@ nmap <esc> :noh <CR>
 autocmd BufWritePre * :%s/\s\+$//e
 
 set timeoutlen=500
+
+highlight clear

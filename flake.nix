@@ -4,7 +4,7 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    # determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
 
     disko = {
       url = "github:nix-community/disko";
@@ -51,7 +51,7 @@
     , nixpkgs
     , nixpkgs-unstable
     , nixos-hardware
-    , determinate
+    # , determinate
     , disko
     , nixos-22-11
     , infra
@@ -78,6 +78,7 @@
         inherit system;
         config.allowUnfree = true;
         overlays = extraOverlays;
+        config.allowUnsupportedSystem = true;
       };
 
       pkgsOverlay = system: final: prev: {
@@ -188,7 +189,7 @@
             ./hosts/litten/configuration.nix
             disko.nixosModules.disko
             nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
-            determinate.nixosModules.default
+            # determinate.nixosModules.default
           ];
 
           specialArgs = {

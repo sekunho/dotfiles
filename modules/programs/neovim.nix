@@ -78,13 +78,13 @@
           " string. Also, not a fan of the forwardslash for the leader key.
           let mapleader = "\<Space>"
 
+          ${builtins.readFile ../../config/neovim/init.vim}
+
           lua << EOF
             ${builtins.readFile ../../config/neovim/lsp.lua}
             ${builtins.readFile ../../config/neovim/init.lua}
+            ${builtins.readFile ../../config/neovim/boring.lua}
           EOF
-
-          ${builtins.readFile ../../config/neovim/void.vim}
-          ${builtins.readFile ../../config/neovim/init.vim}
         '';
       };
     };

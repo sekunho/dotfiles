@@ -1,0 +1,7 @@
+vim.api.nvim_set_hl(0, "Normal", {fg="White", bg="None"})
+vim.api.nvim_set_hl(0, "String", {fg="#b8b8b8"})
+vim.api.nvim_set_hl(0, "Identifier", {fg="None"})
+vim.api.nvim_set_hl(0, "Function", {fg="None"})
+vim.api.nvim_set_hl(0, "rustQuestionMark", {fg="None"})
+vim.api.nvim_set_hl(0, "Directory", {fg="None", bold=true})
+vim.api.nvim_set_hl(0, "NormalFloat", {fg="None", bg="None"})
