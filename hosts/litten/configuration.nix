@@ -94,6 +94,8 @@
       enable = true;
       enableSSHSupport = true;
     };
+
+    kdeconnect.enable = true;
   };
 
   # List packages installed in system profile.
@@ -103,10 +105,13 @@
     wget
     kdePackages.akregator
     kdePackages.alligator
+    kdePackages.merkuro
     tailscale
+    google-chrome
     obs-studio
     vlc
     hledger
+    anki-bin
   ];
 
   fonts.packages = with pkgs; [

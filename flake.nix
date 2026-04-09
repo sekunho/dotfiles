@@ -44,6 +44,11 @@
 
     microvm.url = "github:microvm-nix/microvm.nix";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
+    remotehiro-flake.url = "git+https://forgejo.quoll-owl.ts.net/tacohirosystems/remotehiro";
+
+    moneyman-flake = {
+      url = "github:tacohirosystems/moneyman";
+    };
   };
 
   outputs =
@@ -64,6 +69,8 @@
     , dotfiles-private
     , nixos-generators
     , microvm
+    , remotehiro-flake
+    , moneyman-flake
     }:
     let
       lib = nixpkgs.lib;
@@ -86,6 +93,9 @@
         myfonts = fontpkgs.packages.${system};
         emojied = emojiedpkg.packages.${system}.emojied;
         blog = sekunpkg.packages.${system}.blog;
+        moneyman = moneyman-flake.packages.${system}.moneyman;
+        remotehiro = remotehiro-flake.packages.${system}.remotehiro;
+        remotehiro-migrator = remotehiro-flake.packages.${system}.remotehiro-migrator;
       };
 
       pkgs-22-11 = mkPkgs nixos-22-11 [ ];
@@ -189,6 +199,8 @@
             ./hosts/litten/configuration.nix
             disko.nixosModules.disko
             nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
+            remotehiro-flake.nixosModules.remotehiro
+            remotehiro-flake.nixosModules.remotehiro-moneyman
             # determinate.nixosModules.default
           ];
 
