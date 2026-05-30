@@ -58,15 +58,17 @@
 
             # I don't know how to categorize this
             plenary-nvim
+            telescope-nvim
 
             nvim-web-devicons
-            auto-pairs
+            nvim-autopairs
             trouble-nvim
             vim-commentary
             vim-surround
             which-key-nvim
 
             rust-vim
+            crates-nvim
 
             # Magit is unfortunately still king :(
             gitsigns-nvim
@@ -83,6 +85,7 @@
           lua << EOF
             ${builtins.readFile ../../config/neovim/lsp.lua}
             ${builtins.readFile ../../config/neovim/init.lua}
+            ${builtins.readFile ../../config/neovim/telescope.lua}
             ${builtins.readFile ../../config/neovim/boring.lua}
           EOF
         '';

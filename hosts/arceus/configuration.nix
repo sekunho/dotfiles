@@ -261,7 +261,6 @@
       xorg.xeyes
       vulkan-tools
       lshw
-      agenix
       tree
       rclone # Encrypt files and make a remote backup
       glxinfo # View GPU-related information

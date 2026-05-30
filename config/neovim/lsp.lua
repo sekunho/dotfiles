@@ -17,28 +17,21 @@ vim.lsp.config.rust_analyzer = {
         excludeDirs = { ".direnv", ".devenv", "node_modules" },
       },
 
-      -- check = {
-      --   command = "clippy",
-      --   features = "all",
-      --   allTargets = true,
-      -- },
+      cargo = {
+        targetDir = null,
+        allTargets = false,
+      },
+
+      check = {
+        command = "clippy",
+        allTargets = false,
+      },
+
+      checkOnSave = false,
+      procMacro = { enable = true },
 
       diagnostics = {
         styleLints = { enable = true }
-      },
-
-    --   checkOnSave = true,
-      check = {
-        features = "all",
-        command = "clippy",
-        extraArgs = {
-          "--",
-          "--no-deps",
-          "-Dclippy::correctness",
-          "-Dclippy::complexity",
-          "-Wclippy::perf",
-          "-Wclippy::pedantic",
-        },
       },
     }
   }
@@ -100,7 +93,45 @@ vim.lsp.config.nil_ls = {
   },
 }
 
-vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls'})
+vim.lsp.config.css_variables = {
+  cmd = { 'css-variables-language-server', '--stdio' },
+  root_markers = { 'package.json', 'flake.nix', '.git' },
+  filetypes = { 'css', 'scss', 'less' },
+  settings = {
+    cssVariables = {
+      lookupFiles = { '**/*.less', '**/*.scss', '**/*.sass', '**/*.css' },
+      blacklistFolders = {
+        '**/.direnv', '**/.cache', '**/.git', '**/.hg', '**/.next', '**/.svn',
+        '**/bower_components', '**/CVS', '**/dist', '**/node_modules', '**/tmp',
+      },
+    },
+  },
+}
 
-vim.cmd("set completeopt+=noselect")
+vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls', 'css_variables'})
+
+vim.o.completeopt = 'menuone,noselect,popup,fuzzy'
 vim.o.winborder = 'rounded'
+
+vim.keymap.set('i', '<Tab>', function()
+  return vim.fn.pumvisible() == 1 and '<C-n>' or '<Tab>'
+end, { expr = true })
+vim.keymap.set('i', '<S-Tab>', function()
+  return vim.fn.pumvisible() == 1 and '<C-p>' or '<S-Tab>'
+end, { expr = true })
+
+vim.keymap.set('i', '<CR>', function()
+  if vim.fn.pumvisible() == 1 and vim.fn.complete_info({ 'selected' }).selected ~= -1 then
+    return '<C-y>'
+  end
+  return '<CR>'
+end, { expr = true })
+
+require("crates").setup {
+  lsp = {
+    enabled = true,
+    actions = true,
+    completion = true,
+    hover = true,
+  },
+}

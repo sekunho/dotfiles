@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, pkgs', ... }: {
   imports = [
     ./hardware-configuration.nix
     ./disk-config.nix
@@ -86,6 +86,7 @@
 
   programs = {
     firefox.enable = true;
+    fish.enable = true;
 
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
@@ -112,11 +113,16 @@
     vlc
     hledger
     anki-bin
+    pkgs'.obsidian
+    steam
+    ripgrep
   ];
 
   fonts.packages = with pkgs; [
     nerd-fonts.commit-mono
+    nerd-fonts.jetbrains-mono
     myfonts.berkeley-mono-1009-ligatures
+    comic-mono
   ];
 
   # List services that you want to enable:
@@ -130,5 +136,5 @@
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 }

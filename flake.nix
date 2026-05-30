@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
@@ -21,9 +21,8 @@
 
     emojiedpkg.url = "github:sekunho/emojied";
     sekunpkg.url = "github:sekunho/sekun.dev";
-    agenix.url = "github:ryantm/agenix";
 
-    home-manager.url = "github:nix-community/home-manager/release-25.05";
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Private flakes
@@ -62,7 +61,6 @@
     , infra
     , emojiedpkg
     , sekunpkg
-    , agenix
     , nix-darwin
     , home-manager
     , fontpkgs
@@ -89,7 +87,6 @@
       };
 
       pkgsOverlay = system: final: prev: {
-        agenix = agenix.packages.${system}.default;
         myfonts = fontpkgs.packages.${system};
         emojied = emojiedpkg.packages.${system}.emojied;
         blog = sekunpkg.packages.${system}.blog;
@@ -176,7 +173,6 @@
             ./modules/programs/direnv.nix
             ./modules/programs/neovim.nix
             infra.nixosModules.nix
-            agenix.nixosModules.age
             ./hosts/arceus/configuration.nix
           ];
 
@@ -206,6 +202,7 @@
 
           specialArgs = {
             pkgs = pkgs system.x86_64-linux;
+            pkgs' = pkgs' system.x86_64-linux;
             nix = nix system.x86_64-linux;
           };
         };
