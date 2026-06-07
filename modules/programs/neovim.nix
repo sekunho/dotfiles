@@ -59,6 +59,7 @@
             # I don't know how to categorize this
             plenary-nvim
             telescope-nvim
+            direnv-vim
 
             nvim-web-devicons
             nvim-autopairs

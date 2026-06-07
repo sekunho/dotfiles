@@ -1,7 +1,7 @@
 -- Making diagnostics prettier
--- require("trouble").setup {
---   padding = false,
--- }
+require("trouble").setup {
+  padding = false,
+}
 
 -- require("fidget").setup{}
 

@@ -1,4 +1,4 @@
-{ pkgs, pkgs', ... }: {
+{ pkgs, pkgs', config, ... }: {
   imports = [
     ./hardware-configuration.nix
     ./disk-config.nix
@@ -97,6 +97,23 @@
     };
 
     kdeconnect.enable = true;
+
+
+    # sway stuff
+    waybar.enable = true;
+    sway = {
+      enable = true;
+      wrapperFeatures.gtk = true;
+    };
+    foot = {
+      enable = true;
+      enableFishIntegration = true;
+      settings = {
+        main = {
+          font = "CommitMono Nerd Font:size=12";
+        };
+      };
+    };
   };
 
   # List packages installed in system profile.
@@ -107,6 +124,7 @@
     kdePackages.akregator
     kdePackages.alligator
     kdePackages.merkuro
+    kdePackages.audiotube
     tailscale
     google-chrome
     obs-studio
@@ -116,6 +134,10 @@
     pkgs'.obsidian
     steam
     ripgrep
+
+    wl-clipboard
+    mako
+    i3status-rust
   ];
 
   fonts.packages = with pkgs; [

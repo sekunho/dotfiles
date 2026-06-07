@@ -108,11 +108,6 @@ vim.lsp.config.css_variables = {
   },
 }
 
-vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls', 'css_variables'})
-
-vim.o.completeopt = 'menuone,noselect,popup,fuzzy'
-vim.o.winborder = 'rounded'
-
 vim.keymap.set('i', '<Tab>', function()
   return vim.fn.pumvisible() == 1 and '<C-n>' or '<Tab>'
 end, { expr = true })
@@ -135,3 +130,13 @@ require("crates").setup {
     hover = true,
   },
 }
+
+vim.lsp.config.nixd = {
+  cmd = { 'nixd' },
+  filetypes = { 'nix' },
+  root_markers = { 'flake.nix', '.git' },
+}
+
+vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls', 'css_variables', 'nixd'})
+vim.o.completeopt = 'menuone,noselect,popup,fuzzy'
+vim.o.winborder = 'rounded'
