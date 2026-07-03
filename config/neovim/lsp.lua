@@ -137,6 +137,7 @@ vim.lsp.config.nixd = {
   root_markers = { 'flake.nix', '.git' },
 }
 
-vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls', 'css_variables', 'nixd'})
+vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls', 'css_variables', 'nixd', 'basedpyright', 'ruff'})
+
 vim.o.completeopt = 'menuone,noselect,popup,fuzzy'
 vim.o.winborder = 'rounded'

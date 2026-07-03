@@ -84,6 +84,8 @@
           ${builtins.readFile ../../config/neovim/init.vim}
 
           lua << EOF
+            ${builtins.readFile ../../config/neovim/lsp/basedpyright.lua}
+            ${builtins.readFile ../../config/neovim/lsp/ruff.lua}
             ${builtins.readFile ../../config/neovim/lsp.lua}
             ${builtins.readFile ../../config/neovim/init.lua}
             ${builtins.readFile ../../config/neovim/telescope.lua}

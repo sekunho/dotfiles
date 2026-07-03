@@ -33,6 +33,10 @@
   # Set your time zone.
   time.timeZone = "Europe/Madrid";
 
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+  };
+
   # Select internationalisation properties.
   # i18n.defaultLocale = "en_US.UTF-8";
   # console = {
@@ -55,6 +59,8 @@
       enable = true;
       pulse.enable = true;
     };
+
+    gnome.gnome-keyring.enable = true;
 
     vault = {
       enable = true;
@@ -98,9 +104,17 @@
 
     kdeconnect.enable = true;
 
+    obs-studio = {
+      enable = true;
 
-    # sway stuff
-    waybar.enable = true;
+      plugins = with pkgs.obs-studio-plugins; [
+        wlrobs
+        obs-vaapi
+      ];
+    };
+
+    # # sway stuff
+    # waybar.enable = true;
     sway = {
       enable = true;
       wrapperFeatures.gtk = true;
@@ -127,7 +141,6 @@
     kdePackages.audiotube
     tailscale
     google-chrome
-    obs-studio
     vlc
     hledger
     anki-bin
@@ -138,6 +151,10 @@
     wl-clipboard
     mako
     i3status-rust
+    grim
+    slurp
+
+    mpv
   ];
 
   fonts.packages = with pkgs; [
