@@ -1,4 +1,4 @@
-{ pkgs, pkgs', config, ... }: {
+{ pkgs, pkgs', ... }: {
   imports = [
     ./hardware-configuration.nix
     ./disk-config.nix
@@ -7,7 +7,6 @@
   boot = {
     kernelPackages = pkgs.linuxPackages_6_12;
 
-    # Use the systemd-boot EFI boot loader.
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
 
@@ -30,20 +29,12 @@
     };
   };
 
-  # Set your time zone.
   time.timeZone = "Europe/Madrid";
 
   environment.sessionVariables = {
+    WLR_DRM_NO_MODIFIERS = "1";
     NIXOS_OZONE_WL = "1";
   };
-
-  # Select internationalisation properties.
-  # i18n.defaultLocale = "en_US.UTF-8";
-  # console = {
-  #   font = "Lat2-Terminus16";
-  #   keyMap = "us";
-  #   useXkbConfig = true; # use xkb.options in tty.
-  # };
 
   services = {
     # Enable the X11 windowing system.
@@ -72,28 +63,28 @@
     };
   };
 
-
-  # Configure keymap in X11
-  # services.xserver.xkb.layout = "us";
-  # services.xserver.xkb.options = "eurosign:e,caps:escape";
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users = {
-    users.sekun = {
-      isNormalUser = true;
-      extraGroups = [ "wheel" "networkmanager" ];
+    users = {
+      sekun = {
+        isNormalUser = true;
+        extraGroups = [ "wheel" "networkmanager" ];
+      };
 
-      packages = with pkgs; [
-        tree
-        discord
-      ];
+      stream = {
+        isNormalUser = true;
+        extraGroups = [ "wheel" "networkmanager" ];
+      };
     };
   };
 
-  programs = {
-    firefox.enable = true;
-    fish.enable = true;
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
+  };
 
+  programs = {
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
     mtr.enable = true;
@@ -101,6 +92,8 @@
       enable = true;
       enableSSHSupport = true;
     };
+
+    fish.enable = true;
 
     kdeconnect.enable = true;
 
@@ -113,12 +106,11 @@
       ];
     };
 
-    # # sway stuff
-    # waybar.enable = true;
     sway = {
       enable = true;
       wrapperFeatures.gtk = true;
     };
+
     foot = {
       enable = true;
       enableFishIntegration = true;
@@ -130,8 +122,6 @@
     };
   };
 
-  # List packages installed in system profile.
-  # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
     vim
     wget
@@ -155,6 +145,9 @@
     slurp
 
     mpv
+
+    home-manager
+    swayidle
   ];
 
   fonts.packages = with pkgs; [
@@ -164,16 +157,18 @@
     comic-mono
   ];
 
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
   system.stateVersion = "26.05";
+
+  home-manager = {
+    users.sekun = ../../modules/home-manager/sekun.nix;
+    extraSpecialArgs = {
+      inherit pkgs;
+    };
+
+    sharedModules = [
+      ../../modules/home-manager/firefox.nix
+      ../../modules/home-manager/ghostty.nix
+      ../../modules/home-manager/emacs.nix
+    ];
+  };
 }

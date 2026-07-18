@@ -16,7 +16,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixos-22-11.url = "github:NixOS/nixpkgs/nixos-22.11";
     infra.url = "github:sekunho/infra";
 
     emojiedpkg.url = "github:sekunho/emojied";
@@ -41,13 +40,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    microvm.url = "github:microvm-nix/microvm.nix";
-    microvm.inputs.nixpkgs.follows = "nixpkgs";
     remotehiro-flake.url = "git+https://forgejo.quoll-owl.ts.net/tacohirosystems/remotehiro";
 
-    moneyman-flake = {
-      url = "github:tacohirosystems/moneyman";
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    moneyman-flake.url = "github:tacohirosystems/moneyman";
   };
 
   outputs =
@@ -57,7 +57,6 @@
     , nixos-hardware
     # , determinate
     , disko
-    , nixos-22-11
     , infra
     , emojiedpkg
     , sekunpkg
@@ -66,8 +65,8 @@
     , fontpkgs
     , dotfiles-private
     , nixos-generators
-    , microvm
     , remotehiro-flake
+    , nur
     , moneyman-flake
     }:
     let
@@ -93,9 +92,8 @@
         moneyman = moneyman-flake.packages.${system}.moneyman;
         remotehiro = remotehiro-flake.packages.${system}.remotehiro;
         remotehiro-migrator = remotehiro-flake.packages.${system}.remotehiro-migrator;
+        nur = nur.legacyPackages.${system};
       };
-
-      pkgs-22-11 = mkPkgs nixos-22-11 [ ];
 
       publicKeys = {
         arceus.sekun = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINI269n68/pDDfMjkPaWeRUldzr1I/dWfUZl7sZPktwCAAAABHNzaDo= software@sekun.net";
@@ -197,13 +195,13 @@
             nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
             remotehiro-flake.nixosModules.remotehiro
             remotehiro-flake.nixosModules.remotehiro-moneyman
-            # determinate.nixosModules.default
+            home-manager.nixosModules.home-manager
           ];
 
           specialArgs = {
+            nur = import nur { system = "x86_64-linux"; };
             pkgs = pkgs system.x86_64-linux;
             pkgs' = pkgs' system.x86_64-linux;
-            nix = nix system.x86_64-linux;
           };
         };
       };
