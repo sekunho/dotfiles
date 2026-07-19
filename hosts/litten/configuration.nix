@@ -1,4 +1,4 @@
-{ pkgs, pkgs', ... }: {
+{ pkgs, pkgs', nixosModules, ... }: {
   imports = [
     ./hardware-configuration.nix
     ./disk-config.nix
@@ -162,13 +162,7 @@
   home-manager = {
     users.sekun = ../../modules/home-manager/sekun.nix;
     extraSpecialArgs = {
-      inherit pkgs;
+      inherit pkgs nixosModules;
     };
-
-    sharedModules = [
-      ../../modules/home-manager/firefox.nix
-      ../../modules/home-manager/ghostty.nix
-      ../../modules/home-manager/emacs.nix
-    ];
   };
 }

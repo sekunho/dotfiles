@@ -163,6 +163,16 @@
         };
       };
 
+      nixosModules = {
+        firefox = import ./modules/home-manager/firefox.nix;
+        sway = import ./modules/home-manager/sway.nix;
+        emacs = import ./modules/home-manager/emacs.nix;
+      };
+
+      # homeConfigurations = {
+      #   sekun = import ./modules/home-manager/sekun.nix;
+      # };
+
       nixosConfigurations = {
         arceus = lib.nixosSystem {
           system = system.x86_64-linux;
@@ -199,6 +209,7 @@
           ];
 
           specialArgs = {
+            inherit (self) nixosModules;
             nur = import nur { system = "x86_64-linux"; };
             pkgs = pkgs system.x86_64-linux;
             pkgs' = pkgs' system.x86_64-linux;
