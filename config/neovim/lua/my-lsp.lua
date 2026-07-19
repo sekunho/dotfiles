@@ -64,24 +64,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- vim.lsp.config.hls.setup {
---   filetypes = { 'haskell', 'lhaskell', 'cabal' },
---   settings = {
---     haskell = {
---       formattingProvider = "fourmolu",
---       cabalFormattingProvider = "cabalfmt",
---     }
---   },
---   cmd = { "haskell-language-server-9.10.1", "--lsp" }
--- }
-
 -- vim.lsp.config.ts_ls.setup{
 --   cmd = { "typescript-language-server", "--stdio", "--tsserver-path", "tsserver" }
--- }
-
--- vim.lsp.config.elixirls.setup {
---   cmd = { "elixir-ls" },
---   root_dir = require("vim.lsp.config.util").root_pattern(".git")
 -- }
 
 vim.lsp.config.nil_ls = {
