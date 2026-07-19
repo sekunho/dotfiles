@@ -7,5 +7,8 @@
     shotcut
   ];
 
-  _module.args.swayConfigPath = "/home/sekun/Projects/dotfiles/config/sway";
+  _module.args = {
+    swayConfigPath = "/home/sekun/Projects/dotfiles/config/sway";
+    neovimConfigPath = "/home/sekun/Projects/dotfiles/config/neovim";
+  };
 }

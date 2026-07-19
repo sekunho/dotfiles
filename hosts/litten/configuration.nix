@@ -1,4 +1,4 @@
-{ pkgs, pkgs', nixosModules, ... }: {
+{ pkgs, pkgs', ... }: {
   imports = [
     ./hardware-configuration.nix
     ./disk-config.nix
@@ -12,12 +12,6 @@
 
     supportedFilesystems = [ "zfs" ];
     initrd.kernelModules = [ "zfs" ];
-  };
-
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-    dockerSocket.enable = true;
   };
 
   networking = {
@@ -125,6 +119,10 @@
           font = "CommitMono Nerd Font:size=12";
         };
       };
+    };
+
+    thunar = {
+      enable = true;
     };
   };
 

@@ -163,25 +163,17 @@
         };
       };
 
-      nixosModules = {
-        firefox = import ./modules/home-manager/firefox.nix;
-        sway = import ./modules/home-manager/sway.nix;
-        emacs = import ./modules/home-manager/emacs.nix;
-      };
-
-      # homeConfigurations = {
-      #   sekun = import ./modules/home-manager/sekun.nix;
-      # };
-
       homeConfigurations = {
         sekun = home-manager.lib.homeManagerConfiguration {
           pkgs = pkgs system.x86_64-linux;
 
           modules = [
             ./modules/home-manager/sekun.nix
-            self.nixosModules.firefox
-            self.nixosModules.sway
-            self.nixosModules.emacs
+            ./modules/home-manager/firefox.nix
+            ./modules/home-manager/sway.nix
+            ./modules/home-manager/emacs.nix
+            ./modules/home-manager/discord.nix
+            ./modules/home-manager/neovim.nix
           ];
         };
 
@@ -190,9 +182,10 @@
 
           modules = [
             ./modules/home-manager/stream.nix
-            self.nixosModules.firefox
-            self.nixosModules.sway
-            self.nixosModules.emacs
+            ./modules/home-manager/firefox.nix
+            ./modules/home-manager/sway.nix
+            ./modules/home-manager/emacs.nix
+            ./modules/home-manager/neovim.nix
           ];
         };
       };
@@ -220,7 +213,7 @@
           modules = [
             ./modules/doas.nix
             ./modules/programs/git.nix
-            ./modules/programs/neovim.nix
+            # ./modules/programs/neovim.nix
             ./modules/programs/fish.nix
             ./modules/programs/direnv.nix
             ./modules/nix.nix

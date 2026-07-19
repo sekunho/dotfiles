@@ -43,6 +43,11 @@ vim.lsp.config.gopls = {
   filetypes = {'go'},
 }
 
+vim.lsp.config.clangd = {
+  cmd = { 'clangd'},
+  root_markers = { ".direnv", "flake.nix", ".clangd", ".clang-tidy", ".clang-format", "compile_commands.json", "compile_flags.txt", "configure.ac", ".git" }
+};
+
 vim.lsp.config.typescript_ls = {
   cmd = { 'typescript-language-server', "--stdio", "--tsserver-path", "tsserver" },
   root_markers = { 'package.json', 'flake.nix' },
@@ -122,14 +127,14 @@ vim.keymap.set('i', '<CR>', function()
   return '<CR>'
 end, { expr = true })
 
-require("crates").setup {
-  lsp = {
-    enabled = true,
-    actions = true,
-    completion = true,
-    hover = true,
-  },
-}
+-- require("crates").setup {
+--   lsp = {
+--     enabled = true,
+--     actions = true,
+--     completion = true,
+--     hover = true,
+--   },
+-- }
 
 vim.lsp.config.nixd = {
   cmd = { 'nixd' },
@@ -137,7 +142,7 @@ vim.lsp.config.nixd = {
   root_markers = { 'flake.nix', '.git' },
 }
 
-vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls', 'css_variables', 'nixd', 'basedpyright', 'ruff'})
+vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls', 'css_variables', 'nixd', 'basedpyright', 'ruff', 'clangd'})
 
 vim.o.completeopt = 'menuone,noselect,popup,fuzzy'
 vim.o.winborder = 'rounded'

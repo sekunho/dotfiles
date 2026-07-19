@@ -18,7 +18,6 @@
             vim-airline-clock
 
             # Languages, etc.
-            direnv-vim
             # nvim-lspconfig
             ghcid
 

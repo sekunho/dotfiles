@@ -1,3 +1,5 @@
+-- print("Initializing telescope.")
+
 require('telescope').setup {
   pickers = {
     find_files = {
