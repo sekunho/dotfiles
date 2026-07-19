@@ -30,10 +30,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    dotfiles-private = {
-      url = "git+ssh://git@github.com/sekunho/dotfiles-private";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # dotfiles-private = {
+    #   url = "git+ssh://git@github.com/sekunho/dotfiles-private";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     nixos-generators = {
       url = "github:nix-community/nixos-generators";
@@ -63,7 +63,7 @@
     , nix-darwin
     , home-manager
     , fontpkgs
-    , dotfiles-private
+    # , dotfiles-private
     , nixos-generators
     , remotehiro-flake
     , nur
@@ -173,6 +173,30 @@
       #   sekun = import ./modules/home-manager/sekun.nix;
       # };
 
+      homeConfigurations = {
+        sekun = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgs system.x86_64-linux;
+
+          modules = [
+            ./modules/home-manager/sekun.nix
+            self.nixosModules.firefox
+            self.nixosModules.sway
+            self.nixosModules.emacs
+          ];
+        };
+
+        stream = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgs system.x86_64-linux;
+
+          modules = [
+            ./modules/home-manager/stream.nix
+            self.nixosModules.firefox
+            self.nixosModules.sway
+            self.nixosModules.emacs
+          ];
+        };
+      };
+
       nixosConfigurations = {
         arceus = lib.nixosSystem {
           system = system.x86_64-linux;
@@ -205,12 +229,10 @@
             nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
             remotehiro-flake.nixosModules.remotehiro
             remotehiro-flake.nixosModules.remotehiro-moneyman
-            home-manager.nixosModules.home-manager
           ];
 
           specialArgs = {
             inherit (self) nixosModules;
-            nur = import nur { system = "x86_64-linux"; };
             pkgs = pkgs system.x86_64-linux;
             pkgs' = pkgs' system.x86_64-linux;
           };

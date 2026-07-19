@@ -131,10 +131,7 @@
   environment.systemPackages = with pkgs; [
     vim
     wget
-    kdePackages.akregator
-    kdePackages.alligator
-    kdePackages.merkuro
-    kdePackages.audiotube
+
     tailscale
     google-chrome
     vlc
@@ -164,12 +161,4 @@
   ];
 
   system.stateVersion = "26.05";
-
-  home-manager = {
-    users.sekun = ../../modules/home-manager/sekun.nix;
-    users.stream = ../../modules/home-manager/stream.nix;
-    extraSpecialArgs = {
-      inherit pkgs nixosModules;
-    };
-  };
 }

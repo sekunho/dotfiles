@@ -121,26 +121,6 @@
         "type": "github"
       }
     },
-    "dotfiles-private": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1714917237,
-        "narHash": "sha256-rC9zPH+Gpifulb/Nb4RPQL/lKCG6UJmkdMrgTZ9RTFM=",
-        "ref": "refs/heads/main",
-        "rev": "7a19c6d90332b02bb8ff08a03d249a9ea1e94bd1",
-        "revCount": 27,
-        "type": "git",
-        "url": "ssh://git@github.com/sekunho/dotfiles-private"
-      },
-      "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/sekunho/dotfiles-private"
-      }
-    },
     "emojiedpkg": {
       "inputs": {
         "devenv": "devenv",
@@ -1190,7 +1170,6 @@
     "root": {
       "inputs": {
         "disko": "disko",
-        "dotfiles-private": "dotfiles-private",
         "emojiedpkg": "emojiedpkg",
         "fontpkgs": "fontpkgs",
         "home-manager": "home-manager",
