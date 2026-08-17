@@ -31,6 +31,19 @@
   };
 
   services = {
+    blueman.enable = true;
+
+    keyd = {
+      enable = true;
+      keyboards.default = {
+        ids = [ "*" ];
+        settings.main = {
+          muhenkan = "leftmeta";
+          henkan = "rightmeta";
+        };
+      };
+    };
+
     # Enable the X11 windowing system.
     xserver.enable = true;
 
@@ -62,12 +75,12 @@
     users = {
       sekun = {
         isNormalUser = true;
-        extraGroups = [ "wheel" "networkmanager" ];
+        extraGroups = [ "wheel" "networkmanager" "video" ];
       };
 
       stream = {
         isNormalUser = true;
-        extraGroups = [ "wheel" "networkmanager" ];
+        extraGroups = [ "wheel" "networkmanager" "video" ];
       };
     };
   };
@@ -159,4 +172,11 @@
   ];
 
   system.stateVersion = "26.05";
+  boot.initrd.systemd.network.wait-online.enable = false;
+  systemd.network.wait-online.enable = false;
+  systemd.suppressedSystemUnits = [ "NetworkManager-initrd.service" ];
+
+  hardware.bluetooth = {
+    enable = true;
+  };
 }
