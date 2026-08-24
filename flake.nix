@@ -181,6 +181,7 @@
             ./modules/home-manager/discord.nix
             ./modules/home-manager/neovim.nix
             stylix.homeModules.stylix
+            ./modules/home-manager/style.nix
           ];
         };
 
