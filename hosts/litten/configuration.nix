@@ -44,12 +44,6 @@
       };
     };
 
-    # Enable the X11 windowing system.
-    xserver.enable = true;
-
-    displayManager.sddm.enable = true;
-    displayManager.sddm.wayland.enable = true;
-    desktopManager.plasma6.enable = true;
     tailscale.enable = true;
 
     # Enable sound.
@@ -115,13 +109,9 @@
 
       plugins = with pkgs.obs-studio-plugins; [
         wlrobs
+        obs-source-record
         obs-vaapi
       ];
-    };
-
-    sway = {
-      enable = true;
-      wrapperFeatures.gtk = true;
     };
 
     foot = {
@@ -161,7 +151,6 @@
     mpv
 
     home-manager
-    swayidle
   ];
 
   fonts.packages = with pkgs; [
