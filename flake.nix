@@ -48,6 +48,11 @@
     };
 
     moneyman-flake.url = "github:tacohirosystems/moneyman";
+
+    stylix = {
+      url = "github:nix-community/stylix/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -68,6 +73,7 @@
     , remotehiro-flake
     , nur
     , moneyman-flake
+    , stylix
     }:
     let
       lib = nixpkgs.lib;
@@ -174,6 +180,7 @@
             ./modules/home-manager/emacs.nix
             ./modules/home-manager/discord.nix
             ./modules/home-manager/neovim.nix
+            stylix.homeModules.stylix
           ];
         };
 
@@ -222,6 +229,7 @@
             nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
             remotehiro-flake.nixosModules.remotehiro
             remotehiro-flake.nixosModules.remotehiro-moneyman
+            ./modules/gnome.nix
           ];
 
           specialArgs = {
