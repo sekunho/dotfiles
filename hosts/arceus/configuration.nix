@@ -173,7 +173,7 @@
           # Social
           signal-desktop
           discord
-          tdesktop
+          telegram-desktop
           element-desktop
 
           # Streaming
@@ -193,7 +193,7 @@
           krita
 
           yt-dlp
-          gnome.gnome-disk-utility
+          gnome-disk-utility
 
           # VM stuff
           virt-manager
@@ -302,7 +302,7 @@
       zoom-us
 
       # Customization
-      gnome.gnome-tweaks
+      gnome-tweaks
       gnome-browser-connector
 
       # Browsers

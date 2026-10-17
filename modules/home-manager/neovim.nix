@@ -33,7 +33,7 @@ in
     viAlias = true;
     vimAlias = true;
     sideloadInitLua = true;
-    waylandSupport = true;
+    waylandSupport = pkgs.stdenv.hostPlatform.isLinux;
 
     plugins = with pkgs.vimPlugins; [
       vim-airline

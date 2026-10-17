@@ -12,7 +12,7 @@
     };
 
     nix-darwin = {
-      url = "github:nix-darwin/nix-darwin/nix-darwin-25.05";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -157,8 +157,6 @@
 
       darwinConfigurations."blaziken" = nix-darwin.lib.darwinSystem {
         modules = [
-          home-manager.darwinModules.default
-          ./modules/programs/neovim.nix
           ./hosts/blaziken/configuration.nix
         ];
 
@@ -196,6 +194,32 @@
             ./modules/home-manager/neovim.nix
           ];
         };
+
+        "sekun@blaziken" = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgs system.aarch64-darwin;
+
+          extraSpecialArgs = {
+            username = "sekun";
+            homeDirectory = "/Users/sekun";
+          };
+
+          modules = [
+            ./modules/home-manager/darwin-user.nix
+          ];
+        };
+
+        "noodle@blaziken" = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgs system.aarch64-darwin;
+
+          extraSpecialArgs = {
+            username = "noodle";
+            homeDirectory = "/Users/noodle";
+          };
+
+          modules = [
+            ./modules/home-manager/darwin-user.nix
+          ];
+        };
       };
 
       nixosConfigurations = {
@@ -204,7 +228,6 @@
 
           modules = [
             ./modules/programs/direnv.nix
-            ./modules/programs/neovim.nix
             infra.nixosModules.nix
             ./hosts/arceus/configuration.nix
           ];
@@ -221,7 +244,6 @@
           modules = [
             ./modules/doas.nix
             ./modules/programs/git.nix
-            # ./modules/programs/neovim.nix
             ./modules/programs/fish.nix
             ./modules/programs/direnv.nix
             ./modules/nix.nix

@@ -7,5 +7,8 @@
     shotcut
   ];
 
-  _module.args.swayConfigPath = "/home/stream/.config/dotfiles/config/sway";
+  _module.args = {
+    swayConfigPath = "/home/stream/.config/dotfiles/config/sway";
+    neovimConfigPath = "/home/stream/.config/dotfiles/config/neovim";
+  };
 }

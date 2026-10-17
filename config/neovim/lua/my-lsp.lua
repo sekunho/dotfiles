@@ -45,6 +45,7 @@ vim.lsp.config.gopls = {
 
 vim.lsp.config.clangd = {
   cmd = { 'clangd'},
+  filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda', 'proto' },
   root_markers = { ".direnv", "flake.nix", ".clangd", ".clang-tidy", ".clang-format", "compile_commands.json", "compile_flags.txt", "configure.ac", ".git" }
 };
 
@@ -52,6 +53,12 @@ vim.lsp.config.typescript_ls = {
   cmd = { 'typescript-language-server', "--stdio", "--tsserver-path", "tsserver" },
   root_markers = { 'package.json', 'flake.nix' },
   filetypes = {'typescript'}
+};
+
+vim.lsp.config.some_sass_ls = {
+  cmd = { 'some-sass-language-server', '--stdio' },
+  root_markers = { 'package.json', 'flake.nix', '.git' },
+  filetypes = { 'scss', 'sass', 'vue', 'svelte', 'astro' },
 };
 
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -126,7 +133,7 @@ vim.lsp.config.nixd = {
   root_markers = { 'flake.nix', '.git' },
 }
 
-vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls', 'css_variables', 'nixd', 'basedpyright', 'ruff', 'clangd'})
+vim.lsp.enable({'rust_analyzer', 'nil_ls', 'gopls', 'typescript_ls', 'some_sass_ls', 'css_variables', 'nixd', 'basedpyright', 'ruff', 'clangd'})
 
 vim.o.completeopt = 'menuone,noselect,popup,fuzzy'
 vim.o.winborder = 'rounded'

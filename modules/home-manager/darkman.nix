@@ -1,5 +1,0 @@
-{ ... }: {
-  programs.darkman = {
-    enable = true;
-  };
-}
